@@ -1,0 +1,72 @@
+### Get all venues
+GET {{base_url}}/api/venues
+
+### Get venue by id
+GET {{base_url}}/api/venues/1
+
+### Get venue by id error 404
+
+GET {{base_url}}/api/venues/9999
+
+### Create venue
+POST {{base_url}}/api/venues
+Content-Type: application/json
+
+{
+    "managedBy": 2,
+    "name": "Guild Hall",
+    "description": "The place for board games",
+    "address": "Cluj-Napoca"
+}
+
+### Create venue only with required params
+POST {{base_url}}/api/venues
+Content-Type: application/json
+
+{
+    "name": "Guild Hall 2",
+    "address": "Cluj-Napoca"
+}
+
+### Create venue error 400
+POST {{base_url}}/api/venues
+Content-Type: application/json
+
+{
+    "managedBy": 2,
+    "description": "The place for board games",
+    "address": "Cluj-Napoca"
+}
+
+### Create venue error 400 (Whitespace name)
+POST {{base_url}}/api/venues
+Content-Type: application/json
+
+{
+    "name": "   ",
+    "address": "Cluj-Napoca"
+}
+
+### Update venue
+PUT {{base_url}}/api/venues/1
+Content-Type: application/json
+
+{
+    "name": "Checkpoint",
+    "address": "Piata Cipariu"
+}
+
+### Update venue error 404
+PUT {{base_url}}/api/venues/9999
+Content-Type: application/json
+
+{
+    "name": "Checkpoint",
+    "address": "Piata Cipariu"
+}
+
+### Delete venue
+DELETE {{base_url}}/api/venues/1
+
+### Delete venue error 404
+DELETE {{base_url}}/api/venues/9999
