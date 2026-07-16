@@ -33,8 +33,7 @@ public class VenueRepository {
     }
 
     public Venue update(Venue venue) {
-//        if (!venues.containsKey(venue.getId())) {
-        if (findById(venue.getId()).isEmpty()) {
+        if (!venues.containsKey(venue.getId())) {
             throw new EntityNotFoundException("Venue with id: " + venue.getId() + " not found!");
         }
         venues.put(venue.getId(), venue);
@@ -42,7 +41,7 @@ public class VenueRepository {
     }
 
     public void deleteById(Long id) {
-        if (findById(id).isEmpty()) {
+        if (!venues.containsKey(id)) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
         venues.remove(id);
