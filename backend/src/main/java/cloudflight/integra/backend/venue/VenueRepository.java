@@ -4,6 +4,7 @@ import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class VenueRepository {
     public Venue save(Venue venue) {
         if (venue.getId() == null) {
             venue.setId(idGen.getAndIncrement());
+            venue.setCreatedAt(LocalDateTime.now());
         }
         venues.put(venue.getId(), venue);
         return venue;
