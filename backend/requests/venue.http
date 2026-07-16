@@ -34,8 +34,7 @@ Content-Type: application/json
 
 {
     "managedBy": 2,
-    "description": "The place for board games",
-    "address": "Cluj-Napoca"
+    "description": "The place for board games"
 }
 
 ### Create venue error 400 (Whitespace name)
