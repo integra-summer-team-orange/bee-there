@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.venue;
 
+import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
 import org.springframework.stereotype.Service;
 
@@ -53,9 +54,15 @@ public class VenueService {
      * @param id The unique identifier of the venue to be updated.
      * @param venue The {@link Venue} entity containing the updated information.
      * @return The updated {@link Venue} entity.
+     * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
+        Venue existingVenue = repository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Venue with id: " + id + " not found!"));
+
         venue.setId(id);
+        venue.setCreatedAt(existingVenue.getCreatedAt());
+
         return repository.update(venue);
     }
 
