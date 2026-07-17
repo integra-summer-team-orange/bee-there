@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.resources;
 
-import cloudflight.integra.backend.EntityNotFoundException;
+import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.resources.model.Resource;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
