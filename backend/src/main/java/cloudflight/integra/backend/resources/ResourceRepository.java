@@ -1,6 +1,5 @@
 package cloudflight.integra.backend.resources;
 
-import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.resources.model.Resource;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +9,10 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * In-memory repository for managing {@link Resource} entities.
+ * Utilizes a thread-safe map for storage and an atomic counter for ID generation.
+ */
 @Repository
 public class ResourceRepository {
     private final ConcurrentHashMap<Long, Resource> resources = new ConcurrentHashMap<>();
@@ -18,28 +21,27 @@ public class ResourceRepository {
     /**
      * Retrieves all resources from the repository.
      *
-     * @return a list of all resources
+     * @return A list of all {@link Resource} entities.
      */
     public List<Resource> findAll() {
         return new ArrayList<>(resources.values());
     }
 
     /**
-     * Finds a resource by its identifier.
+     * Retrieves a resource by its unique identifier.
      *
-     * @param id the unique identifier
-     * @return an Optional containing the resource if found, or empty otherwise
+     * @param id The unique identifier of the resource.
+     * @return An {@link Optional} containing the resource if found, or empty otherwise.
      */
     public Optional<Resource> findById(Long id) {
         return Optional.ofNullable(resources.get(id));
     }
 
-
     /**
-     * Saves a new resource to the repository.
+     * Saves a new resource to the repository and assigns it a generated identifier.
      *
-     * @param resource the resource to save
-     * @return the saved resource with its generated identifier
+     * @param resource The resource to save.
+     * @return The saved {@link Resource} entity.
      */
     public Resource save(Resource resource) {
         if (resource.getId() == null) {
@@ -52,29 +54,26 @@ public class ResourceRepository {
     /**
      * Updates an existing resource in the repository.
      *
-     * @param id       the unique identifier of the resource
-     * @param resource the updated resource data
-     * @return the updated resource
-     * @throws EntityNotFoundException if the resource does not exist
+     * @param id       The unique identifier of the resource to update.
+     * @param resource The updated resource data.
+     * @return An {@link Optional} containing the updated resource, or empty if the resource does not exist.
      */
-    public Resource update(Long id, Resource resource) {
+    public Optional<Resource> update(Long id, Resource resource) {
         if (!resources.containsKey(id)) {
-            throw new EntityNotFoundException("Resource not found");
+            return Optional.empty();
         }
         resource.setId(id);
         resources.put(id, resource);
-        return resource;
+        return Optional.of(resource);
     }
 
     /**
-     * Deletes a resource from the repository.
+     * Deletes a resource from the repository by its identifier.
      *
-     * @param id the unique identifier of the resource to delete
-     * @throws EntityNotFoundException if the resource does not exist
+     * @param id The unique identifier of the resource to delete.
+     * @return true if the resource was deleted, false if it did not exist.
      */
-    public void deleteById(Long id) {
-        if(resources.remove(id) == null) {
-            throw new EntityNotFoundException("Resource not found");
-        }
+    public boolean deleteById(Long id) {
+        return resources.remove(id) != null;
     }
 }

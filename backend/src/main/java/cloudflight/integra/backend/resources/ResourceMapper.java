@@ -4,25 +4,27 @@ import cloudflight.integra.backend.resources.model.Resource;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+/**
+ * Mapper interface responsible for converting between {@link Resource} entities and {@link ResourceDto} records.
+ */
 @Mapper(componentModel = "spring")
 public interface ResourceMapper {
 
     /**
-     * Converts a Resource entity to a ResourceResponse DTO.
+     * Converts a {@link Resource} entity into a {@link ResourceDto}.
      *
-     * @param resource the resource entity
-     * @return the resource response DTO
+     * @param resource The entity to be mapped.
+     * @return The corresponding {@link ResourceDto}.
      */
-    ResourceResponse toDto(Resource resource);
-
+    ResourceDto toDto(Resource resource);
 
     /**
-     * Converts a ResourceRequest DTO to a Resource entity.
+     * Converts a {@link ResourceDto} into a {@link Resource} entity.
+     * The ID is managed internally and ignored during mapping.
      *
-     * @param dto the resource request DTO
-     * @return the resource entity
+     * @param dto The DTO containing the data.
+     * @return The resulting {@link Resource} entity.
      */
     @Mapping(target = "id", ignore = true)
-    Resource toEntity(ResourceRequest dto);
+    Resource toEntity(ResourceDto dto);
 }
-

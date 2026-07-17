@@ -1,26 +1,23 @@
 package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
-import cloudflight.integra.backend.resources.model.Resource;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
 
+/**
+ * REST Controller for managing resource API endpoints.
+ */
 @RestController
 @RequestMapping("/api/resources")
 public class ResourceController {
     private final ResourceService service;
     private final ResourceMapper mapper;
 
-    /**
-     * Constructs a new ResourceController.
-     *
-     * @param service the resource service
-     * @param mapper  the resource mapper
-     */
     public ResourceController(ResourceService service, ResourceMapper mapper) {
         this.service = service;
         this.mapper = mapper;
@@ -29,56 +26,61 @@ public class ResourceController {
     /**
      * Retrieves all resources.
      *
-     * @return a list of resource responses
+     * @return A {@link ResponseEntity} containing a list of {@link ResourceDto} with a 200 OK status.
      */
     @GetMapping
-    public List<ResourceResponse> getAll() {
-        return service.getAll().stream().map(mapper::toDto).toList();
+    public ResponseEntity<List<ResourceDto>> getAll() {
+        return ResponseEntity.ok(
+            service.getAll().stream().map(mapper::toDto).toList()
+        );
     }
 
     /**
-     * Retrieves a resource by its identifier.
+     * Retrieves a specific resource by its identifier.
      *
-     * @param id the unique identifier of the resource
-     * @return the resource response
-     * @throws EntityNotFoundException if the resource is not found
+     * @param id The unique identifier of the resource.
+     * @return A {@link ResponseEntity} containing the {@link ResourceDto} with a 200 OK status.
+     * @throws EntityNotFoundException if the resource is not found.
      */
     @GetMapping("/{id}")
-    public ResourceResponse getById(@PathVariable Long id) {
+    public ResponseEntity<ResourceDto> getById(@PathVariable Long id) {
         return service.getById(id).map(mapper::toDto)
-            .orElseThrow(() -> new EntityNotFoundException("Resource not found"));
+            .map(ResponseEntity::ok)
+            .orElseThrow(() -> new EntityNotFoundException("Resource not found with id: " + id));
     }
 
     /**
      * Creates a new resource.
      *
-     * @param dto the resource request payload
-     * @return a response entity containing the created resource
+     * @param dto The validated {@link ResourceDto} payload.
+     * @return A {@link ResponseEntity} containing the created {@link ResourceDto} with a 201 CREATED status and a Location header.
      */
     @PostMapping
-    public ResponseEntity<ResourceResponse> create(@Valid @RequestBody ResourceRequest dto) {
-        ResourceResponse created = mapper.toDto(service.create(mapper.toEntity(dto)));
-        return ResponseEntity.created(URI.create("/api/resources/" + created.getId())).body(created);
+    public ResponseEntity<ResourceDto> create(@Valid @RequestBody ResourceDto dto) {
+        ResourceDto created = mapper.toDto(service.create(mapper.toEntity(dto)));
+        URI location = UriComponentsBuilder.fromPath("/api/resources/{id}").buildAndExpand(created.id()).toUri();
+        return ResponseEntity.created(location).body(created);
     }
 
     /**
      * Updates an existing resource.
      *
-     * @param id  the unique identifier of the resource to update
-     * @param dto the resource request payload
-     * @return the updated resource response
+     * @param id  The unique identifier of the resource to update.
+     * @param dto The validated {@link ResourceDto} payload.
+     * @return A {@link ResponseEntity} containing the updated {@link ResourceDto} with a 200 OK status.
      */
     @PutMapping("/{id}")
-    public ResourceResponse update(@PathVariable Long id, @Valid @RequestBody ResourceRequest dto) {
-        Resource updated = service.update(id, mapper.toEntity(dto));
-        return mapper.toDto(updated);
+    public ResponseEntity<ResourceDto> update(@PathVariable Long id, @Valid @RequestBody ResourceDto dto) {
+        return ResponseEntity.ok(
+            mapper.toDto(service.update(id, mapper.toEntity(dto)))
+        );
     }
 
     /**
-     * Deletes a resource by its identifier.
+     * Deletes a specific resource.
      *
-     * @param id the unique identifier of the resource to delete
-     * @return an empty response entity
+     * @param id The unique identifier of the resource to delete.
+     * @return An empty {@link ResponseEntity} with a 204 NO CONTENT status.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
