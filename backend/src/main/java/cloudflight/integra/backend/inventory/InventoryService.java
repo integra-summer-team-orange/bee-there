@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service class for managing {@link Inventory} entities.
@@ -34,7 +33,7 @@ public class InventoryService {
      * @param id The unique identifier of the inventory item to retrieve.
      * @return An {@link Optional} containing the inventory item if it exists, or empty otherwise.
      */
-    public Optional<Inventory> getById(UUID id) {
+    public Optional<Inventory> getById(Long id) {
         return repository.findById(id);
     }
 
@@ -55,7 +54,7 @@ public class InventoryService {
      * @param inventory The {@link Inventory} entity containing the updated information.
      * @return The updated {@link Inventory} entity.
      */
-    public Inventory update(UUID id, Inventory inventory) {
+    public Inventory update(Long id, Inventory inventory) {
         inventory.setId(id);
         return repository.update(inventory);
     }
@@ -65,7 +64,7 @@ public class InventoryService {
      *
      * @param id The unique identifier of the inventory item to be deleted.
      */
-    public void delete(UUID id) {
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 }

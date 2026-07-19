@@ -11,7 +11,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * REST Controller for managing inventory-related API endpoints.
@@ -48,7 +47,7 @@ public class InventoryController {
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<InventoryResponseDto> getById(@PathVariable UUID id) {
+    public ResponseEntity<InventoryResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(
             service.getById(id).map(mapper::toResponseDto)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory with id: " + id + " not found!"))
@@ -77,7 +76,7 @@ public class InventoryController {
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryResponseDto> update(@PathVariable UUID id, @RequestBody @Valid InventoryRequestDto dto) {
+    public ResponseEntity<InventoryResponseDto> update(@PathVariable Long id, @RequestBody @Valid InventoryRequestDto dto) {
         return ResponseEntity.ok(
             mapper.toResponseDto(service.update(id, mapper.toEntity(dto)))
         );
@@ -91,7 +90,7 @@ public class InventoryController {
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

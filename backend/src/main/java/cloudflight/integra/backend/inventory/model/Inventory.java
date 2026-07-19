@@ -3,7 +3,7 @@ package cloudflight.integra.backend.inventory.model;
 import java.util.UUID;
 
 public class Inventory {
-    private UUID id;
+    private Long id;
     private UUID venueId;
     private String name;
     private int totalQuantity;
@@ -12,7 +12,7 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(UUID id, UUID venueId, String name, int totalQuantity, int availableQuantity) {
+    public Inventory(Long id, UUID venueId, String name, int totalQuantity, int availableQuantity) {
         this.id = id;
         this.venueId = venueId;
         this.name = name;
@@ -20,11 +20,11 @@ public class Inventory {
         this.availableQuantity = availableQuantity;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
