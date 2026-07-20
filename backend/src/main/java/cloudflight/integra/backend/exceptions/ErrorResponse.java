@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.user.exceptions;
+package cloudflight.integra.backend.exceptions;
 
 import java.time.LocalDateTime;
 import java.util.List;
