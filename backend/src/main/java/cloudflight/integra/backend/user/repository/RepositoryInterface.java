@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.user.repository;
 
-import cloudflight.integra.backend.user.exceptions.RepositoryException;
+import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +33,9 @@ public interface RepositoryInterface<K, T> {
      *
      * @param value the entity to save
      * @return the saved entity
-     * @throws RepositoryException if the entity cannot be saved
+     * @throws DuplicateEmailException if the entity cannot be saved
      */
-    T save(T value) throws RepositoryException;
+    T save(T value) throws DuplicateEmailException;
 
     /**
      * Deletes the entity with the specified identifier.

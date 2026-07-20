@@ -15,12 +15,8 @@ public class StrongPasswordValidator implements ConstraintValidator<StrongPasswo
 
         boolean hasUppercase = password.chars().anyMatch(Character::isUpperCase);
         boolean hasDigit = password.chars().anyMatch(Character::isDigit);
-        boolean hasSymbol = password.chars()
-            .anyMatch(c -> "!@#$%^&*()".indexOf(c) >= 0);
+        boolean hasSymbol = password.chars().anyMatch(c -> "!@#$%^&*()".indexOf(c) >= 0);
 
-        return password.length() >= 8
-            && hasUppercase
-            && hasDigit
-            && hasSymbol;
+        return password.length() >= 8 && hasUppercase && hasDigit && hasSymbol;
     }
 }

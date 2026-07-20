@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.user.model;
+package cloudflight.integra.backend.user.exceptions;
 
 import java.time.LocalDateTime;
 import java.util.List;

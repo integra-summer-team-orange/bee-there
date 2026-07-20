@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.UUID;
 /**
  * Represents the data required to create or update a user.
  * Validation constraints ensure that all provided user information is valid.

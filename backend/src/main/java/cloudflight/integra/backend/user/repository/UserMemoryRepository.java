@@ -1,27 +1,23 @@
 package cloudflight.integra.backend.user.repository;
 
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
-import cloudflight.integra.backend.user.exceptions.RepositoryException;
-import cloudflight.integra.backend.user.utils.UUIDGenerator;
 import cloudflight.integra.backend.user.model.User;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * In-memory implementation of the {@link UserRepository} interface.
- * Stores users in a thread-safe map and generates unique UUIDs for new users.
+ * Stores users in a thread-safe map and generates unique Longs for new users.
  */
 @Repository
 public class UserMemoryRepository implements UserRepository {
-    private final Map<UUID, User> users = new ConcurrentHashMap<>();
-    private final UUIDGenerator generator;
+    private final Map<Long, User> users = new ConcurrentHashMap<>();
+    private final AtomicLong idGen = new AtomicLong(1);
 
-    UserMemoryRepository(UUIDGenerator generator) {
-        this.generator = generator;
-    }
 
     /**
      * Retrieves all users stored in the repository.
@@ -40,25 +36,25 @@ public class UserMemoryRepository implements UserRepository {
      * @return an {@code Optional} containing the user if found, or empty otherwise
      */
     @Override
-    public Optional<User> findById(UUID id) {
+    public Optional<User> findById(Long id) {
         return Optional.ofNullable(users.get(id));
     }
 
     /**
      * Saves a user in the repository. If the user does not already have an
-     * identifier, a new UUID and creation timestamp are assigned.
+     * identifier, a new Long and creation timestamp are assigned.
      *
      * @param value the user to save
      * @return the saved user
-     * @throws RepositoryException if a user with the same email already exists
+     * @throws DuplicateEmailException if a user with the same email already exists
      */
     @Override
-    public User save(User value) throws RepositoryException {
+    public User save(User value) throws DuplicateEmailException {
 
-        checkEmail(value.getEmail());
+        checkEmail(value);
 
         if (value.getId() == null) {
-            value.setId(generator.next(users.keySet()));
+            value.setId(idGen.getAndIncrement());
             value.setCreatedAt(LocalDateTime.now());
         }
 
@@ -72,14 +68,19 @@ public class UserMemoryRepository implements UserRepository {
      * @param id the identifier of the user to remove
      */
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         users.remove(id);
     }
 
-    private void checkEmail(String email) throws DuplicateEmailException {
-        if (users.values().stream()
-            .anyMatch(user -> user.getEmail().equals(email))) {
-            throw new DuplicateEmailException("There is already a user with this email.");
+    private void checkEmail(User user) throws DuplicateEmailException {
+        boolean exists = users.values().stream()
+            .anyMatch(existing ->
+                existing.getEmail().equals(user.getEmail()) &&
+                    !existing.getId().equals(user.getId()));
+
+        if (exists) {
+            throw new DuplicateEmailException(
+                "There is already a user with this email.");
         }
     }
 }

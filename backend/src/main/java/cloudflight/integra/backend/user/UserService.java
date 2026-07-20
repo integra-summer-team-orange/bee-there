@@ -2,15 +2,14 @@ package cloudflight.integra.backend.user;
 
 
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
-import cloudflight.integra.backend.user.exceptions.RepositoryException;
 import cloudflight.integra.backend.user.exceptions.UserNotFoundException;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Provides business logic for managing users.
@@ -19,9 +18,12 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+
+    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -40,7 +42,7 @@ public class UserService {
      * @return the requested user
      * @throws UserNotFoundException if no user with the specified identifier exists
      */
-    public User getById(UUID id) throws RepositoryException {
+    public User getById(Long id) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {
@@ -57,7 +59,8 @@ public class UserService {
      * @return the created user
      * @throws DuplicateEmailException if the email is already used by another user
      */
-    public User create(User user) throws RepositoryException {
+    public User create(User user) throws DuplicateEmailException {
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         return userRepository.save(user);
     }
 
@@ -70,7 +73,7 @@ public class UserService {
      * @throws UserNotFoundException if no user with the specified identifier exists
      * @throws DuplicateEmailException if the email is already used by another user
      */
-    public User update(UUID id, User user) throws RepositoryException {
+    public User update(Long id, User user) throws DuplicateEmailException,UserNotFoundException {
 
         Optional<User> existing = userRepository.findById(id);
 
@@ -80,6 +83,7 @@ public class UserService {
 
         user.setId(id);
         user.setCreatedAt(existing.get().getCreatedAt());
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
 
         return userRepository.save(user);
     }
@@ -90,7 +94,7 @@ public class UserService {
      * @param id the identifier of the user to delete
      * @throws UserNotFoundException if no user with the specified identifier exists
      */
-    public void delete(UUID id) throws RepositoryException {
+    public void delete(Long id) throws UserNotFoundException {
         userRepository.findById(id)
             .map(user -> {
                 userRepository.deleteById(id);

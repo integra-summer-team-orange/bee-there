@@ -2,14 +2,13 @@ package cloudflight.integra.backend.user.model;
 
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Represents a user stored in the application.
  * Contains the user's personal information, role, and creation timestamp.
  */
 public class User {
-    private UUID id;
+    private Long id;
     private String name;
     private String email;
     private String passwordHash;
@@ -17,11 +16,11 @@ public class User {
     private Role role;
     private LocalDateTime createdAt;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

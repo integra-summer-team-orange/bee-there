@@ -1,7 +1,6 @@
 package cloudflight.integra.backend.user;
 
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
-import cloudflight.integra.backend.user.exceptions.RepositoryException;
 import cloudflight.integra.backend.user.exceptions.UserNotFoundException;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.model.UserRequestDto;
@@ -9,9 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * REST controller that exposes CRUD operations for managing users.
@@ -46,7 +42,7 @@ public class UserController {
      * @throws UserNotFoundException if no user with the specified identifier exists
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable UUID id) throws RepositoryException {
+    public ResponseEntity<?> getById(@PathVariable Long id) throws UserNotFoundException {
         User user = userService.getById(id);
 
         return new ResponseEntity<>(userMapper.toDto(user), HttpStatus.OK);
@@ -60,7 +56,7 @@ public class UserController {
      * @throws DuplicateEmailException if the email is not unique
      */
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody @Valid UserRequestDto dto) throws RepositoryException {
+    public ResponseEntity<?> create(@RequestBody @Valid UserRequestDto dto) throws DuplicateEmailException {
         User user = userService.create(userMapper.fromDto(dto));
         return new ResponseEntity<>(userMapper.toDto(user), HttpStatus.CREATED);
     }
@@ -72,11 +68,11 @@ public class UserController {
      * @param userRequestDto the updated user data
      * @return a response containing the updated user
      * @throws DuplicateEmailException if the email is not unique
+     * @throws UserNotFoundException if the user with the specified id does not exist
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id,
-                                    @RequestBody @Valid UserRequestDto userRequestDto)
-        throws RepositoryException {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UserRequestDto userRequestDto)
+        throws DuplicateEmailException, UserNotFoundException {
 
         User user = userService.update(id, userMapper.fromDto(userRequestDto));
         return new ResponseEntity<>(userMapper.toDto(user), HttpStatus.OK);
@@ -90,7 +86,7 @@ public class UserController {
      * @throws UserNotFoundException if no user with the specified identifier exists
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable UUID id) throws RepositoryException {
+    public ResponseEntity<?> delete(@PathVariable Long id) throws UserNotFoundException {
         userService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

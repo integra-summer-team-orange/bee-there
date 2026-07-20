@@ -1,9 +1,10 @@
 package cloudflight.integra.backend.user.utils;
 
 
+import cloudflight.integra.backend.user.UserController;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.exceptions.UserNotFoundException;
-import cloudflight.integra.backend.user.model.ErrorResponse;
+import cloudflight.integra.backend.user.exceptions.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ import java.util.List;
  * Handles application exceptions globally and converts them into
  * consistent HTTP error responses.
  */
-@RestControllerAdvice
+@RestControllerAdvice(assignableTypes = UserController.class)
 public class UserExceptionHandler {
 
     /**

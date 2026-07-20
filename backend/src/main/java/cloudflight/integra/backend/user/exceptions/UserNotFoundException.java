@@ -3,7 +3,7 @@ package cloudflight.integra.backend.user.exceptions;
 /**
  * Exception thrown when a requested user cannot be found.
  */
-public class UserNotFoundException extends RepositoryException {
+public class UserNotFoundException extends Exception {
 
     /**
      * Creates a new exception with the specified detail message.
