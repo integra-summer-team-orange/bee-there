@@ -1,0 +1,66 @@
+### Get all users
+GET {{host}}/api/users
+
+### Get user by id
+GET {{host}}/api/users/1
+
+### Get user by id(failed)
+
+GET {{host}}/api/users/123
+
+### Create user
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+    "name": "ionel",
+    "email": "ionel@gmail.com",
+    "password": "!IonelCelSmecher123",
+    "phone": "0747474747",
+    "role": "PARTICIPANT"
+}
+
+### Create user - same as above (failed)
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+    "name": "ionel",
+    "email": "ionel@gmail.com",
+    "password": "!IonelCelSmecher123",
+    "phone": "0747474747",
+    "role": "PARTICIPANT"
+}
+
+### Create user - invalid fields
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+    "name": "",
+    "email": "ionel",
+    "password": "123",
+    "phone": "19fj352t",
+    "role": "PARTICIPANT"
+}
+
+### Update user
+PUT {{host}}/api/users/1
+Content-Type: application/json
+
+{
+    "name": "ionelionel",
+    "email": "ionel@gmail.com",
+    "password": "!IonelCelSmecher123",
+    "phone": "+40712121212",
+    "role": "PARTICIPANT"
+}
+
+### Delete user
+DELETE {{host}}/api/users/1
+
+
+### Delete user (failed)
+DELETE {{host}}/api/users/123
+
+
