@@ -20,7 +20,6 @@ public interface VenueMapper {
      * @return The resulting {@link Venue} entity.
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
     Venue toEntity(VenueDto venueDto);
 
     /**

@@ -57,12 +57,6 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
-        Venue existingVenue = repository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Venue with id: " + id + " not found!"));
-
-        venue.setId(id);
-        venue.setCreatedAt(existingVenue.getCreatedAt());
-
         return repository.update(venue);
     }
 

@@ -4,7 +4,7 @@ package cloudflight.integra.backend.user.utils;
 import cloudflight.integra.backend.user.UserController;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.exceptions.UserNotFoundException;
-import cloudflight.integra.backend.user.exceptions.ErrorResponse;
+import cloudflight.integra.backend.exceptions.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
