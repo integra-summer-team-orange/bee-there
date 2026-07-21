@@ -5,7 +5,6 @@ GET {{host}}/api/venues
 GET {{host}}/api/venues/1
 
 ### Get venue by id error 404
-
 GET {{host}}/api/venues/9999
 
 ### Create venue
@@ -51,8 +50,12 @@ PUT {{host}}/api/venues/1
 Content-Type: application/json
 
 {
+    "id": 1,
+    "managedBy": 2,
     "name": "Checkpoint",
-    "address": "Piata Cipariu"
+    "description": "The place for board games",
+    "address": "Piata Cipariu",
+    "createdAt": "2026-07-21T10:00:00"
 }
 
 ### Update venue error 404
@@ -60,8 +63,10 @@ PUT {{host}}/api/venues/9999
 Content-Type: application/json
 
 {
+    "id": 9999,
     "name": "Checkpoint",
-    "address": "Piata Cipariu"
+    "address": "Piata Cipariu",
+    "createdAt": "2026-07-21T10:00:00"
 }
 
 ### Delete venue

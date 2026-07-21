@@ -57,6 +57,10 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
+        if (repository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException("Venue with id: " + id + " not found!");
+        }
+
         return repository.update(venue);
     }
 
@@ -64,8 +68,13 @@ public class VenueService {
      * Removes a venue from the system by its ID.
      *
      * @param id The unique identifier of the venue to be deleted.
+     * @throws EntityNotFoundException if the venue does not exist.
      */
     public void delete(Long id) {
+        if (repository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException("Venue with id: " + id + " not found!");
+        }
+
         repository.deleteById(id);
     }
 }

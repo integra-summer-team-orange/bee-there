@@ -1,6 +1,5 @@
 package cloudflight.integra.backend.venue;
 
-import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
 import org.springframework.stereotype.Repository;
 
@@ -35,17 +34,11 @@ public class VenueRepository {
     }
 
     public Venue update(Venue venue) {
-        if (!venues.containsKey(venue.getId())) {
-            throw new EntityNotFoundException("Venue with id: " + venue.getId() + " not found!");
-        }
         venues.put(venue.getId(), venue);
         return venue;
     }
 
     public void deleteById(Long id) {
-        if (!venues.containsKey(id)) {
-            throw new EntityNotFoundException("Venue with id: " + id + " not found!");
-        }
         venues.remove(id);
     }
 }
