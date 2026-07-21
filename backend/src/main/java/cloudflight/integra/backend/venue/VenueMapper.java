@@ -3,7 +3,6 @@ package cloudflight.integra.backend.venue;
 import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 /**
  * Mapper interface responsible for converting between {@link Venue} entities and their Data Transfer Objects (DTOs).
@@ -19,7 +18,6 @@ public interface VenueMapper {
      * @param venueDto The DTO containing the incoming data for creating or updating a venue.
      * @return The resulting {@link Venue} entity.
      */
-    @Mapping(target = "id", ignore = true)
     Venue toEntity(VenueDto venueDto);
 
     /**
