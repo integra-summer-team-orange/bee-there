@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 /**
  * Maps between user entities and Data Transfer Objects (DTOs).
  */
-@Mapper(componentModel = "spring", uses = UserMapper.class)
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     /**
@@ -19,6 +19,8 @@ public interface UserMapper {
      * @return the mapped user entity
      */
     @Mapping(target = "passwordHash", source = "password")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     User fromDto(UserRequestDto userRequestDto);
 
     /**
