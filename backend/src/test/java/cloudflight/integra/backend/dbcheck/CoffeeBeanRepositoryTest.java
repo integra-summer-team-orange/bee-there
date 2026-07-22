@@ -24,5 +24,4 @@ public class CoffeeBeanRepositoryTest {
         assertThat(found.getId()).isEqualTo(saved.getId());
         assertThat(found.getOrigin()).isEqualTo("Arabica");
     }
-
 }
