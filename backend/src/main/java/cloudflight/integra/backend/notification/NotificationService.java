@@ -48,7 +48,8 @@ public class NotificationService {
      *
      * @param notification the notification to create
      * @return the created notification
-     * @throws IllegalArgumentException if the message is blank or exceeds 500 characters, or if the notification type is null
+     * @throws IllegalArgumentException if the message is blank or exceeds 500 characters,
+     * or if the notification type is null
      */
     public Notification create(Notification notification) {
         validateNotification(notification);

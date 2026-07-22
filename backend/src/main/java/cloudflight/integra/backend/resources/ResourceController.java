@@ -51,7 +51,8 @@ public class ResourceController {
      * Creates a new resource.
      *
      * @param dto The validated {@link ResourceDto} payload.
-     * @return A {@link ResponseEntity} containing the created {@link ResourceDto} with a 201 CREATED status and a Location header.
+     * @return A {@link ResponseEntity} containing the created {@link ResourceDto} with a 201 CREATED status
+     * and a Location header.
      */
     @PostMapping
     public ResponseEntity<ResourceDto> create(@Valid @RequestBody ResourceDto dto) {

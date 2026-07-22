@@ -30,7 +30,8 @@ public class NotificationRepository {
      * Finds a notification by its ID.
      *
      * @param id the ID of the notification to retrieve
-     * @return an {@code Optional} containing the notification if found, or an empty {@code Optional} if no notification exists with the given ID
+     * @return an {@code Optional} containing the notification if found,
+     * or an empty {@code Optional} if no notification exists with the given ID
      */
     public Optional<Notification> findById(Long id) {
         return Optional.ofNullable(notifications.get(id));
