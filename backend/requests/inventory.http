@@ -1,0 +1,66 @@
+### Get all inventory items
+GET {{host}}/api/inventory
+
+### Get inventory item by id (use id returned from Create request)
+GET {{host}}/api/inventory/1
+
+### Get inventory item by id error 404
+GET {{host}}/api/inventory/999
+
+### Create inventory item
+POST {{host}}/api/inventory
+Content-Type: application/json
+
+{
+    "venueId": 1,
+    "name": "Chess set",
+    "totalQuantity": 10,
+    "availableQuantity": 7
+}
+
+### Create inventory item error 400 (missing required fields)
+POST {{host}}/api/inventory
+Content-Type: application/json
+
+{
+    "totalQuantity": 10
+}
+
+### Create inventory item error 400 (availableQuantity exceeds totalQuantity)
+POST {{host}}/api/inventory
+Content-Type: application/json
+
+{
+    "venueId": 1,
+    "name": "Chess set",
+    "totalQuantity": 5,
+    "availableQuantity": 10
+}
+
+### Update inventory item (use id returned from Create request)
+PUT {{host}}/api/inventory/1
+Content-Type: application/json
+
+{
+    "venueId": 1,
+    "name": "Chess set",
+    "totalQuantity": 10,
+    "availableQuantity": 4
+}
+
+### Update inventory item error 404
+PUT {{host}}/api/inventory/999
+Content-Type: application/json
+
+{
+    "venueId": 1,
+    "name": "Chess set",
+    "totalQuantity": 10,
+    "availableQuantity": 4
+}
+
+### Delete inventory item (use id returned from Create request)
+DELETE {{host}}/api/inventory/1
+
+### Delete inventory item error 404
+DELETE {{host}}/api/inventory/999
