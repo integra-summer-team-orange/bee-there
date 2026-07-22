@@ -4,13 +4,11 @@ import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.inventory.model.InventoryRequestDto;
 import cloudflight.integra.backend.inventory.model.InventoryResponseDto;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * REST Controller for managing inventory-related API endpoints.
@@ -35,8 +33,7 @@ public class InventoryController {
     @GetMapping
     public ResponseEntity<List<InventoryResponseDto>> getAll() {
         return ResponseEntity.ok(
-            service.getAll().stream().map(mapper::toResponseDto).toList()
-        );
+                service.getAll().stream().map(mapper::toResponseDto).toList());
     }
 
     /**
@@ -48,22 +45,24 @@ public class InventoryController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<InventoryResponseDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(
-            service.getById(id).map(mapper::toResponseDto)
-                .orElseThrow(() -> new EntityNotFoundException("Inventory with id: " + id + " not found!"))
-        );
+        return ResponseEntity.ok(service.getById(id)
+                .map(mapper::toResponseDto)
+                .orElseThrow(() -> new EntityNotFoundException("Inventory with id: " + id + " not found!")));
     }
 
     /**
      * Creates a new inventory item based on the provided request payload.
      *
      * @param dto The validated {@link InventoryRequestDto} containing the inventory details.
-     * @return A {@link ResponseEntity} containing the created {@link InventoryResponseDto} with a 201 CREATED status and a Location header.
+     * @return A {@link ResponseEntity} containing the created {@link InventoryResponseDto} with a 201 CREATED
+     *         status and a Location header.
      */
     @PostMapping
     public ResponseEntity<InventoryResponseDto> create(@RequestBody @Valid InventoryRequestDto dto) {
         InventoryResponseDto createdInventory = mapper.toResponseDto(service.create(mapper.toEntity(dto)));
-        URI location = UriComponentsBuilder.fromPath("/api/inventory/{id}").buildAndExpand(createdInventory.id()).toUri();
+        URI location = UriComponentsBuilder.fromPath("/api/inventory/{id}")
+                .buildAndExpand(createdInventory.id())
+                .toUri();
         return ResponseEntity.created(location).body(createdInventory);
     }
 
@@ -76,10 +75,9 @@ public class InventoryController {
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryResponseDto> update(@PathVariable Long id, @RequestBody @Valid InventoryRequestDto dto) {
-        return ResponseEntity.ok(
-            mapper.toResponseDto(service.update(id, mapper.toEntity(dto)))
-        );
+    public ResponseEntity<InventoryResponseDto> update(
+            @PathVariable Long id, @RequestBody @Valid InventoryRequestDto dto) {
+        return ResponseEntity.ok(mapper.toResponseDto(service.update(id, mapper.toEntity(dto))));
     }
 
     /**

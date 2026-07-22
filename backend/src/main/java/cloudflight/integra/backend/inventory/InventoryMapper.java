@@ -7,7 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * Mapper interface responsible for converting between {@link Inventory} entities and their respective Data Transfer Objects (DTOs).
+ * Mapper interface responsible for converting between {@link Inventory} entities and their
+ * respective Data Transfer Objects (DTOs).
  */
 @Mapper(componentModel = "spring")
 public interface InventoryMapper {

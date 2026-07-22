@@ -1,10 +1,9 @@
 package cloudflight.integra.backend.inventory;
 
 import cloudflight.integra.backend.inventory.model.Inventory;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for managing {@link Inventory} entities.

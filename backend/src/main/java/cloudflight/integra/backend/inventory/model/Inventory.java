@@ -9,8 +9,7 @@ public class Inventory {
     private int totalQuantity;
     private int availableQuantity;
 
-    public Inventory() {
-    }
+    public Inventory() {}
 
     public Inventory(Long id, UUID venueId, String name, int totalQuantity, int availableQuantity) {
         this.id = id;

@@ -1,14 +1,14 @@
 ### Get all inventory items
-GET {{base_url}}/api/inventory
+GET {{host}}/api/inventory
 
 ### Get inventory item by id (use id returned from Create request)
-GET {{base_url}}/api/inventory/1
+GET {{host}}/api/inventory/1
 
 ### Get inventory item by id error 404
-GET {{base_url}}/api/inventory/999
+GET {{host}}/api/inventory/999
 
 ### Create inventory item
-POST {{base_url}}/api/inventory
+POST {{host}}/api/inventory
 Content-Type: application/json
 
 {
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Create inventory item error 400 (missing required fields)
-POST {{base_url}}/api/inventory
+POST {{host}}/api/inventory
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ### Create inventory item error 400 (availableQuantity exceeds totalQuantity)
-POST {{base_url}}/api/inventory
+POST {{host}}/api/inventory
 Content-Type: application/json
 
 {
@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ### Update inventory item (use id returned from Create request)
-PUT {{base_url}}/api/inventory/1
+PUT {{host}}/api/inventory/1
 Content-Type: application/json
 
 {
@@ -49,7 +49,7 @@ Content-Type: application/json
 }
 
 ### Update inventory item error 404
-PUT {{base_url}}/api/inventory/999
+PUT {{host}}/api/inventory/999
 Content-Type: application/json
 
 {
@@ -60,7 +60,7 @@ Content-Type: application/json
 }
 
 ### Delete inventory item (use id returned from Create request)
-DELETE {{base_url}}/api/inventory/1
+DELETE {{host}}/api/inventory/1
 
 ### Delete inventory item error 404
-DELETE {{base_url}}/api/inventory/999
+DELETE {{host}}/api/inventory/999

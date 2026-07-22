@@ -2,14 +2,13 @@ package cloudflight.integra.backend.inventory;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.inventory.model.Inventory;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class InventoryRepository {
