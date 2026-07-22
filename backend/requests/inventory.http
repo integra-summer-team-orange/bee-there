@@ -12,7 +12,7 @@ POST {{host}}/api/inventory
 Content-Type: application/json
 
 {
-    "venueId": "11111111-1111-1111-1111-111111111111",
+    "venueId": 1,
     "name": "Chess set",
     "totalQuantity": 10,
     "availableQuantity": 7
@@ -31,7 +31,7 @@ POST {{host}}/api/inventory
 Content-Type: application/json
 
 {
-    "venueId": "11111111-1111-1111-1111-111111111111",
+    "venueId": 1,
     "name": "Chess set",
     "totalQuantity": 5,
     "availableQuantity": 10
@@ -42,7 +42,7 @@ PUT {{host}}/api/inventory/1
 Content-Type: application/json
 
 {
-    "venueId": "11111111-1111-1111-1111-111111111111",
+    "venueId": 1,
     "name": "Chess set",
     "totalQuantity": 10,
     "availableQuantity": 4
@@ -53,7 +53,7 @@ PUT {{host}}/api/inventory/999
 Content-Type: application/json
 
 {
-    "venueId": "11111111-1111-1111-1111-111111111111",
+    "venueId": 1,
     "name": "Chess set",
     "totalQuantity": 10,
     "availableQuantity": 4
