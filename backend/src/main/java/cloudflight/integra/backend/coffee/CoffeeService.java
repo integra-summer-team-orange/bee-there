@@ -1,10 +1,9 @@
 package cloudflight.integra.backend.coffee;
 
 import cloudflight.integra.backend.coffee.model.Coffee;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CoffeeService {
@@ -34,9 +33,12 @@ public class CoffeeService {
     }
 
     public boolean delete(Long id) {
-        return repository.findById(id).map(existing -> {
-            repository.deleteById(id);
-            return true;
-        }).orElse(false);
+        return repository
+                .findById(id)
+                .map(existing -> {
+                    repository.deleteById(id);
+                    return true;
+                })
+                .orElse(false);
     }
 }

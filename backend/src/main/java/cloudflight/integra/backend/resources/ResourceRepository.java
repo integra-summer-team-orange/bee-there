@@ -1,13 +1,12 @@
 package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.resources.model.Resource;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
 /**
  * In-memory repository for managing {@link Resource} entities.

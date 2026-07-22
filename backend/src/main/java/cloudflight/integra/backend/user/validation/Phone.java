@@ -1,9 +1,7 @@
 package cloudflight.integra.backend.user.validation;
 
-
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.FIELD)
@@ -12,8 +10,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface Phone {
 
-    String message() default
-        "Phone must be formed only with numbers and maybe starting with a +";
+    String message() default "Phone must be formed only with numbers and maybe starting with a +";
 
     Class<?>[] groups() default {};
 

@@ -2,7 +2,6 @@ package cloudflight.integra.backend.user.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-
 import java.lang.annotation.*;
 
 @Target(ElementType.FIELD)
@@ -11,8 +10,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface StrongPassword {
 
-    String message() default
-        "Password must contain at least one uppercase letter, one digit and one symbol !@#$%^&*()";
+    String message() default "Password must contain at least one uppercase letter, one digit and one symbol !@#$%^&*()";
 
     Class<?>[] groups() default {};
 

@@ -1,12 +1,11 @@
 package cloudflight.integra.backend.coffee;
 
 import cloudflight.integra.backend.coffee.model.CoffeeDto;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/coffees")
@@ -26,7 +25,8 @@ public class CoffeeController {
 
     @GetMapping("/{id}")
     public CoffeeDto getById(@PathVariable Long id) {
-        return service.getById(id).map(mapper::toDto)
+        return service.getById(id)
+                .map(mapper::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
@@ -37,7 +37,8 @@ public class CoffeeController {
 
     @PutMapping("/{id}")
     public CoffeeDto update(@PathVariable Long id, @RequestBody CoffeeDto dto) {
-        return service.update(id, mapper.toEntity(dto)).map(mapper::toDto)
+        return service.update(id, mapper.toEntity(dto))
+                .map(mapper::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

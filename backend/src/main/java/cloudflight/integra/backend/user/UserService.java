@@ -1,15 +1,13 @@
 package cloudflight.integra.backend.user;
 
-
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.exceptions.UserNotFoundException;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides business logic for managing users.
@@ -20,8 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-
-    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -73,7 +70,7 @@ public class UserService {
      * @throws UserNotFoundException if no user with the specified identifier exists
      * @throws DuplicateEmailException if the email is already used by another user
      */
-    public User update(Long id, User user) throws DuplicateEmailException,UserNotFoundException {
+    public User update(Long id, User user) throws DuplicateEmailException, UserNotFoundException {
 
         Optional<User> existing = userRepository.findById(id);
 
@@ -95,11 +92,12 @@ public class UserService {
      * @throws UserNotFoundException if no user with the specified identifier exists
      */
     public void delete(Long id) throws UserNotFoundException {
-        userRepository.findById(id)
-            .map(user -> {
-                userRepository.deleteById(id);
-                return true;
-            })
-            .orElseThrow(() -> new UserNotFoundException("User not found"));
+        userRepository
+                .findById(id)
+                .map(user -> {
+                    userRepository.deleteById(id);
+                    return true;
+                })
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }

@@ -2,10 +2,9 @@ package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for managing {@link Venue} entities.

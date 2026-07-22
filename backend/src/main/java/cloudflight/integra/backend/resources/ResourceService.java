@@ -2,10 +2,9 @@ package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.resources.model.Resource;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class for managing {@link Resource} business logic.
@@ -57,8 +56,9 @@ public class ResourceService {
      * @throws EntityNotFoundException if the resource does not exist.
      */
     public Resource update(Long id, Resource resource) {
-        return repository.update(id, resource)
-            .orElseThrow(() -> new EntityNotFoundException("Resource not found with id: " + id));
+        return repository
+                .update(id, resource)
+                .orElseThrow(() -> new EntityNotFoundException("Resource not found with id: " + id));
     }
 
     /**

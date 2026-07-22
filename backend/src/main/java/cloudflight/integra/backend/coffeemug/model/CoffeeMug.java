@@ -18,8 +18,7 @@ public class CoffeeMug {
         this.coffee = coffee;
     }
 
-    public CoffeeMug() {
-    }
+    public CoffeeMug() {}
 
     public Long getId() {
         return id;

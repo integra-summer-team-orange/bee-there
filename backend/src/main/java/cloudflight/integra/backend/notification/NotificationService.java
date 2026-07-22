@@ -1,10 +1,9 @@
 package cloudflight.integra.backend.notification;
 
 import cloudflight.integra.backend.notification.model.Notification;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Service class responsible for managing notifications.
@@ -86,9 +85,9 @@ public class NotificationService {
      */
     public Optional<Notification> update(Long id, Notification notification) {
         return repository.findById(id).map(existing -> {
-                notification.setId(id);
-                return repository.save(notification);
-            });
+            notification.setId(id);
+            return repository.save(notification);
+        });
     }
 
     /**
@@ -111,9 +110,12 @@ public class NotificationService {
      * @return true if the notification was deleted, false otherwise
      */
     public boolean delete(Long id) {
-        return repository.findById(id).map(existing -> {
-            repository.deleteById(id);
-            return true;
-        }).orElse(false);
+        return repository
+                .findById(id)
+                .map(existing -> {
+                    repository.deleteById(id);
+                    return true;
+                })
+                .orElse(false);
     }
 }

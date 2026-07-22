@@ -3,11 +3,10 @@ package cloudflight.integra.backend.venue;
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * REST Controller for managing venue-related API endpoints.
@@ -31,9 +30,7 @@ public class VenueController {
      */
     @GetMapping
     public ResponseEntity<List<VenueDto>> getAll() {
-        return ResponseEntity.ok(
-            service.getAll().stream().map(mapper::toDto).toList()
-        );
+        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
 
     /**
@@ -45,10 +42,9 @@ public class VenueController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<VenueDto> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(
-            service.getById(id).map(mapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Venue with id: " + id + " not found!"))
-        );
+        return ResponseEntity.ok(service.getById(id)
+                .map(mapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Venue with id: " + id + " not found!")));
     }
 
     /**
@@ -72,9 +68,7 @@ public class VenueController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<VenueDto> update(@PathVariable Long id, @RequestBody @Valid VenueDto dto) {
-        return ResponseEntity.ok(
-            mapper.toDto(service.update(id, mapper.toEntity(dto)))
-        );
+        return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
     /**

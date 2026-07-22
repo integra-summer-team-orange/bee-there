@@ -7,27 +7,20 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 public record ResourceDto(
-    Long id,
+        Long id,
 
-    @NotNull(message = "Venue ID is required")
-    Long venueId,
+        @NotNull(message = "Venue ID is required") Long venueId,
 
-    @NotBlank(message = "Name cannot be blank")
-    String name,
+        @NotBlank(message = "Name cannot be blank") String name,
 
-    @NotBlank(message = "Activity type cannot be blank")
-    String activityType,
+        @NotBlank(message = "Activity type cannot be blank") String activityType,
 
-    String activityDescription,
+        String activityDescription,
 
-    @ValidResourceType
-    String type,
+        @ValidResourceType String type,
 
-    @NotNull(message = "Capacity is required")
-    @Positive(message = "Capacity must be a positive integer")
-    Integer capacity,
+        @NotNull(message = "Capacity is required") @Positive(message = "Capacity must be a positive integer")
+        Integer capacity,
 
-    @NotNull(message = "Hourly rate is required")
-    @PositiveOrZero(message = "Hourly rate must be zero or positive")
-    BigDecimal hourlyRate
-) {}
+        @NotNull(message = "Hourly rate is required") @PositiveOrZero(message = "Hourly rate must be zero or positive")
+        BigDecimal hourlyRate) {}

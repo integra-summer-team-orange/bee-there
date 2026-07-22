@@ -2,12 +2,11 @@ package cloudflight.integra.backend.user.repository;
 
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.model.User;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
 /**
  * In-memory implementation of the {@link UserRepository} interface.
@@ -17,7 +16,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class UserMemoryRepository implements UserRepository {
     private final Map<Long, User> users = new ConcurrentHashMap<>();
     private final AtomicLong idGen = new AtomicLong(1);
-
 
     /**
      * Retrieves all users stored in the repository.
@@ -74,13 +72,11 @@ public class UserMemoryRepository implements UserRepository {
 
     private void checkEmail(User user) throws DuplicateEmailException {
         boolean exists = users.values().stream()
-            .anyMatch(existing ->
-                existing.getEmail().equals(user.getEmail()) &&
-                    !existing.getId().equals(user.getId()));
+                .anyMatch(existing -> existing.getEmail().equals(user.getEmail())
+                        && !existing.getId().equals(user.getId()));
 
         if (exists) {
-            throw new DuplicateEmailException(
-                "There is already a user with this email.");
+            throw new DuplicateEmailException("There is already a user with this email.");
         }
     }
 }

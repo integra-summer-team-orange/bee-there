@@ -5,8 +5,7 @@ public class Coffee {
     private String origin;
     private BrewMethod brewMethod;
 
-    public Coffee() {
-    }
+    public Coffee() {}
 
     public Coffee(Long id, String origin, BrewMethod brewMethod) {
         this.id = id;
