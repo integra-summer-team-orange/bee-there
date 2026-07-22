@@ -19,69 +19,86 @@ class VerticalSliceArchitectureTest {
     @Test
     void controllersShouldNotDependOnRepositories() {
         ArchRuleDefinition.noClasses()
-            .that().areAnnotatedWith(RestController.class)
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(Repository.class)
-            .check(imported);
+                .that()
+                .areAnnotatedWith(RestController.class)
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(Repository.class)
+                .check(imported);
     }
 
     @Test
     void servicesShouldNotDependOnControllersOrDtos() {
         ArchRuleDefinition.noClasses()
-            .that().areAnnotatedWith(Service.class)
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(RestController.class)
-            .orShould().dependOnClassesThat()
-            .haveSimpleNameEndingWith("Dto")
-            .check(imported);
+                .that()
+                .areAnnotatedWith(Service.class)
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(RestController.class)
+                .orShould()
+                .dependOnClassesThat()
+                .haveSimpleNameEndingWith("Dto")
+                .check(imported);
     }
 
     @Test
     void repositoriesShouldNotDependOnServicesOrControllersOrDtos() {
         ArchRuleDefinition.noClasses()
-            .that().areAnnotatedWith(Repository.class)
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(Service.class)
-            .orShould().dependOnClassesThat()
-            .areAnnotatedWith(RestController.class)
-            .orShould().dependOnClassesThat()
-            .haveSimpleNameEndingWith("Dto")
-            .check(imported);
+                .that()
+                .areAnnotatedWith(Repository.class)
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(Service.class)
+                .orShould()
+                .dependOnClassesThat()
+                .areAnnotatedWith(RestController.class)
+                .orShould()
+                .dependOnClassesThat()
+                .haveSimpleNameEndingWith("Dto")
+                .check(imported);
     }
 
     @Test
     void controllersShouldNotDependOnOtherSlicesControllers() {
         ArchRuleDefinition.noClasses()
-            .that().areAnnotatedWith(RestController.class)
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(RestController.class)
-            .check(imported);
+                .that()
+                .areAnnotatedWith(RestController.class)
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(RestController.class)
+                .check(imported);
     }
 
     @Test
     void repositoriesShouldNotDependOnOtherSlicesRepositories() {
         ArchRuleDefinition.noClasses()
-            .that().areAnnotatedWith(Repository.class)
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(Repository.class)
-            .check(imported);
+                .that()
+                .areAnnotatedWith(Repository.class)
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(Repository.class)
+                .check(imported);
     }
 
     @Test
     void mappersShouldNotDependOnRepositories() {
         ArchRuleDefinition.noClasses()
-            .that().haveSimpleNameEndingWith("Mapper")
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(Repository.class)
-            .check(imported);
+                .that()
+                .haveSimpleNameEndingWith("Mapper")
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(Repository.class)
+                .check(imported);
     }
 
     @Test
     void mappersShouldNotDependOnServices() {
         ArchRuleDefinition.noClasses()
-            .that().haveSimpleNameEndingWith("Mapper")
-            .should().dependOnClassesThat()
-            .areAnnotatedWith(Service.class)
-            .check(imported);
+                .that()
+                .haveSimpleNameEndingWith("Mapper")
+                .should()
+                .dependOnClassesThat()
+                .areAnnotatedWith(Service.class)
+                .check(imported);
     }
 }

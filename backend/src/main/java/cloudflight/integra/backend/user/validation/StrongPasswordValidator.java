@@ -3,7 +3,6 @@ package cloudflight.integra.backend.user.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-
 public class StrongPasswordValidator implements ConstraintValidator<StrongPassword, String> {
 
     @Override

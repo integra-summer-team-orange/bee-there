@@ -13,10 +13,4 @@ import java.util.List;
  * @param messages the list of error messages describing the failure
  * @param path the request path that caused the error
  */
-public record ErrorResponse(
-    LocalDateTime timestamp,
-    int status,
-    String error,
-    List<String> messages,
-    String path
-) {}
+public record ErrorResponse(LocalDateTime timestamp, int status, String error, List<String> messages, String path) {}

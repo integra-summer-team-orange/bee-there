@@ -72,7 +72,7 @@ public class UserController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UserRequestDto userRequestDto)
-        throws DuplicateEmailException, UserNotFoundException {
+            throws DuplicateEmailException, UserNotFoundException {
 
         User user = userService.update(id, userMapper.fromDto(userRequestDto));
         return new ResponseEntity<>(userMapper.toDto(user), HttpStatus.OK);

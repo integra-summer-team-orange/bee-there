@@ -11,8 +11,7 @@ public class Venue {
     private String address;
     private LocalDateTime createdAt;
 
-    public Venue() {
-    }
+    public Venue() {}
 
     public Venue(Long id, Long managedBy, String name, String description, String address, LocalDateTime createdAt) {
         this.id = id;

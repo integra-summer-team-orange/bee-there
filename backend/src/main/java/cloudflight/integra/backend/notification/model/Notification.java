@@ -11,18 +11,16 @@ public class Notification {
     private LocalDateTime sentAt;
     private boolean read;
 
-    public Notification() {
-    }
+    public Notification() {}
 
     public Notification(
-        Long id,
-        Long recipientId,
-        Long reservationId,
-        NotificationType type,
-        String message,
-        LocalDateTime sentAt,
-        boolean read
-    ) {
+            Long id,
+            Long recipientId,
+            Long reservationId,
+            NotificationType type,
+            String message,
+            LocalDateTime sentAt,
+            boolean read) {
         this.id = id;
         this.recipientId = recipientId;
         this.reservationId = reservationId;

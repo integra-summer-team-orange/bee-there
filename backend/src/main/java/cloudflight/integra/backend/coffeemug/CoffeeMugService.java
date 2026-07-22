@@ -2,12 +2,11 @@ package cloudflight.integra.backend.coffeemug;
 
 import cloudflight.integra.backend.coffee.CoffeeService;
 import cloudflight.integra.backend.coffeemug.model.CoffeeMug;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CoffeeMugService {
@@ -41,16 +40,21 @@ public class CoffeeMugService {
     }
 
     private void validateCoffeeExists(CoffeeMug mug) {
-        if (mug.getCoffee() != null && coffeeService.getById(mug.getCoffee().getId()).isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+        if (mug.getCoffee() != null
+                && coffeeService.getById(mug.getCoffee().getId()).isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
                     "Coffee with id %d does not exist".formatted(mug.getCoffee().getId()));
         }
     }
 
     public boolean delete(Long id) {
-        return repository.findById(id).map(existing -> {
-            repository.deleteById(id);
-            return true;
-        }).orElse(false);
+        return repository
+                .findById(id)
+                .map(existing -> {
+                    repository.deleteById(id);
+                    return true;
+                })
+                .orElse(false);
     }
 }

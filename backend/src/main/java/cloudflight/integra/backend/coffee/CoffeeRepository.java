@@ -1,10 +1,9 @@
 package cloudflight.integra.backend.coffee;
 
 import cloudflight.integra.backend.coffee.model.Coffee;
-import org.springframework.stereotype.Repository;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CoffeeRepository {

@@ -1,11 +1,10 @@
 package cloudflight.integra.backend.notification;
 
 import cloudflight.integra.backend.notification.model.Notification;
-import org.springframework.stereotype.Repository;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository class for managing notifications.
@@ -15,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Repository
 public class NotificationRepository {
-    private final Map<Long, Notification> notifications =  new ConcurrentHashMap<>();
+    private final Map<Long, Notification> notifications = new ConcurrentHashMap<>();
     private final AtomicLong idGen = new AtomicLong(1);
 
     /**
@@ -23,15 +22,20 @@ public class NotificationRepository {
      *
      * @return a list of all {@code Notification} instances.
      */
-    public List<Notification> findAll() { return new ArrayList<>(notifications.values());    }
+    public List<Notification> findAll() {
+        return new ArrayList<>(notifications.values());
+    }
 
     /**
      * Finds a notification by its ID.
      *
      * @param id the ID of the notification to retrieve
-     * @return an {@code Optional} containing the notification if found, or an empty {@code Optional} if no notification exists with the given ID
+     * @return an {@code Optional} containing the notification if found,
+     * or an empty {@code Optional} if no notification exists with the given ID
      */
-    public Optional<Notification> findById(Long id) { return Optional.ofNullable(notifications.get(id)); }
+    public Optional<Notification> findById(Long id) {
+        return Optional.ofNullable(notifications.get(id));
+    }
 
     /**
      * Saves a {@link Notification} to the repository. If the notification does not have an ID,
@@ -56,5 +60,7 @@ public class NotificationRepository {
      * Deletes a {@link Notification} from the repository, based on its ID.
      * @param id the ID of the notification to delete
      */
-    public void deleteById(Long id) { notifications.remove(id); }
+    public void deleteById(Long id) {
+        notifications.remove(id);
+    }
 }

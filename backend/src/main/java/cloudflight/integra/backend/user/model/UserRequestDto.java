@@ -12,24 +12,13 @@ import jakarta.validation.constraints.Size;
  * Validation constraints ensure that all provided user information is valid.
  */
 public record UserRequestDto(
+        @NotBlank(message = "Name is required") @Size(max = 100, message = "Name must be at most 100 characters")
+        String name,
 
+        @NotBlank(message = "Email is required") @Email(message = "Invalid email")
+        String email,
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 100, message = "Name must be at most 100 characters")
-    String name,
+        @StrongPassword String password,
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email")
-    String email,
-
-    @StrongPassword
-    String password,
-
-    @NotBlank(message = "Phone is required")
-    @Phone
-    String phone,
-    @NotNull(message = "Role is required")
-    Role role
-) {
-
-}
+        @NotBlank(message = "Phone is required") @Phone String phone,
+        @NotNull(message = "Role is required") Role role) {}

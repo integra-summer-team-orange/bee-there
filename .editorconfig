@@ -31,3 +31,6 @@ indent_size = 2
 # Tell the CI to stop complaining about the length of the .editorconfig itself
 [.editorconfig]
 max_line_length = off
+
+[*.http]
+max_line_length = off

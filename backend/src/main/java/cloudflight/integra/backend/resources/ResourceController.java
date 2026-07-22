@@ -2,12 +2,11 @@ package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * REST Controller for managing resource API endpoints.
@@ -30,9 +29,7 @@ public class ResourceController {
      */
     @GetMapping
     public ResponseEntity<List<ResourceDto>> getAll() {
-        return ResponseEntity.ok(
-            service.getAll().stream().map(mapper::toDto).toList()
-        );
+        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
 
     /**
@@ -44,21 +41,25 @@ public class ResourceController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ResourceDto> getById(@PathVariable Long id) {
-        return service.getById(id).map(mapper::toDto)
-            .map(ResponseEntity::ok)
-            .orElseThrow(() -> new EntityNotFoundException("Resource not found with id: " + id));
+        return service.getById(id)
+                .map(mapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new EntityNotFoundException("Resource not found with id: " + id));
     }
 
     /**
      * Creates a new resource.
      *
      * @param dto The validated {@link ResourceDto} payload.
-     * @return A {@link ResponseEntity} containing the created {@link ResourceDto} with a 201 CREATED status and a Location header.
+     * @return A {@link ResponseEntity} containing the created {@link ResourceDto} with a 201 CREATED status
+     * and a Location header.
      */
     @PostMapping
     public ResponseEntity<ResourceDto> create(@Valid @RequestBody ResourceDto dto) {
         ResourceDto created = mapper.toDto(service.create(mapper.toEntity(dto)));
-        URI location = UriComponentsBuilder.fromPath("/api/resources/{id}").buildAndExpand(created.id()).toUri();
+        URI location = UriComponentsBuilder.fromPath("/api/resources/{id}")
+                .buildAndExpand(created.id())
+                .toUri();
         return ResponseEntity.created(location).body(created);
     }
 
@@ -71,9 +72,7 @@ public class ResourceController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ResourceDto> update(@PathVariable Long id, @Valid @RequestBody ResourceDto dto) {
-        return ResponseEntity.ok(
-            mapper.toDto(service.update(id, mapper.toEntity(dto)))
-        );
+        return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
     /**

@@ -12,6 +12,6 @@ public class ResourceTypeValidator implements ConstraintValidator<ValidResourceT
             return false;
         }
         return Arrays.stream(ResourceType.values())
-            .anyMatch(enumValue -> enumValue.name().equals(value));
+                .anyMatch(enumValue -> enumValue.name().equals(value));
     }
 }

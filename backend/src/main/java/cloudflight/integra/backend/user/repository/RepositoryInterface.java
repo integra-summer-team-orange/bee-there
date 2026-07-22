@@ -1,7 +1,6 @@
 package cloudflight.integra.backend.user.repository;
 
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
-
 import java.util.List;
 import java.util.Optional;
 
