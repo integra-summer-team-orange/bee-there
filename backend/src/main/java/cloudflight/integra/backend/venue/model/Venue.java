@@ -13,15 +13,6 @@ public class Venue {
 
     public Venue() {}
 
-    public Venue(Long id, Long managedBy, String name, String description, String address, LocalDateTime createdAt) {
-        this.id = id;
-        this.managedBy = managedBy;
-        this.name = name;
-        this.description = description;
-        this.address = address;
-        this.createdAt = createdAt;
-    }
-
     public Long getId() {
         return id;
     }

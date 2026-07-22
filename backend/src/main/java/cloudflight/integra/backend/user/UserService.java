@@ -1,9 +1,8 @@
 package cloudflight.integra.backend.user;
 
+import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
-import cloudflight.integra.backend.user.exceptions.UserNotFoundException;
 import cloudflight.integra.backend.user.model.User;
-import cloudflight.integra.backend.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,13 +36,13 @@ public class UserService {
      *
      * @param id the identifier of the user to retrieve
      * @return the requested user
-     * @throws UserNotFoundException if no user with the specified identifier exists
+     * @throws EntityNotFoundException if no user with the specified identifier exists
      */
-    public User getById(Long id) throws UserNotFoundException {
+    public User getById(Long id) {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {
-            throw new UserNotFoundException("User Not Found");
+            throw new EntityNotFoundException("User Not Found");
         }
 
         return user.get();
@@ -56,7 +55,7 @@ public class UserService {
      * @return the created user
      * @throws DuplicateEmailException if the email is already used by another user
      */
-    public User create(User user) throws DuplicateEmailException {
+    public User create(User user) {
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         return userRepository.save(user);
     }
@@ -67,15 +66,15 @@ public class UserService {
      * @param id the identifier of the user to update
      * @param user the updated user data
      * @return the updated user
-     * @throws UserNotFoundException if no user with the specified identifier exists
+     * @throws EntityNotFoundException if no user with the specified identifier exists
      * @throws DuplicateEmailException if the email is already used by another user
      */
-    public User update(Long id, User user) throws DuplicateEmailException, UserNotFoundException {
+    public User update(Long id, User user) {
 
         Optional<User> existing = userRepository.findById(id);
 
         if (existing.isEmpty()) {
-            throw new UserNotFoundException("User not found");
+            throw new EntityNotFoundException("User not found");
         }
 
         user.setId(id);
@@ -89,15 +88,15 @@ public class UserService {
      * Deletes the user with the specified identifier.
      *
      * @param id the identifier of the user to delete
-     * @throws UserNotFoundException if no user with the specified identifier exists
+     * @throws EntityNotFoundException if no user with the specified identifier exists
      */
-    public void delete(Long id) throws UserNotFoundException {
+    public void delete(Long id) {
         userRepository
                 .findById(id)
                 .map(user -> {
                     userRepository.deleteById(id);
                     return true;
                 })
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 }

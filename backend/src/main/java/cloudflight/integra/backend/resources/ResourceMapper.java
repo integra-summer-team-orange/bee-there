@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.resources.model.Resource;
+import cloudflight.integra.backend.resources.model.ResourceDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

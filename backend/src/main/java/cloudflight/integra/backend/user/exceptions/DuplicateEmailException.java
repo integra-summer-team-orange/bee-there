@@ -4,7 +4,7 @@ package cloudflight.integra.backend.user.exceptions;
  * Exception thrown when attempting to create or update a user
  * with an email address that already exists.
  */
-public class DuplicateEmailException extends Exception {
+public class DuplicateEmailException extends RuntimeException {
 
     /**
      * Creates a new exception with the specified error message.

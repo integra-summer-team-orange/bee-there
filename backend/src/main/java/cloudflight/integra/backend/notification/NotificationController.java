@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.notification;
 
-import cloudflight.integra.backend.exceptions.ResourceNotFoundException;
+import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.notification.model.NotificationDto;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -45,14 +45,14 @@ public class NotificationController {
      *
      * @param id the ID of the notification to retrieve
      * @return the notification with the given ID
-     * @throws ResourceNotFoundException if no notification is found with a matching ID
+     * @throws EntityNotFoundException if no notification is found with a matching ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<NotificationDto> getById(@PathVariable Long id) {
         return service.findById(id)
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Notification not found with id: " + id));
     }
 
     /**
@@ -89,26 +89,26 @@ public class NotificationController {
      *
      * @param id the ID of the notification to mark as read
      * @return the updated notification
-     * @throws ResourceNotFoundException if no notification is found with a matching ID
+     * @throws EntityNotFoundException if no notification is found with a matching ID
      */
     @PatchMapping("/{id}/read")
     public ResponseEntity<NotificationDto> markAsRead(@PathVariable Long id) {
         return service.markAsRead(id)
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Notification not found with id: " + id));
     }
 
     /**
      * Deletes a notification by its ID.
      *
      * @param id the ID of the notification to delete
-     * @throws ResourceNotFoundException if no notification is found with a matching ID
+     * @throws EntityNotFoundException if no notification is found with a matching ID
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (!service.delete(id)) {
-            throw new ResourceNotFoundException("Notification not found with id: " + id);
+            throw new EntityNotFoundException("Notification not found with id: " + id);
         }
         return ResponseEntity.noContent().build();
     }

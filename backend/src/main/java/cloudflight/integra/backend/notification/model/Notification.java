@@ -13,23 +13,6 @@ public class Notification {
 
     public Notification() {}
 
-    public Notification(
-            Long id,
-            Long recipientId,
-            Long reservationId,
-            NotificationType type,
-            String message,
-            LocalDateTime sentAt,
-            boolean read) {
-        this.id = id;
-        this.recipientId = recipientId;
-        this.reservationId = reservationId;
-        this.type = type;
-        this.message = message;
-        this.sentAt = sentAt;
-        this.read = read;
-    }
-
     public Long getId() {
         return id;
     }

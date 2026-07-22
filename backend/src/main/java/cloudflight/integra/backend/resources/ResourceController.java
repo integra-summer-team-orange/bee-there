@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
+import cloudflight.integra.backend.resources.model.ResourceDto;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
