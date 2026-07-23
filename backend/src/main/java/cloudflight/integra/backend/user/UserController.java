@@ -19,6 +19,12 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    /**
+     * Creates a new user controller.
+     *
+     * @param userService the user service
+     * @param userMapper the user mapper
+     */
     public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;

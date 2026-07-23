@@ -18,6 +18,12 @@ public class ResourceController {
     private final ResourceService service;
     private final ResourceMapper mapper;
 
+    /**
+     * Creates a new resource controller.
+     *
+     * @param service the resource service
+     * @param mapper the resource mapper
+     */
     public ResourceController(ResourceService service, ResourceMapper mapper) {
         this.service = service;
         this.mapper = mapper;

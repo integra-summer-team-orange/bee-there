@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * REST controller that exposes CRUD operations for managing coffees.
+ */
 @RestController
 @RequestMapping("/api/coffees")
 @Tag(name = "Coffee", description = "Endpoints for managing coffees")
@@ -22,11 +25,22 @@ public class CoffeeController {
     private final CoffeeService service;
     private final CoffeeMapper mapper;
 
+    /**
+     * Creates a new coffee controller.
+     *
+     * @param service the coffee service
+     * @param mapper the coffee mapper
+     */
     public CoffeeController(CoffeeService service, CoffeeMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
+    /**
+     * Retrieves all coffees.
+     *
+     * @return the list of all coffees
+     */
     @GetMapping
     @Operation(summary = "Get all coffees", description = "Retrieves a list of all available coffee items.")
     @ApiResponse(
@@ -40,6 +54,13 @@ public class CoffeeController {
         return service.getAll().stream().map(mapper::toDto).toList();
     }
 
+    /**
+     * Retrieves a coffee by its unique identifier.
+     *
+     * @param id the identifier of the coffee to retrieve
+     * @return the requested coffee
+     * @throws ResponseStatusException if no coffee with the specified identifier exists
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get a coffee by ID", description = "Retrieves a single coffee item by its unique identifier.")
     @ApiResponses(
@@ -60,6 +81,12 @@ public class CoffeeController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Creates a new coffee.
+     *
+     * @param dto the coffee data used to create the new coffee
+     * @return a response containing the created coffee
+     */
     @PostMapping
     @Operation(summary = "Create a new coffee", description = "Adds a new coffee item to the system.")
     @ApiResponses(
@@ -78,6 +105,14 @@ public class CoffeeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(mapper.toEntity(dto))));
     }
 
+    /**
+     * Updates an existing coffee.
+     *
+     * @param id the identifier of the coffee to update
+     * @param dto the updated coffee data
+     * @return the updated coffee
+     * @throws ResponseStatusException if no coffee with the specified identifier exists
+     */
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing coffee", description = "Updates the coffee details for the given ID.")
     @ApiResponses(
@@ -100,6 +135,11 @@ public class CoffeeController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Deletes a coffee by its unique identifier.
+     *
+     * @param id the identifier of the coffee to delete
+     */
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a coffee", description = "Removes a coffee item by its unique identifier.")
     @ApiResponses(
