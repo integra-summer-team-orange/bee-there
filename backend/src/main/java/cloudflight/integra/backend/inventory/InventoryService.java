@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 public class InventoryService {
     private final InventoryRepository repository;
 
+    /**
+     * Creates a new inventory service.
+     *
+     * @param repository the inventory repository
+     */
     public InventoryService(InventoryRepository repository) {
         this.repository = repository;
     }
