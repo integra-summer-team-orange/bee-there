@@ -69,6 +69,22 @@ public class NotificationController {
     }
 
     /**
+     * Updates an existing notification.
+     *
+     * @param id  the ID of the notification to update
+     * @param dto the DTO containing the updated notification data
+     * @return the updated notification
+     * @throws ResourceNotFoundException if no notification is found with a matching ID
+     */
+    public ResponseEntity<NotificationDto> update(@PathVariable Long id, @Valid @RequestBody NotificationDto dto) {
+        var notification = mapper.toEntity(dto);
+        return service.update(id, notification)
+                .map(mapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found with id: " + id));
+    }
+
+    /**
      * Marks a notification as read.
      *
      * @param id the ID of the notification to mark as read
