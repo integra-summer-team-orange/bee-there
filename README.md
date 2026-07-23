@@ -32,5 +32,24 @@ they are generated dynamically and excluded from version control.
 make sure the Gradle JVM version is set to 24.
 
 ---
+## Javadoc Check
+
+Public classes and methods in the controller, service, repository, and mapper packages
+must include Javadoc. This rule is enforced by Checkstyle and is validated in the CI
+pipeline for every pull request.
+
+Before pushing your changes, run the following command to verify that all required
+Javadoc is present:
+
+```bash
+./gradlew checkstyleMain
+```
+
+**NOTES:**
+- The check fails if any required Javadoc is missing from a public class or method.
+- Checkstyle reports the file and line number for each violation, making it easier to
+  identify and fix missing documentation.
+- Ensure the check passes locally before opening or updating a pull request.
+---
 ## Additional Resources
 [text]
