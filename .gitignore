@@ -14,3 +14,9 @@ dist/
 
 # OS files
 .DS_Store
+
+# Backend Build
+backend/build/openapi.json
+
+# Frontend Generated Client API
+frontend/src/api/generated
