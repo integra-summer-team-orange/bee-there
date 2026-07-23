@@ -57,3 +57,26 @@ Content-Type: application/json
 "type": "SYSTEM",
 "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 }
+
+### Update an existing notification
+PUT http://{{host}}/api/notifications/1
+Content-Type: application/json
+
+{
+    "recipientId": 1,
+    "reservationId": 10,
+    "type": "REMINDER",
+    "message": "Updated notification message",
+    "sentAt": "2026-07-23T10:00:00",
+    "read": false
+}
+
+### Error: Update non-existent notification (404)
+PUT http://{{host}}/api/notifications/999
+Content-Type: application/json
+
+{
+    "recipientId": 1,
+    "type": "SYSTEM",
+    "message": "This will fail"
+}
