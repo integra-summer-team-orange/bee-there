@@ -76,6 +76,7 @@ public class NotificationController {
      * @return the updated notification
      * @throws ResourceNotFoundException if no notification is found with a matching ID
      */
+    @PutMapping("/{id}")
     public ResponseEntity<NotificationDto> update(@PathVariable Long id, @Valid @RequestBody NotificationDto dto) {
         var notification = mapper.toEntity(dto);
         return service.update(id, notification)
