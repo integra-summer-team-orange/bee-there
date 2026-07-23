@@ -78,7 +78,8 @@ public class CoffeeMugService {
      * Deletes a coffee mug by its unique identifier.
      *
      * @param id the identifier of the coffee mug to delete
-     * @return {@code true} if the coffee mug was deleted, {@code false} if no coffee mug with the specified identifier exists
+     * @return {@code true} if the coffee mug was deleted, {@code false} if no coffee mug with the specified
+     * identifier exists
      */
     public boolean delete(Long id) {
         return repository

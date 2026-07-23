@@ -48,7 +48,7 @@ Javadoc is present:
 **NOTES:**
 - The check fails if any required Javadoc is missing from a public class or method.
 - Checkstyle reports the file and line number for each violation, making it easier to
-  identify and fix missing documentation.
+identify and fix missing documentation.
 - Ensure the check passes locally before opening or updating a pull request.
 ---
 ## Additional Resources
