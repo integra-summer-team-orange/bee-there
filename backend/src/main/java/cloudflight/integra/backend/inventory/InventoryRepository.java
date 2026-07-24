@@ -1,6 +1,5 @@
 package cloudflight.integra.backend.inventory;
 
-import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.inventory.model.Inventory;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +30,7 @@ public class InventoryRepository {
         return inventory;
     }
 
-    public Inventory update(Inventory inventory) {
-        if (!inventories.containsKey(inventory.getId())) {
-            throw new EntityNotFoundException("Inventory with id: " + inventory.getId() + " not found!");
-        }
-        inventories.put(inventory.getId(), inventory);
-        return inventory;
-    }
-
     public void deleteById(Long id) {
-        if (!inventories.containsKey(id)) {
-            throw new EntityNotFoundException("Inventory with id: " + id + " not found!");
-        }
         inventories.remove(id);
     }
 }

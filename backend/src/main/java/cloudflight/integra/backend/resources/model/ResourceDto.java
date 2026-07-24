@@ -1,5 +1,6 @@
-package cloudflight.integra.backend.resources;
+package cloudflight.integra.backend.resources.model;
 
+import cloudflight.integra.backend.resources.ValidResourceType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

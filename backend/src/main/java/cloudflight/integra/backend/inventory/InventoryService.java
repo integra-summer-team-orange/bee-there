@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.inventory;
 
+import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.inventory.model.Inventory;
 import java.util.List;
 import java.util.Optional;
@@ -54,8 +55,11 @@ public class InventoryService {
      * @return The updated {@link Inventory} entity.
      */
     public Inventory update(Long id, Inventory inventory) {
+        if (repository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException("Inventory with id: " + id + " not found!");
+        }
         inventory.setId(id);
-        return repository.update(inventory);
+        return repository.save(inventory);
     }
 
     /**
@@ -64,6 +68,9 @@ public class InventoryService {
      * @param id The unique identifier of the inventory item to be deleted.
      */
     public void delete(Long id) {
+        if (repository.findById(id).isEmpty()) {
+            throw new EntityNotFoundException("Inventory with id: " + id + " not found!");
+        }
         repository.deleteById(id);
     }
 }

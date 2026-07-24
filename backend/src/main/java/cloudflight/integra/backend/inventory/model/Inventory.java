@@ -9,14 +9,6 @@ public class Inventory {
 
     public Inventory() {}
 
-    public Inventory(Long id, Long venueId, String name, int totalQuantity, int availableQuantity) {
-        this.id = id;
-        this.venueId = venueId;
-        this.name = name;
-        this.totalQuantity = totalQuantity;
-        this.availableQuantity = availableQuantity;
-    }
-
     public Long getId() {
         return id;
     }

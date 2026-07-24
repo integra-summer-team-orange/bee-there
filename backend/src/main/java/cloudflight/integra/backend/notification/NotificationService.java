@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotificationService {
     private final NotificationRepository repository;
-    // user and reservation-specific services to be added here
+    // todo: user and reservation-specific services to be added here
 
     /**
      * Constructs a new instance of the NotificationService.
