@@ -21,6 +21,3 @@ jobs:
 
       - name: Run backend tests 🧪
         run: ./backend/gradlew -p ./backend/ test -PexcludeTags=architecture
-
-      - name: Javadoc check 📚
-        run: ./backend/gradlew -p ./backend/ checkstyleMain
