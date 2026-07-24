@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -112,7 +113,22 @@ public class ResourceController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ResourceDto.class))),
+                                        schema = @Schema(implementation = ResourceDto.class),
+                                        examples =
+                                                @ExampleObject(
+                                                        name = "Resource Example",
+                                                        value =
+                                                                """
+                                                {
+                                                  "venueId": 1,
+                                                  "name": "Badminton Court 1",
+                                                  "activityType": "Badminton",
+                                                  "activityDescription": "A full-sized badminton court.",
+                                                  "type": "INDOOR_SPORT",
+                                                  "capacity": 4,
+                                                  "hourlyRate": 15.00
+                                                }
+                                                """))),
                 @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
                 @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
             })
@@ -143,7 +159,22 @@ public class ResourceController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ResourceDto.class))),
+                                        schema = @Schema(implementation = ResourceDto.class),
+                                        examples =
+                                                @ExampleObject(
+                                                        name = "Resource Example",
+                                                        value =
+                                                                """
+                                                {
+                                                  "venueId": 1,
+                                                  "name": "Badminton Court 1",
+                                                  "activityType": "Badminton",
+                                                  "activityDescription": "A full-sized badminton court.",
+                                                  "type": "INDOOR_SPORT",
+                                                  "capacity": 4,
+                                                  "hourlyRate": 15.00
+                                                }
+                                                """))),
                 @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
                 @ApiResponse(
                         responseCode = "404",
