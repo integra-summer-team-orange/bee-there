@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 public class ResourceService {
     private final ResourceRepository repository;
 
+    /**
+     * Creates a new resource service.
+     *
+     * @param repository the resource repository
+     */
     public ResourceService(ResourceRepository repository) {
         this.repository = repository;
     }

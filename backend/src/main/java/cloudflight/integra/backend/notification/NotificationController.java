@@ -104,6 +104,7 @@ public class NotificationController {
      *
      * @param id the ID of the notification to delete
      * @throws EntityNotFoundException if no notification is found with a matching ID
+     * @return a response status no content if it was successful
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

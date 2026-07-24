@@ -5,6 +5,7 @@ plugins {
     id 'com.diffplug.spotless' version '8.8.0'
     id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
     id 'org.openapi.generator' version '7.16.0'
+    id 'checkstyle'
 }
 
 group = 'cloudflight.integra'
@@ -91,4 +92,20 @@ tasks.register('generateApiClient') {
     description = "Generates OpenAPI spec from controllers and outputs a TypeScript client."
 
     dependsOn 'openApiGenerate'
+}
+
+checkstyle {
+    toolVersion = '10.26.1'
+    configFile = file("../config/checkstyle/checkstyle.xml")
+}
+
+tasks.named("checkstyleMain", Checkstyle) {
+    include("**/*Controller.java")
+    include("**/*Service.java")
+    include("**/*Repository.java")
+    include("**/*Mapper.java")
+}
+
+tasks.named("checkstyleTest") {
+    enabled = false //only needed for javadoc testing, enable it when needed
 }

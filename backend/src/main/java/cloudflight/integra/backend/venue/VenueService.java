@@ -14,10 +14,14 @@ import org.springframework.stereotype.Service;
 public class VenueService {
     private final VenueRepository repository;
 
+    /**
+     * Creates a new venue service.
+     *
+     * @param repository the venue repository
+     */
     public VenueService(VenueRepository repository) {
         this.repository = repository;
     }
-
     /**
      * Retrieves all available venues from the system.
      *

@@ -17,5 +17,11 @@ public interface NotificationMapper {
      */
     NotificationDto toDto(Notification notification);
 
+    /**
+     * Converts a {@link NotificationDto} to a {@link Notification}
+     *
+     * @param notificationDto a DTO for {@link Notification}
+     * @return the converted entity
+     */
     Notification toEntity(NotificationDto notificationDto);
 }

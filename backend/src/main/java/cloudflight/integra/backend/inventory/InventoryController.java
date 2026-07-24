@@ -20,6 +20,12 @@ public class InventoryController {
     private final InventoryService service;
     private final InventoryMapper mapper;
 
+    /**
+     * Creates a new inventory controller.
+     *
+     * @param service the inventory service
+     * @param mapper the inventory mapper
+     */
     public InventoryController(InventoryService service, InventoryMapper mapper) {
         this.service = service;
         this.mapper = mapper;

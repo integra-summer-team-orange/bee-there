@@ -18,6 +18,12 @@ public class VenueController {
     private final VenueService service;
     private final VenueMapper mapper;
 
+    /**
+     * Creates a new venue controller.
+     *
+     * @param service the venue service
+     * @param mapper the venue mapper
+     */
     public VenueController(VenueService service, VenueMapper mapper) {
         this.service = service;
         this.mapper = mapper;
