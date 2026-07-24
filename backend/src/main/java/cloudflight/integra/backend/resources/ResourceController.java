@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -117,18 +116,7 @@ public class ResourceController {
                 @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
                 @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
             })
-    public ResponseEntity<ResourceDto> create(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            description = "Details of the resource to be created",
-                            content =
-                                    @Content(
-                                            examples =
-                                                    @ExampleObject(
-                                                            value =
-                                                                    "{\"venueId\": 1, \"name\": \"Badminton Court 1\", \"activityType\": \"Badminton\", \"activityDescription\": \"Full-sized court\", \"type\": \"INDOOR_SPORT\", \"capacity\": 4, \"hourlyRate\": 15.00}")))
-                    @Valid
-                    @RequestBody
-                    ResourceDto dto) {
+    public ResponseEntity<ResourceDto> create(@Valid @RequestBody ResourceDto dto) {
         ResourceDto created = mapper.toDto(service.create(mapper.toEntity(dto)));
         URI location = UriComponentsBuilder.fromPath("/api/resources/{id}")
                 .buildAndExpand(created.id())
@@ -166,17 +154,7 @@ public class ResourceController {
     public ResponseEntity<ResourceDto> update(
             @Parameter(description = "The unique identifier of the resource to update", example = "1") @PathVariable
                     Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            description = "Updated resource data",
-                            content =
-                                    @Content(
-                                            examples =
-                                                    @ExampleObject(
-                                                            value =
-                                                                    "{\"venueId\": 1, \"name\": \"Updated Court Name\", \"activityType\": \"Badminton\", \"activityDescription\": \"Updated description\", \"type\": \"INDOOR_SPORT\", \"capacity\": 4, \"hourlyRate\": 18.00}")))
-                    @Valid
-                    @RequestBody
-                    ResourceDto dto) {
+            @Valid @RequestBody ResourceDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
