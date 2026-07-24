@@ -127,10 +127,7 @@ public class NotificationController {
                                     @Content(
                                             mediaType = "application/json",
                                             examples =
-                                                    @ExampleObject(
-                                                            name = "Valid Notification Request",
-                                                            value =
-                                                                    """
+                                                    @ExampleObject(name = "Valid Notification Request", value = """
                                                                     {
                                                                         "recipientId": 12,
                                                                         "reservationId": 5,
@@ -183,8 +180,7 @@ public class NotificationController {
                                             examples =
                                                     @ExampleObject(
                                                             name = "Valid Notification Update Request",
-                                                            value =
-                                                                    """
+                                                            value = """
                                                                     {
                                                                         "recipientId": 12,
                                                                         "reservationId": 5,
