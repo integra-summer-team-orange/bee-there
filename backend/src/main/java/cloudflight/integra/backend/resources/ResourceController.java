@@ -120,13 +120,13 @@ public class ResourceController {
                                                         value =
                                                                 """
                                                 {
-                                                  "venueId": 1,
-                                                  "name": "Badminton Court 1",
-                                                  "activityType": "Badminton",
-                                                  "activityDescription": "A full-sized badminton court.",
-                                                  "type": "INDOOR_SPORT",
-                                                  "capacity": 4,
-                                                  "hourlyRate": 15.00
+                                                "venueId": 1,
+                                                "name": "Badminton Court 1",
+                                                "activityType": "Badminton",
+                                                "activityDescription": "A full-sized badminton court.",
+                                                "type": "INDOOR_SPORT",
+                                                "capacity": 4,
+                                                "hourlyRate": 15.00
                                                 }
                                                 """))),
                 @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
@@ -166,13 +166,13 @@ public class ResourceController {
                                                         value =
                                                                 """
                                                 {
-                                                  "venueId": 1,
-                                                  "name": "Badminton Court 1",
-                                                  "activityType": "Badminton",
-                                                  "activityDescription": "A full-sized badminton court.",
-                                                  "type": "INDOOR_SPORT",
-                                                  "capacity": 4,
-                                                  "hourlyRate": 15.00
+                                                "venueId": 1,
+                                                "name": "Badminton Court 1",
+                                                "activityType": "Badminton",
+                                                "activityDescription": "A full-sized badminton court.",
+                                                "type": "INDOOR_SPORT",
+                                                "capacity": 4,
+                                                "hourlyRate": 15.00
                                                 }
                                                 """))),
                 @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
