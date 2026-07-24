@@ -57,6 +57,7 @@ public class InventoryService {
      *
      * @param id The unique identifier of the inventory item to be updated.
      * @param inventory The {@link Inventory} entity containing the updated information.
+     * @throws EntityNotFoundException if no inventory item with the specified identifier exists
      * @return The updated {@link Inventory} entity.
      */
     public Inventory update(Long id, Inventory inventory) {
@@ -69,7 +70,7 @@ public class InventoryService {
 
     /**
      * Removes an inventory item from the system by its ID.
-     *
+     * @throws EntityNotFoundException if no inventory item with the specified identifier exists
      * @param id The unique identifier of the inventory item to be deleted.
      */
     public void delete(Long id) {
