@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Tag(
         name = "Resources",
         description =
-                "Endpoints for managing various types of resources (sports courts, social spaces, etc.) within venues.")
+                "API endpoints for managing various types of resources (sports courts, social spaces, etc.) within venues.")
 public class ResourceController {
     private final ResourceService service;
     private final ResourceMapper mapper;
@@ -104,7 +104,10 @@ public class ResourceController {
      * and a Location header.
      */
     @PostMapping
-    @Operation(summary = "Create a new resource", description = "Registers a new resource in the system.")
+    @Operation(
+            summary = "Create a new resource",
+            description =
+                    "Registers a new resource in the system. Allowed values for the 'type' field: INDOOR_SPORT, OUTDOOR_SPORT, BOARDGAME_SOCIAL")
     @ApiResponses(
             value = {
                 @ApiResponse(
@@ -114,25 +117,39 @@ public class ResourceController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ResourceDto.class),
-                                        examples =
-                                                @ExampleObject(
-                                                        name = "Resource Example",
-                                                        value =
-                                                                """
-                                                {
-                                                "venueId": 1,
-                                                "name": "Badminton Court 1",
-                                                "activityType": "Badminton",
-                                                "activityDescription": "A full-sized badminton court.",
-                                                "type": "INDOOR_SPORT",
-                                                "capacity": 4,
-                                                "hourlyRate": 15.00
-                                                }
-                                                """))),
+                                        examples = @ExampleObject(name = "Resource Example", value = """
+                                                            {
+                                                                "venueId": 1,
+                                                                "name": "Badminton Court 1",
+                                                                "activityType": "Badminton",
+                                                                "activityDescription": "A full-sized badminton court.",
+                                                                "type": "INDOOR_SPORT",
+                                                                "capacity": 4,
+                                                                "hourlyRate": 15.00
+                                                            }
+                                                            """))),
                 @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
                 @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
             })
-    public ResponseEntity<ResourceDto> create(@Valid @RequestBody ResourceDto dto) {
+    public ResponseEntity<ResourceDto> create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            examples = @ExampleObject(name = "Valid Resource Request", value = """
+                                                            {
+                                                                "venueId": 1,
+                                                                "name": "Badminton Court 1",
+                                                                "activityType": "Badminton",
+                                                                "activityDescription": "A full-sized badminton court.",
+                                                                "type": "INDOOR_SPORT",
+                                                                "capacity": 4,
+                                                                "hourlyRate": 15.00
+                                                            }
+                                                            """)))
+                    @Valid
+                    @RequestBody
+                    ResourceDto dto) {
         ResourceDto created = mapper.toDto(service.create(mapper.toEntity(dto)));
         URI location = UriComponentsBuilder.fromPath("/api/resources/{id}")
                 .buildAndExpand(created.id())
@@ -160,11 +177,7 @@ public class ResourceController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ResourceDto.class),
-                                        examples =
-                                                @ExampleObject(
-                                                        name = "Resource Example",
-                                                        value =
-                                                                """
+                                        examples = @ExampleObject(name = "Resource Example", value = """
                                                 {
                                                 "venueId": 1,
                                                 "name": "Badminton Court 1",
@@ -185,7 +198,27 @@ public class ResourceController {
     public ResponseEntity<ResourceDto> update(
             @Parameter(description = "The unique identifier of the resource to update", example = "1") @PathVariable
                     Long id,
-            @Valid @RequestBody ResourceDto dto) {
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            examples =
+                                                    @ExampleObject(
+                                                            name = "Valid Resource Update Request",
+                                                            value = """
+                                                            {
+                                                                "venueId": 1,
+                                                                "name": "Badminton Court 1",
+                                                                "activityType": "Badminton",
+                                                                "activityDescription": "A full-sized badminton court.",
+                                                                "type": "INDOOR_SPORT",
+                                                                "capacity": 4,
+                                                                "hourlyRate": 15.00
+                                                            }
+                                                            """)))
+                    @Valid
+                    @RequestBody
+                    ResourceDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
