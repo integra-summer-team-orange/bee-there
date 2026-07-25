@@ -117,7 +117,17 @@ public class NotificationController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = NotificationDto.class))),
+                                        schema = @Schema(implementation = NotificationDto.class),
+                                        examples =
+                                                @ExampleObject(name = "Created Notification Response", value = """
+                                                                {
+                                                                    "id": 1,
+                                                                    "recipientId": 12,
+                                                                    "reservationId": 5,
+                                                                    "type": "REMINDER",
+                                                                    "message": "Your reservation starts in 1 hour.",
+                                                                    "read": false
+                                                                }"""))),
                 @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
                 @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             })
@@ -164,7 +174,17 @@ public class NotificationController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = NotificationDto.class))),
+                                        schema = @Schema(implementation = NotificationDto.class),
+                                        examples =
+                                                @ExampleObject(name = "Updated Notification Response", value = """
+                                                                {
+                                                                    "id": 1,
+                                                                    "recipientId": 12,
+                                                                    "reservationId": 5,
+                                                                    "type": "SYSTEM",
+                                                                    "message": "System maintenance at midnight.",
+                                                                    "read": true
+                                                                }"""))),
                 @ApiResponse(responseCode = "400", description = "Invalid input data or ID format", content = @Content),
                 @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content),
                 @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
