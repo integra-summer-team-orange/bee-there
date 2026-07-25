@@ -26,7 +26,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Tag(
         name = "Resources",
         description =
-                "API endpoints for managing various types of resources (sports courts, social spaces, etc.) within venues.")
+                "API endpoints for managing various types of resources " +
+                    "(sports courts, social spaces, etc.) within venues.")
 public class ResourceController {
     private final ResourceService service;
     private final ResourceMapper mapper;
@@ -107,7 +108,8 @@ public class ResourceController {
     @Operation(
             summary = "Create a new resource",
             description =
-                    "Registers a new resource in the system. Allowed values for the 'type' field: INDOOR_SPORT, OUTDOOR_SPORT, BOARDGAME_SOCIAL")
+                    "Registers a new resource in the system. " +
+                        "Allowed values for the 'type' field: INDOOR_SPORT, OUTDOOR_SPORT, BOARDGAME_SOCIAL")
     @ApiResponses(
             value = {
                 @ApiResponse(
