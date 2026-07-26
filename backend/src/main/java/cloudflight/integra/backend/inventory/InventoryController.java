@@ -1,8 +1,7 @@
 package cloudflight.integra.backend.inventory;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
-import cloudflight.integra.backend.inventory.model.InventoryRequestDto;
-import cloudflight.integra.backend.inventory.model.InventoryResponseDto;
+import cloudflight.integra.backend.inventory.model.InventoryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -47,7 +46,7 @@ public class InventoryController {
     /**
      * Retrieves a list of all inventory items present in the system.
      *
-     * @return A {@link ResponseEntity} containing a list of {@link InventoryResponseDto} with a 200 OK status.
+     * @return A {@link ResponseEntity} containing a list of {@link InventoryDto} with a 200 OK status.
      */
     @GetMapping
     @Operation(
@@ -63,7 +62,7 @@ public class InventoryController {
                     mediaType = "application/json",
                     array = @ArraySchema(
                         schema = @Schema(
-                            implementation = InventoryResponseDto.class
+                            implementation = InventoryDto.class
                         )
                     )
                 )
@@ -75,16 +74,16 @@ public class InventoryController {
             )
         }
     )
-    public ResponseEntity<List<InventoryResponseDto>> getAll() {
+    public ResponseEntity<List<InventoryDto>> getAll() {
         return ResponseEntity.ok(
-                service.getAll().stream().map(mapper::toResponseDto).toList());
+                service.getAll().stream().map(mapper::toDto).toList());
     }
 
     /**
      * Retrieves the details of a specific inventory item based on its ID.
      *
      * @param id The unique identifier of the requested inventory item.
-     * @return A {@link ResponseEntity} containing the {@link InventoryResponseDto} with a 200 OK status.
+     * @return A {@link ResponseEntity} containing the {@link InventoryDto} with a 200 OK status.
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @GetMapping("/{id}")
@@ -100,7 +99,7 @@ public class InventoryController {
                 content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(
-                        implementation = InventoryResponseDto.class
+                        implementation = InventoryDto.class
                     )
                 )
             ),
@@ -121,20 +120,20 @@ public class InventoryController {
             )
         }
     )
-    public ResponseEntity<InventoryResponseDto> getById(
+    public ResponseEntity<InventoryDto> getById(
         @Parameter(description = "ID of the inventory item to retrieve", example = "1", required = true)
         @PathVariable
         Long id) {
         return ResponseEntity.ok(service.getById(id)
-                .map(mapper::toResponseDto)
+                .map(mapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory with id: " + id + " not found!")));
     }
 
     /**
      * Creates a new inventory item based on the provided request payload.
      *
-     * @param dto The validated {@link InventoryRequestDto} containing the inventory details.
-     * @return A {@link ResponseEntity} containing the created {@link InventoryResponseDto} with a 201 CREATED
+     * @param dto The validated {@link InventoryDto} containing the inventory details.
+     * @return A {@link ResponseEntity} containing the created {@link InventoryDto} with a 201 CREATED
      *         status and a Location header.
      */
     @PostMapping
@@ -150,7 +149,7 @@ public class InventoryController {
                 content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(
-                        implementation = InventoryResponseDto.class
+                        implementation = InventoryDto.class
                     ),
                     examples = @ExampleObject(
                         name = "Created Inventory Response",
@@ -178,7 +177,7 @@ public class InventoryController {
             )
         }
     )
-    public ResponseEntity<InventoryResponseDto> create(
+    public ResponseEntity<InventoryDto> create(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(
                 mediaType = "application/json",
@@ -197,8 +196,8 @@ public class InventoryController {
         )
         @RequestBody
         @Valid
-        InventoryRequestDto dto) {
-        InventoryResponseDto createdInventory = mapper.toResponseDto(service.create(mapper.toEntity(dto)));
+        InventoryDto dto) {
+        InventoryDto createdInventory = mapper.toDto(service.create(mapper.toEntity(dto)));
         URI location = UriComponentsBuilder.fromPath("/api/inventory/{id}")
                 .buildAndExpand(createdInventory.id())
                 .toUri();
@@ -209,8 +208,8 @@ public class InventoryController {
      * Updates an existing inventory item entirely with the provided payload.
      *
      * @param id The unique identifier of the inventory item to be updated.
-     * @param dto The validated {@link InventoryRequestDto} containing the new data.
-     * @return A {@link ResponseEntity} containing the updated {@link InventoryResponseDto} with a 200 OK status.
+     * @param dto The validated {@link InventoryDto} containing the new data.
+     * @return A {@link ResponseEntity} containing the updated {@link InventoryDto} with a 200 OK status.
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @PutMapping("/{id}")
@@ -226,7 +225,7 @@ public class InventoryController {
                 content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(
-                        implementation = InventoryResponseDto.class
+                        implementation = InventoryDto.class
                     ),
                     examples = @ExampleObject(
                         name = "Updated Inventory Response",
@@ -259,7 +258,7 @@ public class InventoryController {
             )
         }
     )
-    public ResponseEntity<InventoryResponseDto> update(
+    public ResponseEntity<InventoryDto> update(
         @Parameter(
             description = "ID of the inventory item to update",
             example = "1",
@@ -285,8 +284,8 @@ public class InventoryController {
         )
         @RequestBody
         @Valid
-        InventoryRequestDto dto) {
-        return ResponseEntity.ok(mapper.toResponseDto(service.update(id, mapper.toEntity(dto))));
+        InventoryDto dto) {
+        return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
     /**
