@@ -1,3 +1,5 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.4'
@@ -29,7 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // openAPI
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.17'
 
     //bcrypt
     implementation 'org.springframework.security:spring-security-crypto'
@@ -46,7 +48,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql'
-    testRuntimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
 }
 
 test {
@@ -65,33 +67,36 @@ spotless {
 
 openApi {
     apiDocsUrl.set("http://localhost:8080/v3/api-docs")
-    outputDir.set(layout.buildDirectory.get().asFile)
+    outputDir.set(layout.buildDirectory.dir("openapi").get().asFile)
     outputFileName.set("openapi.json")
+
     waitTimeInSeconds.set(10)
+
+    waitTimeInSeconds.set(20)
+
+    customBootRun {
+        args = ["--spring.profiles.active=openapi"]
+    }
 }
 
-openApiGenerate {
-    generatorName.set("typescript-axios")
+tasks.register('generateAngularClient', GenerateTask) {
+    dependsOn tasks.generateOpenApiDocs
+    generatorName.set("typescript-angular")
+    inputSpec.set(layout.buildDirectory.file("openapi/openapi.json").get().asFile.toURI().toString())
 
-    inputSpec.set(layout.buildDirectory.file("openapi.json").get().asFile.toURI().toString())
 
     outputDir.set(file("${projectDir}/../frontend/src/api/generated").absolutePath)
+    apiPackage.set("api")
+    modelPackage.set("models")
 
     configOptions.set([
-        npmName: "api-client",
+        npmName    : "api-client",
         supportsES6: "true"
     ])
 }
 
-tasks.named('openApiGenerate') {
-    dependsOn 'generateOpenApiDocs'
-}
-
-tasks.register('generateApiClient') {
-    group = "build"
-    description = "Generates OpenAPI spec from controllers and outputs a TypeScript client."
-
-    dependsOn 'openApiGenerate'
+tasks.build {
+    dependsOn tasks.generateAngularClient
 }
 
 checkstyle {
