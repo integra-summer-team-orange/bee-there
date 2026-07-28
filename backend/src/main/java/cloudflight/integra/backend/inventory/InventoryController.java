@@ -24,10 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @RestController
 @RequestMapping("/api/inventory")
-@Tag(
-    name = "Inventory",
-    description = "API endpoints for managing inventory items"
-)
+@Tag(name = "Inventory", description = "API endpoints for managing inventory items")
 public class InventoryController {
     private final InventoryService service;
     private final InventoryMapper mapper;
@@ -49,34 +46,20 @@ public class InventoryController {
      * @return A {@link ResponseEntity} containing a list of {@link InventoryDto} with a 200 OK status.
      */
     @GetMapping
-    @Operation(
-        summary = "Get all inventory items",
-        description = "Retrieves a list of all inventory items."
-    )
+    @Operation(summary = "Get all inventory items", description = "Retrieves a list of all inventory items.")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successfully retrieved inventory items",
-                content = @Content(
-                    mediaType = "application/json",
-                    array = @ArraySchema(
-                        schema = @Schema(
-                            implementation = InventoryDto.class
-                        )
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Internal server error",
-                content = @Content
-            )
-        }
-    )
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully retrieved inventory items",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        array = @ArraySchema(schema = @Schema(implementation = InventoryDto.class)))),
+                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            })
     public ResponseEntity<List<InventoryDto>> getAll() {
-        return ResponseEntity.ok(
-                service.getAll().stream().map(mapper::toDto).toList());
+        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
 
     /**
@@ -88,42 +71,25 @@ public class InventoryController {
      */
     @GetMapping("/{id}")
     @Operation(
-        summary = "Get inventory item by ID",
-        description = "Retrieves a single inventory item by its unique identifier."
-    )
+            summary = "Get inventory item by ID",
+            description = "Retrieves a single inventory item by its unique identifier.")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Successfully retrieved the inventory item",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = InventoryDto.class
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Invalid inventory ID",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Inventory item not found",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Internal server error",
-                content = @Content
-            )
-        }
-    )
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully retrieved the inventory item",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = InventoryDto.class))),
+                @ApiResponse(responseCode = "400", description = "Invalid inventory ID", content = @Content),
+                @ApiResponse(responseCode = "404", description = "Inventory item not found", content = @Content),
+                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            })
     public ResponseEntity<InventoryDto> getById(
-        @Parameter(description = "ID of the inventory item to retrieve", example = "1", required = true)
-        @PathVariable
-        Long id) {
+            @Parameter(description = "ID of the inventory item to retrieve", example = "1", required = true)
+                    @PathVariable
+                    Long id) {
         return ResponseEntity.ok(service.getById(id)
                 .map(mapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Inventory with id: " + id + " not found!")));
@@ -137,23 +103,17 @@ public class InventoryController {
      *         status and a Location header.
      */
     @PostMapping
-    @Operation(
-        summary = "Create a new inventory item",
-        description = "Creates a new inventory item."
-    )
+    @Operation(summary = "Create a new inventory item", description = "Creates a new inventory item.")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "201",
-                description = "Inventory item successfully created",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = InventoryDto.class
-                    ),
-                    examples = @ExampleObject(
-                        name = "Created Inventory Response",
-                        value = """
+            value = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Inventory item successfully created",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = InventoryDto.class),
+                                        examples = @ExampleObject(name = "Created Inventory Response", value = """
                             {
                                 "id": 1,
                                 "venueId": 1,
@@ -161,42 +121,26 @@ public class InventoryController {
                                 "totalQuantity": 100,
                                 "availableQuantity": 95
                             }
-                            """
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Invalid input data",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Internal server error",
-                content = @Content
-            )
-        }
-    )
+                            """))),
+                @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            })
     public ResponseEntity<InventoryDto> create(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Valid Inventory Request",
-                    value = """
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            examples = @ExampleObject(name = "Valid Inventory Request", value = """
                     {
                         "venueId": 1,
                         "name": "Chair",
                         "totalQuantity": 100,
                         "availableQuantity": 95
                     }
-                    """
-                )
-            )
-        )
-        @RequestBody
-        @Valid
-        InventoryDto dto) {
+                    """)))
+                    @RequestBody
+                    @Valid
+                    InventoryDto dto) {
         InventoryDto createdInventory = mapper.toDto(service.create(mapper.toEntity(dto)));
         URI location = UriComponentsBuilder.fromPath("/api/inventory/{id}")
                 .buildAndExpand(createdInventory.id())
@@ -213,23 +157,17 @@ public class InventoryController {
      * @throws EntityNotFoundException if no inventory item is found matching the provided ID.
      */
     @PutMapping("/{id}")
-    @Operation(
-        summary = "Update an inventory item",
-        description = "Updates an existing inventory item."
-    )
+    @Operation(summary = "Update an inventory item", description = "Updates an existing inventory item.")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Inventory item successfully updated",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = InventoryDto.class
-                    ),
-                    examples = @ExampleObject(
-                        name = "Updated Inventory Response",
-                        value = """
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Inventory item successfully updated",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = InventoryDto.class),
+                                        examples = @ExampleObject(name = "Updated Inventory Response", value = """
                             {
                                 "id": 1,
                                 "venueId": 1,
@@ -237,54 +175,32 @@ public class InventoryController {
                                 "totalQuantity": 100,
                                 "availableQuantity": 90
                             }
-                            """
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Invalid input data or id",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Inventory item not found",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Internal server error",
-                content = @Content
-            )
-        }
-    )
+                            """))),
+                @ApiResponse(responseCode = "400", description = "Invalid input data or id", content = @Content),
+                @ApiResponse(responseCode = "404", description = "Inventory item not found", content = @Content),
+                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            })
     public ResponseEntity<InventoryDto> update(
-        @Parameter(
-            description = "ID of the inventory item to update",
-            example = "1",
-            required = true
-        )
-        @PathVariable
-        Long id,
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    name = "Valid Inventory Update Request",
-                    value = """
+            @Parameter(description = "ID of the inventory item to update", example = "1", required = true) @PathVariable
+                    Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            examples =
+                                                    @ExampleObject(
+                                                            name = "Valid Inventory Update Request",
+                                                            value = """
                     {
                         "venueId": 1,
                         "name": "Chair",
                         "totalQuantity": 100,
                         "availableQuantity": 90
                     }
-                    """
-                )
-            )
-        )
-        @RequestBody
-        @Valid
-        InventoryDto dto) {
+                    """)))
+                    @RequestBody
+                    @Valid
+                    InventoryDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
@@ -297,40 +213,21 @@ public class InventoryController {
      */
     @DeleteMapping("/{id}")
     @Operation(
-        summary = "Delete an inventory item",
-        description = "Deletes an inventory item by its unique identifier."
-    )
+            summary = "Delete an inventory item",
+            description = "Deletes an inventory item by its unique identifier.")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "204",
-                description = "Inventory item successfully deleted",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "400",
-                description = "Invalid inventory ID",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Inventory item not found",
-                content = @Content
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Internal server error",
-                content = @Content
-            )
-        }
-    )
+            value = {
+                @ApiResponse(
+                        responseCode = "204",
+                        description = "Inventory item successfully deleted",
+                        content = @Content),
+                @ApiResponse(responseCode = "400", description = "Invalid inventory ID", content = @Content),
+                @ApiResponse(responseCode = "404", description = "Inventory item not found", content = @Content),
+                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            })
     public ResponseEntity<Void> delete(
-        @Parameter(
-            description = "ID of the inventory item to delete",
-            example = "1",
-            required = true
-        )
-        @PathVariable Long id) {
+            @Parameter(description = "ID of the inventory item to delete", example = "1", required = true) @PathVariable
+                    Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
