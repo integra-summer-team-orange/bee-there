@@ -1,4 +1,4 @@
-name: Codestyle Checker 😎
+name: Spotless Checker 😎
 
 on: [pull_request]
 
@@ -7,23 +7,20 @@ permissions:
   pull-requests: write
 
 jobs:
-  editorconfig:
+  spotless:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources 📄
         uses: actions/checkout@v6
-
-      - name: Set up editorconfig-checker
-        uses: editorconfig-checker/action-editorconfig-checker@main
-
-      - name: Run editorconfig-checker
-        run: editorconfig-checker
 
       - name: Setup Java ☕
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 24
+
+      - name: Run Spotless Check 🧪
+        run: ./backend/gradlew -p ./backend/ spotlessCheck
 
       - name: Javadoc check 📚
         run: ./backend/gradlew -p ./backend/ checkstyleMain
