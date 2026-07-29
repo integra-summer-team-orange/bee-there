@@ -162,8 +162,7 @@ public class ResourceController {
     public ResponseEntity<ResourceDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             required = true,
-                            description =
-                                    "The resource data to create. "
+                            description = "The resource data to create. "
                                     + "Must include venueId, name, activityType, type, capacity, and hourlyRate."
                                     + " Optional fields: activityDescription.",
                             content =
@@ -249,8 +248,7 @@ public class ResourceController {
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             required = true,
-                            description =
-                                    "The resource data to update."
+                            description = "The resource data to update."
                                     + " Must include venueId, name, activityType, type, capacity, and hourlyRate. "
                                     + "Optional fields: activityDescription.",
                             content =
