@@ -170,9 +170,12 @@ public class NotificationController {
             })
     public ResponseEntity<NotificationDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            description = "Data required to create a new notification",
+                            required = true,
                             content =
                                     @Content(
                                             mediaType = "application/json",
+                                            schema = @Schema(implementation = NotificationDto.class),
                                             examples =
                                                     @ExampleObject(name = "Valid Notification Request", value = """
                                                                     {
@@ -249,9 +252,12 @@ public class NotificationController {
                     @PathVariable
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            description = "Updated notification data",
+                            required = true,
                             content =
                                     @Content(
                                             mediaType = "application/json",
+                                            schema = @Schema(implementation = NotificationDto.class),
                                             examples =
                                                     @ExampleObject(
                                                             name = "Valid Notification Update Request",
