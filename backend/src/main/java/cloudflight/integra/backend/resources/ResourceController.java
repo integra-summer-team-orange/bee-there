@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
+import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.resources.model.ResourceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -58,7 +59,13 @@ public class ResourceController {
                                 @Content(
                                         mediaType = "application/json",
                                         array = @ArraySchema(schema = @Schema(implementation = ResourceDto.class)))),
-                @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        array = @ArraySchema(schema = @Schema(implementation = ErrorResponse.class))))
             })
     public ResponseEntity<List<ResourceDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
@@ -85,8 +92,17 @@ public class ResourceController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "Resource with the given ID not found",
-                        content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<ResourceDto> getById(
             @Parameter(description = "The unique identifier of the resource", example = "1") @PathVariable Long id) {
@@ -128,8 +144,20 @@ public class ResourceController {
                                                                 "hourlyRate": 15.00
                                                             }
                                                             """))),
-                @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid resource data provided",
+                        content =
+                                @Content(
+                                        mediaType = "applcation/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<ResourceDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -188,12 +216,27 @@ public class ResourceController {
                                                 "hourlyRate": 15.00
                                                 }
                                                 """))),
-                @ApiResponse(responseCode = "400", description = "Invalid resource data provided", content = @Content),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid resource data provided",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Resource with the given ID not found",
-                        content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<ResourceDto> update(
             @Parameter(description = "The unique identifier of the resource to update", example = "1") @PathVariable
@@ -236,8 +279,17 @@ public class ResourceController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "Resource with the given ID not found",
-                        content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error occurred", content = @Content)
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<Void> delete(
             @Parameter(description = "The unique identifier of the resource to delete", example = "1") @PathVariable
