@@ -65,7 +65,7 @@ public class ResourceController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        array = @ArraySchema(schema = @Schema(implementation = ErrorResponse.class))))
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<List<ResourceDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
@@ -149,7 +149,7 @@ public class ResourceController {
                         description = "Invalid resource data provided",
                         content =
                                 @Content(
-                                        mediaType = "applcation/json",
+                                        mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
@@ -161,9 +161,15 @@ public class ResourceController {
             })
     public ResponseEntity<ResourceDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            required = true,
+                            description =
+                                    "The resource data to create. "
+                                    + "Must include venueId, name, activityType, type, capacity, and hourlyRate."
+                                    + " Optional fields: activityDescription.",
                             content =
                                     @Content(
                                             mediaType = "application/json",
+                                            schema = @Schema(implementation = ResourceDto.class),
                                             examples = @ExampleObject(name = "Valid Resource Request", value = """
                                                             {
                                                                 "venueId": 1,
@@ -242,9 +248,15 @@ public class ResourceController {
             @Parameter(description = "The unique identifier of the resource to update", example = "1") @PathVariable
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            required = true,
+                            description =
+                                    "The resource data to update."
+                                    + " Must include venueId, name, activityType, type, capacity, and hourlyRate. "
+                                    + "Optional fields: activityDescription.",
                             content =
                                     @Content(
                                             mediaType = "application/json",
+                                            schema = @Schema(implementation = ResourceDto.class),
                                             examples =
                                                     @ExampleObject(
                                                             name = "Valid Resource Update Request",
