@@ -64,8 +64,7 @@ public class InventoryController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                ))
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<List<InventoryDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
@@ -97,24 +96,21 @@ public class InventoryController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Inventory item not found",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
                         description = "Internal server error",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                ))
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<InventoryDto> getById(
             @Parameter(description = "ID of the inventory item to retrieve", example = "1", required = true)
@@ -158,26 +154,24 @@ public class InventoryController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
                         description = "Internal server error",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                ))
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<InventoryDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "NotificationDto for create",
-                    content =
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = NotificationDto.class),
-                                    examples = @ExampleObject(name = "Valid Inventory Request", value = """
+                            required = true,
+                            description = "NotificationDto for create",
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = NotificationDto.class),
+                                            examples = @ExampleObject(name = "Valid Inventory Request", value = """
                     {
                         "venueId": 1,
                         "name": "Chair",
@@ -229,39 +223,36 @@ public class InventoryController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Inventory item not found",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
                         description = "Internal server error",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                ))
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<InventoryDto> update(
             @Parameter(description = "ID of the inventory item to update", example = "1", required = true) @PathVariable
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "NotificationDto for update",
-                    content =
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = NotificationDto.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Valid Inventory Update Request",
-                                                    value = """
+                            required = true,
+                            description = "NotificationDto for update",
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = NotificationDto.class),
+                                            examples =
+                                                    @ExampleObject(
+                                                            name = "Valid Inventory Update Request",
+                                                            value = """
                     {
                         "venueId": 1,
                         "name": "Chair",
@@ -298,24 +289,21 @@ public class InventoryController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Inventory item not found",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                )),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
                         description = "Internal server error",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)
-                                ))
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<Void> delete(
             @Parameter(description = "ID of the inventory item to delete", example = "1", required = true) @PathVariable
