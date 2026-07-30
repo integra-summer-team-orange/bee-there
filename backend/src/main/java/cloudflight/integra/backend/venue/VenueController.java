@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
+import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -74,7 +75,10 @@ public class VenueController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = VenueDto.class))),
-                @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content)
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
     public ResponseEntity<VenueDto> getById(
@@ -100,7 +104,10 @@ public class VenueController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = VenueDto.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid input data",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping
     public ResponseEntity<VenueDto> create(
@@ -137,8 +144,14 @@ public class VenueController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = VenueDto.class))),
-                @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content),
-                @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content)
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid input data",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PutMapping("/{id}")
     public ResponseEntity<VenueDto> update(
@@ -168,7 +181,10 @@ public class VenueController {
     @ApiResponses(
             value = {
                 @ApiResponse(responseCode = "204", description = "Venue successfully deleted", content = @Content),
-                @ApiResponse(responseCode = "404", description = "Venue not found", content = @Content)
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
