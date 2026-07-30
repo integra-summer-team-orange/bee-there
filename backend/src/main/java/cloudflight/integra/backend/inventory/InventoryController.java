@@ -3,7 +3,6 @@ package cloudflight.integra.backend.inventory;
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.inventory.model.InventoryDto;
-import cloudflight.integra.backend.notification.model.NotificationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -166,11 +165,11 @@ public class InventoryController {
     public ResponseEntity<InventoryDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             required = true,
-                            description = "NotificationDto for create",
+                            description = "InventoryDto for create",
                             content =
                                     @Content(
                                             mediaType = "application/json",
-                                            schema = @Schema(implementation = NotificationDto.class),
+                                            schema = @Schema(implementation = InventoryDto.class),
                                             examples = @ExampleObject(name = "Valid Inventory Request", value = """
                     {
                         "venueId": 1,
@@ -244,11 +243,11 @@ public class InventoryController {
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             required = true,
-                            description = "NotificationDto for update",
+                            description = "InventoryDto for update",
                             content =
                                     @Content(
                                             mediaType = "application/json",
-                                            schema = @Schema(implementation = NotificationDto.class),
+                                            schema = @Schema(implementation = InventoryDto.class),
                                             examples =
                                                     @ExampleObject(
                                                             name = "Valid Inventory Update Request",
