@@ -1,7 +1,17 @@
 package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
+import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.resources.model.ResourceDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -14,6 +24,10 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @RestController
 @RequestMapping("/api/resources")
+@Tag(
+        name = "Resources",
+        description = "API endpoints for managing various types of resources "
+                + "(sports courts, social spaces, etc.) within venues.")
 public class ResourceController {
     private final ResourceService service;
     private final ResourceMapper mapper;
@@ -35,6 +49,24 @@ public class ResourceController {
      * @return A {@link ResponseEntity} containing a list of {@link ResourceDto} with a 200 OK status.
      */
     @GetMapping
+    @Operation(summary = "Get all resources", description = "Returns a list of all resources available in the system.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "List of resources successfully retrieved",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        array = @ArraySchema(schema = @Schema(implementation = ResourceDto.class)))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
     public ResponseEntity<List<ResourceDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
@@ -47,7 +79,33 @@ public class ResourceController {
      * @throws EntityNotFoundException if the resource is not found.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceDto> getById(@PathVariable Long id) {
+    @Operation(summary = "Get a resource by ID", description = "Returns a single resource based on its unique ID.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Resource found and returned",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ResourceDto.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Resource with the given ID not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<ResourceDto> getById(
+            @Parameter(description = "The unique identifier of the resource", example = "1") @PathVariable Long id) {
         return service.getById(id)
                 .map(mapper::toDto)
                 .map(ResponseEntity::ok)
@@ -62,7 +120,69 @@ public class ResourceController {
      * and a Location header.
      */
     @PostMapping
-    public ResponseEntity<ResourceDto> create(@Valid @RequestBody ResourceDto dto) {
+    @Operation(
+            summary = "Create a new resource",
+            description = "Registers a new resource in the system. "
+                    + "Allowed values for the 'type' field: INDOOR_SPORT, OUTDOOR_SPORT, BOARDGAME_SOCIAL")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Resource successfully created",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ResourceDto.class),
+                                        examples = @ExampleObject(name = "Resource Example", value = """
+                                                            {
+                                                                "venueId": 1,
+                                                                "name": "Badminton Court 1",
+                                                                "activityType": "Badminton",
+                                                                "activityDescription": "A full-sized badminton court.",
+                                                                "type": "INDOOR_SPORT",
+                                                                "capacity": 4,
+                                                                "hourlyRate": 15.00
+                                                            }
+                                                            """))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid resource data provided",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<ResourceDto> create(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            required = true,
+                            description = "The resource data to create. "
+                                    + "Must include venueId, name, activityType, type, capacity, and hourlyRate."
+                                    + " Optional fields: activityDescription.",
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = ResourceDto.class),
+                                            examples = @ExampleObject(name = "Valid Resource Request", value = """
+                                                            {
+                                                                "venueId": 1,
+                                                                "name": "Badminton Court 1",
+                                                                "activityType": "Badminton",
+                                                                "activityDescription": "A full-sized badminton court.",
+                                                                "type": "INDOOR_SPORT",
+                                                                "capacity": 4,
+                                                                "hourlyRate": 15.00
+                                                            }
+                                                            """)))
+                    @Valid
+                    @RequestBody
+                    ResourceDto dto) {
         ResourceDto created = mapper.toDto(service.create(mapper.toEntity(dto)));
         URI location = UriComponentsBuilder.fromPath("/api/resources/{id}")
                 .buildAndExpand(created.id())
@@ -78,7 +198,80 @@ public class ResourceController {
      * @return A {@link ResponseEntity} containing the updated {@link ResourceDto} with a 200 OK status.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ResourceDto> update(@PathVariable Long id, @Valid @RequestBody ResourceDto dto) {
+    @Operation(
+            summary = "Update an existing resource",
+            description = "Updates the details of a resource identified by ID.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Resource successfully updated",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ResourceDto.class),
+                                        examples = @ExampleObject(name = "Resource Example", value = """
+                                                {
+                                                "venueId": 1,
+                                                "name": "Badminton Court 1",
+                                                "activityType": "Badminton",
+                                                "activityDescription": "A full-sized badminton court.",
+                                                "type": "INDOOR_SPORT",
+                                                "capacity": 4,
+                                                "hourlyRate": 15.00
+                                                }
+                                                """))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid resource data provided",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Resource with the given ID not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<ResourceDto> update(
+            @Parameter(description = "The unique identifier of the resource to update", example = "1") @PathVariable
+                    Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            required = true,
+                            description = "The resource data to update."
+                                    + " Must include venueId, name, activityType, type, capacity, and hourlyRate. "
+                                    + "Optional fields: activityDescription.",
+                            content =
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = ResourceDto.class),
+                                            examples =
+                                                    @ExampleObject(
+                                                            name = "Valid Resource Update Request",
+                                                            value = """
+                                                            {
+                                                                "venueId": 1,
+                                                                "name": "Badminton Court 1",
+                                                                "activityType": "Badminton",
+                                                                "activityDescription": "A full-sized badminton court.",
+                                                                "type": "INDOOR_SPORT",
+                                                                "capacity": 4,
+                                                                "hourlyRate": 15.00
+                                                            }
+                                                            """)))
+                    @Valid
+                    @RequestBody
+                    ResourceDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
@@ -89,7 +282,28 @@ public class ResourceController {
      * @return An empty {@link ResponseEntity} with a 204 NO CONTENT status.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @Operation(summary = "Delete a resource", description = "Permanently removes a resource from the system.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "204", description = "Resource successfully deleted", content = @Content),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Resource with the given ID not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Void> delete(
+            @Parameter(description = "The unique identifier of the resource to delete", example = "1") @PathVariable
+                    Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

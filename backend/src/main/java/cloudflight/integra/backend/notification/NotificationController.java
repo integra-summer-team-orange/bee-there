@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.notification;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
+import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.notification.model.NotificationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,7 +57,13 @@ public class NotificationController {
                                         array =
                                                 @ArraySchema(
                                                         schema = @Schema(implementation = NotificationDto.class)))),
-                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<List<NotificationDto>> getAll() {
         List<NotificationDto> notifications =
@@ -84,9 +91,27 @@ public class NotificationController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = NotificationDto.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid input data or ID format", content = @Content),
-                @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid input data or ID format",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Notification not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<NotificationDto> getById(
             @Parameter(description = "ID of the notification to be retrieved", example = "1", required = true)
@@ -128,14 +153,29 @@ public class NotificationController {
                                                                     "message": "Your reservation starts in 1 hour.",
                                                                     "read": false
                                                                 }"""))),
-                @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid input data",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<NotificationDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            description = "Data required to create a new notification",
+                            required = true,
                             content =
                                     @Content(
                                             mediaType = "application/json",
+                                            schema = @Schema(implementation = NotificationDto.class),
                                             examples =
                                                     @ExampleObject(name = "Valid Notification Request", value = """
                                                                     {
@@ -185,18 +225,39 @@ public class NotificationController {
                                                                     "message": "System maintenance at midnight.",
                                                                     "read": true
                                                                 }"""))),
-                @ApiResponse(responseCode = "400", description = "Invalid input data or ID format", content = @Content),
-                @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid input data or ID format",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Notification not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<NotificationDto> update(
             @Parameter(description = "ID of the notification to be updated", example = "1", required = true)
                     @PathVariable
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                            description = "Updated notification data",
+                            required = true,
                             content =
                                     @Content(
                                             mediaType = "application/json",
+                                            schema = @Schema(implementation = NotificationDto.class),
                                             examples =
                                                     @ExampleObject(
                                                             name = "Valid Notification Update Request",
@@ -238,9 +299,27 @@ public class NotificationController {
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = NotificationDto.class))),
-                @ApiResponse(responseCode = "400", description = "Invalid ID format", content = @Content),
-                @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid ID format",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Notification not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<NotificationDto> markAsRead(
             @Parameter(description = "ID of the notification to mark as read", example = "1", required = true)
@@ -267,9 +346,27 @@ public class NotificationController {
                         responseCode = "204",
                         description = "Notification successfully deleted",
                         content = @Content),
-                @ApiResponse(responseCode = "400", description = "Invalid ID format", content = @Content),
-                @ApiResponse(responseCode = "404", description = "Notification not found", content = @Content),
-                @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid ID format",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Notification not found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<Void> delete(
             @Parameter(description = "ID of the notification to be deleted", example = "1", required = true)

@@ -8,8 +8,6 @@
 
 ---
 ## Regenerating the Frontend API Client
-
----
 When backend controller endpoints, request/response DTOs, or OpenAPI annotations are
 updated, you must regenerate the TypeScript API client to keep the frontend types in sync.
 This can be achieved through the two commands below:
