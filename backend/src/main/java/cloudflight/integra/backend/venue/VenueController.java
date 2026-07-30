@@ -112,9 +112,7 @@ public class VenueController {
     @PostMapping
     public ResponseEntity<VenueDto> create(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                content = @Content(examples = @ExampleObject(
-                    name = "New venue",
-                    value = """
+                            content = @Content(examples = @ExampleObject(name = "New venue", value = """
                         {
                             "managedBy": 1,
                             "name": "Cloudflight Arena",
@@ -122,7 +120,9 @@ public class VenueController {
                             "address": "Strada Republicii 42, Cluj-Napoca, Romania"
                         }
                         """)))
-            @RequestBody @Valid VenueDto dto) {
+                    @RequestBody
+                    @Valid
+                    VenueDto dto) {
         VenueDto createdVenue = mapper.toDto(service.create(mapper.toEntity(dto)));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
     }
@@ -157,9 +157,7 @@ public class VenueController {
     public ResponseEntity<VenueDto> update(
             @Parameter(description = "ID of the venue to be updated", required = true) @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                content = @Content(examples = @ExampleObject(
-                    name = "Updated venue",
-                    value = """
+                            content = @Content(examples = @ExampleObject(name = "Updated venue", value = """
                         {
                             "managedBy": 1,
                             "name": "Cloudflight Arena - Renovated Wing",
@@ -167,7 +165,9 @@ public class VenueController {
                             "address": "Strada Republicii 42, Cluj-Napoca, Romania"
                         }
                         """)))
-            @RequestBody @Valid VenueDto dto) {
+                    @RequestBody
+                    @Valid
+                    VenueDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
