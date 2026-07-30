@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @ValidQuantities
-public record InventoryRequestDto(
+public record InventoryDto(
+        Long id,
         @NotNull Long venueId,
         @NotBlank String name,
         @NotNull @PositiveOrZero Integer totalQuantity,
