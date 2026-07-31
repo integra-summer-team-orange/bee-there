@@ -18,7 +18,7 @@ public class Notification {
     private User recipient;
 
     @Column(name="reservation_id")
-    private Long reservationId;
+    private Long reservationId; // add real relationship once reservation exists
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,39 @@ public class NotificationController {
         this.service = notificationService;
         this.mapper = notificationMapper;
     }
+
+    /**
+     * Retrieves a specific notification page with page and size
+     * @param page a page number
+     * @param size the size of the page
+     * @return a page of requested notifications
+     */
+    @GetMapping
+    @Operation(summary = "Get a page of notifications", description = "Retrieves a page of notification with specific page and size")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully retrieved a page of notifications",
+                            content =
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Page.class))),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content =
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Page<NotificationDto>> getAll(
+            @RequestParam int page,
+            @RequestParam int size
+    ){
+        return ResponseEntity.ok(service.findAll(page, size).map(mapper::toDto));
+    }
+
 
     /**
      * Retrieves all notifications.
