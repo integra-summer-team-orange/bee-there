@@ -103,26 +103,23 @@ public class VenueController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = VenueDto.class))),
+                                        schema = @Schema(implementation = VenueDto.class),
+                                        examples = @ExampleObject(name = "Created Venue Response", value = """
+                                                {
+                                                    "id": 1,
+                                                    "managedBy": 1,
+                                                    "name": "Cloudflight Arena",
+                                                    "description": "Indoor hall with 3 basketball courts",
+                                                    "address": "Strada Republicii 42, Cluj-Napoca, Romania",
+                                                    "createdAt": "2026-07-31T10:00:00"
+                                                }"""))),
                 @ApiResponse(
                         responseCode = "400",
                         description = "Invalid input data",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping
-    public ResponseEntity<VenueDto> create(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            content = @Content(examples = @ExampleObject(name = "New venue", value = """
-                        {
-                            "managedBy": 1,
-                            "name": "Cloudflight Arena",
-                            "description": "Indoor multi-purpose hall with 3 basketball courts",
-                            "address": "Strada Republicii 42, Cluj-Napoca, Romania"
-                        }
-                        """)))
-                    @RequestBody
-                    @Valid
-                    VenueDto dto) {
+    public ResponseEntity<VenueDto> create(@RequestBody @Valid VenueDto dto) {
         VenueDto createdVenue = mapper.toDto(service.create(mapper.toEntity(dto)));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
     }
@@ -143,7 +140,16 @@ public class VenueController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = VenueDto.class))),
+                                        schema = @Schema(implementation = VenueDto.class),
+                                        examples = @ExampleObject(name = "Updated Venue Response", value = """
+                                                {
+                                                    "id": 1,
+                                                    "managedBy": 1,
+                                                    "name": "Cloudflight Arena - Renovated Wing",
+                                                    "description": "Indoor hall, renovated east wing, 4 courts",
+                                                    "address": "Strada Republicii 42, Cluj-Napoca, Romania",
+                                                    "createdAt": "2026-07-31T10:00:00"
+                                                }"""))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "Venue not found",
@@ -156,18 +162,7 @@ public class VenueController {
     @PutMapping("/{id}")
     public ResponseEntity<VenueDto> update(
             @Parameter(description = "ID of the venue to be updated", required = true) @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            content = @Content(examples = @ExampleObject(name = "Updated venue", value = """
-                        {
-                            "managedBy": 1,
-                            "name": "Cloudflight Arena - Renovated Wing",
-                            "description": "Indoor multi-purpose hall, renovated east wing, 4 courts",
-                            "address": "Strada Republicii 42, Cluj-Napoca, Romania"
-                        }
-                        """)))
-                    @RequestBody
-                    @Valid
-                    VenueDto dto) {
+            @RequestBody @Valid VenueDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
     }
 
