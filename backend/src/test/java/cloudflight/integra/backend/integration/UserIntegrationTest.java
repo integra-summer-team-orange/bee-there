@@ -141,4 +141,78 @@ public class UserIntegrationTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[*].email", containsInAnyOrder("user1@example.com", "user2@example.com")));
     }
+
+    @Test
+    void shouldDenyDuplicateEmail() throws Exception {
+        UserRequestDto user1 =
+                new UserRequestDto("User One", "user1@example.com", "!Password123", "0741111111", Role.PARTICIPANT);
+        UserRequestDto user1_1 =
+                new UserRequestDto("User One (1)", "user1@example.com", "!Password123", "0742222222", Role.PARTICIPANT);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user1)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user1_1)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.messages").isArray())
+                .andExpect(jsonPath("$.messages[0]").exists());
+    }
+
+    @Test
+    void shouldReturnNotFoundForNonExistentUser() throws Exception {
+        mockMvc.perform(get("/api/users/99999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void shouldRejectInvalidEmail() throws Exception {
+        UserRequestDto request =
+                new UserRequestDto("Test User", "invalid-email", "!Password123", "0741234567", Role.PARTICIPANT);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldRejectWeakPassword() throws Exception {
+        UserRequestDto request =
+                new UserRequestDto("Test User", "test@example.com", "123", "0741234567", Role.PARTICIPANT);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldRejectEmptyName() throws Exception {
+        UserRequestDto request =
+                new UserRequestDto("", "test@example.com", "!Password123", "0741234567", Role.PARTICIPANT);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldNotReturnPasswordInResponse() throws Exception {
+        UserRequestDto request =
+                new UserRequestDto("Secure User", "secure@example.com", "!Password123", "0741234567", Role.PARTICIPANT);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
+    }
 }
