@@ -120,7 +120,7 @@ public class VenueController {
             })
     @PostMapping
     public ResponseEntity<VenueDto> create(@RequestBody @Valid VenueDto dto) {
-        VenueDto createdVenue = mapper.toDto(service.create(mapper.toEntity(dto)));
+        VenueDto createdVenue = mapper.toDto(service.create(mapper.toEntity(dto), dto.managedBy()));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
     }
 
@@ -163,7 +163,7 @@ public class VenueController {
     public ResponseEntity<VenueDto> update(
             @Parameter(description = "ID of the venue to be updated", required = true) @PathVariable Long id,
             @RequestBody @Valid VenueDto dto) {
-        return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
+        return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto), dto.managedBy())));
     }
 
     /**
