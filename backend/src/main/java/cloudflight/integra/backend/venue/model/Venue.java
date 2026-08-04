@@ -1,17 +1,50 @@
 package cloudflight.integra.backend.venue.model;
 
+import cloudflight.integra.backend.user.model.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "venue")
 public class Venue {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // TODO: Replace with @ManyToOne when JPA is introduced
-    private Long managedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "managed_by", nullable = false)
+    private User managedBy;
+
+    @Column(nullable = false, length = 150)
     private String name;
+
+    @Column(length = 255)
     private String description;
+
+    @Column(nullable = false)
     private String address;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public Venue() {}
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 
     public Long getId() {
         return id;
@@ -21,11 +54,11 @@ public class Venue {
         this.id = id;
     }
 
-    public Long getManagedBy() {
+    public User getManagedBy() {
         return managedBy;
     }
 
-    public void setManagedBy(Long managedBy) {
+    public void setManagedBy(User managedBy) {
         this.managedBy = managedBy;
     }
 
