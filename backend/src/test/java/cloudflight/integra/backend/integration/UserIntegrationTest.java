@@ -164,8 +164,26 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void shouldReturnNotFoundForNonExistentUser() throws Exception {
+    void shouldNotGetNonExistentUser() throws Exception {
         mockMvc.perform(get("/api/users/99999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingNonexistentUser() throws Exception {
+        UserRequestDto updateRequest =
+                new UserRequestDto("Waldo", "waldo@example.com", "!NewPassword123", "0742222222", Role.ADMIN);
+
+        mockMvc.perform(put("/api/users/99999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldNotDeleteNonExistentUser() throws Exception {
+        mockMvc.perform(delete("/api/users/99999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }

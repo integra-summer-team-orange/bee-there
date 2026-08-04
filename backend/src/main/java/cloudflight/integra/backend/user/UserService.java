@@ -38,7 +38,7 @@ public class UserService {
      * @param size the number of users to include on each page
      * @return a {@code Page} containing the users for the requested page
      */
-    public Page<User> findAll(int page, int size) {
+    public Page<User> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findAll(pageable);
     }
