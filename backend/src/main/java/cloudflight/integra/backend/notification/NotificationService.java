@@ -3,7 +3,6 @@ package cloudflight.integra.backend.notification;
 import cloudflight.integra.backend.notification.model.Notification;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,17 +27,15 @@ public class NotificationService {
         this.repository = repository;
     }
 
-
     /**
      * Retrieves a page of notification entities with specific page number and size
      * @param page page number
      * @param size page size
      * @return a page containing the requested notifications
      */
-    public Page<Notification> findAll(int page, int size){
-        Pageable pageable = PageRequest.of(page,size);
+    public Page<Notification> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return repository.findAll(pageable);
-
     }
 
     /**

@@ -2,7 +2,6 @@ package cloudflight.integra.backend.notification.model;
 
 import cloudflight.integra.backend.user.model.User;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,28 +12,28 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id", nullable = false)
     private User recipient;
 
-    @Column(name="reservation_id")
+    @Column(name = "reservation_id")
     private Long reservationId; // add real relationship once reservation exists
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NotificationType type;
 
-    @Column(nullable = false,length = 500)
+    @Column(nullable = false, length = 500)
     private String message;
 
-    @Column(name="sent_at",nullable = false)
+    @Column(name = "sent_at", nullable = false)
     private LocalDateTime sentAt;
 
     @Column(nullable = false)
     private boolean read = false;
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         sentAt = LocalDateTime.now();
     }
 

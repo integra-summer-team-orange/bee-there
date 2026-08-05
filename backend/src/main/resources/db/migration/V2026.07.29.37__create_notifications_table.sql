@@ -1,5 +1,5 @@
 create table notifications(
-    id bigint primary key generated always as identity,
+    id bigserial primary key,
     recipient_id bigint not null,
     reservation_id bigint,
     type varchar(100) not null,
