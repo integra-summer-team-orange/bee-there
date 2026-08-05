@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -87,6 +88,40 @@ public class UserController {
     public ResponseEntity<List<UserResponseDto>> getAll() {
         return ResponseEntity.ok(
                 userService.getAll().stream().map(userMapper::toDto).toList());
+    }
+
+    /**
+     * Retrieves a paginated list of users.
+     *
+     * @param pageNumber the zero-based page index to retrieve
+     * @param pageSize   the maximum number of items to return per page
+     * @return A {@link ResponseEntity} containing the requested page of {@link UserResponseDto} with a 200 OK status.
+     */
+    @GetMapping(params = {"pageNumber", "pageSize"})
+    @Operation(summary = "Get all users paged", description = "Retrieves a list of all users paged.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully retrieved paged users",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = Page.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Page<UserResponseDto>> getAll(
+            @Parameter(description = "Number of the desired page (0-based index)", example = "0", required = true)
+                    @RequestParam
+                    int pageNumber,
+            @Parameter(description = "Size of page", example = "10", required = true) @RequestParam int pageSize) {
+        return ResponseEntity.ok(userService.getAll(pageNumber, pageSize).map(userMapper::toDto));
     }
 
     /**

@@ -1,19 +1,55 @@
 package cloudflight.integra.backend.user.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
  * Represents a user stored in the application.
  * Contains the user's personal information, role, and creation timestamp.
  */
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(length = 50, nullable = false)
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
+
+    public User(String name, String email, String passwordHash, String phone, Role role) {
+        this.name = name;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phone = phone;
+        this.role = role;
+    }
+
+    protected User() {}
 
     public Long getId() {
         return id;
@@ -69,13 +105,5 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public User(String name, String email, String passwordHash, String phone, Role role) {
-        this.name = name;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.phone = phone;
-        this.role = role;
     }
 }
