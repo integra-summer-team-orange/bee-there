@@ -2,6 +2,7 @@ package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.exceptions.ErrorResponse;
+import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +58,26 @@ public class VenueController {
     @GetMapping
     public ResponseEntity<List<VenueDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+    }
+
+    /**
+     * Retrieves a paginated list of venues present in the system.
+     *
+     * @param page The page index to retrieve (zero-based).
+     * @param size The number of venues per page.
+     * @return A {@link ResponseEntity} containing a {@link Page} of {@link VenueDto} with a 200 OK status.
+     */
+    @Operation(
+            summary = "List venues with pagination",
+            description = "Returns a paginated list of venues stored in the system.")
+    @ApiResponse(responseCode = "200", description = "Paginated venues retrieved successfully")
+    @GetMapping("/paged")
+    public ResponseEntity<Page<VenueDto>> getPaginated(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Page<Venue> venuePage = service.getAll(page, size);
+        Page<VenueDto> responsePage = venuePage.map(mapper::toDto);
+
+        return ResponseEntity.ok(responsePage);
     }
 
     /**

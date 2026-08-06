@@ -38,7 +38,6 @@ public class VenueIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // DB is rolled back automatically thanks to @Transactional
         User user = new User("Test Manager", "manager@example.com", "hash", "0123456789", Role.PARTICIPANT);
         user = userRepository.save(user);
         validUserId = user.getId();

@@ -6,6 +6,9 @@ import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.model.Venue;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,6 +38,18 @@ public class VenueService {
      */
     public List<Venue> getAll() {
         return repository.findAll();
+    }
+
+    /**
+     * Retrieves a paginated list of venues.
+     *
+     * @param page the page index to retrieve (zero-based)
+     * @param size the number of venues to include on each page
+     * @return a {@code Page} containing the venues for the requested page
+     */
+    public Page<Venue> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
     /**
