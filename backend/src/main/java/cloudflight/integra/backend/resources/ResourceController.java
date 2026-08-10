@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -69,6 +70,38 @@ public class ResourceController {
             })
     public ResponseEntity<List<ResourceDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+    }
+
+    /**
+     * Retrieves a paginated list of resources.
+     *
+     * @param page the zero-based page index to retrieve
+     * @param size the maximum number of resources to return per page
+     * @return A {@link ResponseEntity} containing the requested page of {@link ResourceDto} with a 200 OK status.
+     */
+    @GetMapping(params = {"page", "size"})
+    @Operation(summary = "Get all resources paged", description = "Retrieves a list of all resources paged.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully retrieved paged resources",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = Page.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Page<ResourceDto>> getAll(
+            @Parameter(description = "Page index (0-based)", example = "0", required = true) @RequestParam int page,
+            @Parameter(description = "Page size", example = "10", required = true) @RequestParam int size) {
+        return ResponseEntity.ok(service.getAll(page, size).map(mapper::toDto));
     }
 
     /**

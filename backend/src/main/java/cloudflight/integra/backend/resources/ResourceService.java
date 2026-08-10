@@ -4,6 +4,9 @@ import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.resources.model.Resource;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +33,18 @@ public class ResourceService {
      */
     public List<Resource> getAll() {
         return repository.findAll();
+    }
+
+    /**
+     * Retrieves a paginated list of resources.
+     *
+     * @param page the page index to retrieve (zero-based)
+     * @param size the number of resources to include on each page
+     * @return a {@code Page} containing the resources for the requested page
+     */
+    public Page<Resource> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
     /**
@@ -61,9 +76,11 @@ public class ResourceService {
      * @throws EntityNotFoundException if the resource does not exist.
      */
     public Resource update(Long id, Resource resource) {
-        return repository
-                .update(id, resource)
-                .orElseThrow(() -> new EntityNotFoundException("Resource not found with id: " + id));
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Resource not found with id: " + id);
+        }
+        resource.setId(id);
+        return repository.save(resource);
     }
 
     /**
@@ -73,8 +90,9 @@ public class ResourceService {
      * @throws EntityNotFoundException if the resource does not exist.
      */
     public void delete(Long id) {
-        if (!repository.deleteById(id)) {
+        if (!repository.existsById(id)) {
             throw new EntityNotFoundException("Resource not found with id: " + id);
         }
+        repository.deleteById(id);
     }
 }
