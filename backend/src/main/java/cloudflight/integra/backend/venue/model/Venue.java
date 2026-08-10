@@ -13,6 +13,9 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
+/**
+ * Venue class meant to contain info about places that organise events
+ */
 @Entity
 @Table(name = "venue")
 public class Venue {
