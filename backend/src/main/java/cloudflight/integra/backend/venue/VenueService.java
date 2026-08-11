@@ -1,8 +1,6 @@
 package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
-import cloudflight.integra.backend.user.UserRepository;
-import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.model.Venue;
 import java.util.List;
 import java.util.Optional;
@@ -18,17 +16,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class VenueService {
     private final VenueRepository repository;
-    private final UserRepository userRepository;
 
     /**
      * Creates a new venue service.
      *
      * @param repository the venue repository
-     * @param userRepository the user repository
      */
-    public VenueService(VenueRepository repository, UserRepository userRepository) {
+    public VenueService(VenueRepository repository) {
         this.repository = repository;
-        this.userRepository = userRepository;
     }
 
     /**
@@ -66,17 +61,9 @@ public class VenueService {
      * Persists a new venue in the system.
      *
      * @param venue The {@link Venue} entity containing the data to be saved.
-     * @param managedById The ID of the user managing the venue.
      * @return The saved {@link Venue} entity with its generated ID and creation timestamp.
      */
-    public Venue create(Venue venue, Long managedById) {
-        if (managedById != null) {
-            User manager = userRepository
-                    .findById(managedById)
-                    .orElseThrow(() -> new IllegalArgumentException("User with id " + managedById + " does not exist"));
-            venue.setManagedBy(manager);
-        }
-
+    public Venue create(Venue venue) {
         return repository.save(venue);
     }
 
@@ -85,11 +72,10 @@ public class VenueService {
      *
      * @param id The unique identifier of the venue to be updated.
      * @param venue The {@link Venue} entity containing the updated information.
-     * @param managedById The ID of the user managing the venue.
      * @return The updated {@link Venue} entity.
      * @throws EntityNotFoundException if the venue does not exist.
      */
-    public Venue update(Long id, Venue venue, Long managedById) {
+    public Venue update(Long id, Venue venue) {
         Optional<Venue> existing = repository.findById(id);
         if (existing.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
@@ -97,13 +83,6 @@ public class VenueService {
 
         venue.setId(id);
         venue.setCreatedAt(existing.get().getCreatedAt());
-
-        if (managedById != null) {
-            User manager = userRepository
-                    .findById(managedById)
-                    .orElseThrow(() -> new IllegalArgumentException("User with id " + managedById + " does not exist"));
-            venue.setManagedBy(manager);
-        }
 
         return repository.save(venue);
     }

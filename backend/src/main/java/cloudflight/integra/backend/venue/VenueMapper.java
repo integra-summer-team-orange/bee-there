@@ -19,7 +19,7 @@ public interface VenueMapper {
      * @param venueDto The DTO containing the incoming data for creating or updating a venue.
      * @return The resulting {@link Venue} entity.
      */
-    @Mapping(target = "managedBy", ignore = true)
+    @Mapping(source = "managedBy", target = "managedBy.id")
     Venue toEntity(VenueDto venueDto);
 
     /**

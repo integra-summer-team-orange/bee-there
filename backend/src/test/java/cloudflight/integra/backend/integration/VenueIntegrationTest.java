@@ -71,7 +71,7 @@ public class VenueIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.messages[0]").value("User with id 99999 does not exist"));
+                .andExpect(jsonPath("$.messages[0]", containsString("constraint violation")));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class VenueIntegrationTest {
 
         mockMvc.perform(get("/api/venues"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder("Venue 1", "Venue 2")));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[*].name", containsInAnyOrder("Venue 1", "Venue 2")));
     }
 }
