@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.user.utils;
+package cloudflight.integra.backend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
