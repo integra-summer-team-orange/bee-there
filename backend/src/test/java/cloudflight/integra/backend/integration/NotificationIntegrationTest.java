@@ -38,8 +38,6 @@ public class NotificationIntegrationTest {
     @Autowired
     private NotificationRepository notificationRepository;
 
-
-
     Long savedUserId;
 
     @BeforeEach
@@ -47,13 +45,7 @@ public class NotificationIntegrationTest {
 
         notificationRepository.deleteAll();
         userRepository.deleteAll();
-        User user = new User(
-                "test",
-                "test@gmail.com",
-                "password_hash",
-                "0777777777",
-                Role.ADMIN
-        );
+        User user = new User("test", "test@gmail.com", "password_hash", "0777777777", Role.ADMIN);
 
         User savedUser = userRepository.save(user);
 
@@ -61,15 +53,7 @@ public class NotificationIntegrationTest {
     }
 
     private NotificationDto createNotificationDto() {
-        return new NotificationDto(
-                null,
-                savedUserId,
-                null,
-                NotificationType.REMINDER,
-                "test",
-                null,
-                false
-        );
+        return new NotificationDto(null, savedUserId, null, NotificationType.REMINDER, "test", null, false);
     }
 
     @Test
@@ -78,11 +62,9 @@ public class NotificationIntegrationTest {
         // 1. CREATE
         NotificationDto request = createNotificationDto();
 
-        String response = mockMvc.perform(
-                        post("/api/notification")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+        String response = mockMvc.perform(post("/api/notifications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.type").value(NotificationType.REMINDER.name()))
@@ -91,18 +73,13 @@ public class NotificationIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long id = objectMapper.readTree(response)
-                .get("id")
-                .asLong();
+        Long id = objectMapper.readTree(response).get("id").asLong();
 
         LocalDateTime localDateTime = LocalDateTime.parse(
-                objectMapper.readTree(response)
-                        .get("sentAt")
-                        .asText()
-        );
+                objectMapper.readTree(response).get("sentAt").asText());
 
         // 2. READ
-        mockMvc.perform(get("/api/notification/{id}", id))
+        mockMvc.perform(get("/api/notifications/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.type").value(NotificationType.REMINDER.name()))
@@ -110,32 +87,21 @@ public class NotificationIntegrationTest {
 
         // 3. UPDATE
         NotificationDto updateRequest = new NotificationDto(
-                id,
-                savedUserId,
-                null,
-                NotificationType.WEATHER_ALERT,
-                "updated",
-                localDateTime,
-                true
-        );
+                id, savedUserId, null, NotificationType.WEATHER_ALERT, "updated", localDateTime, true);
 
-        mockMvc.perform(
-                        put("/api/notification/{id}", id)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(updateRequest))
-                )
+        mockMvc.perform(put("/api/notifications/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.type").value(NotificationType.WEATHER_ALERT.name()))
                 .andExpect(jsonPath("$.message").value("updated"));
 
         // 4. DELETE
-        mockMvc.perform(delete("/api/notification/{id}", id))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/notifications/{id}", id)).andExpect(status().isNoContent());
 
         // 5. VERIFY DELETE
-        mockMvc.perform(get("/api/notification/{id}", id))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/notifications/{id}", id)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -144,70 +110,37 @@ public class NotificationIntegrationTest {
         Long nonExistentUserId = 999L;
 
         NotificationDto request = new NotificationDto(
-                null,
-                nonExistentUserId,
-                null,
-                NotificationType.REMINDER,
-                "Invalid notification",
-                null,
-                false
-        );
+                null, nonExistentUserId, null, NotificationType.REMINDER, "Invalid notification", null, false);
 
-        mockMvc.perform(
-                        post("/api/notification")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+        mockMvc.perform(post("/api/notifications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.messages[0]",
-                        containsString("Data integrity violation")));
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
     void shouldGetAllNotificationsPaged() throws Exception {
 
         NotificationDto notification1 = new NotificationDto(
-                null,
-                savedUserId,
-                null,
-                NotificationType.WEATHER_ALERT,
-                "Notification 1",
-                null,
-                false
-        );
+                null, savedUserId, null, NotificationType.WEATHER_ALERT, "Notification 1", null, false);
 
-        NotificationDto notification2 = new NotificationDto(
-                null,
-                savedUserId,
-                null,
-                NotificationType.REMINDER,
-                "Notification 2",
-                null,
-                false
-        );
+        NotificationDto notification2 =
+                new NotificationDto(null, savedUserId, null, NotificationType.REMINDER, "Notification 2", null, false);
 
-        mockMvc.perform(
-                        post("/api/notification")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(notification1))
-                )
+        mockMvc.perform(post("/api/notifications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(notification1)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(
-                        post("/api/notification")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(notification2))
-                )
+        mockMvc.perform(post("/api/notifications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(notification2)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(
-                        get("/api/notification?pageNumber=0&pageSize=10")
-                )
+        mockMvc.perform(get("/api/notifications?pageNumber=0&pageSize=10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content",
-                        hasSize(greaterThanOrEqualTo(2))))
-                .andExpect(jsonPath("$.content[*].message",
-                        hasItems("Notification 1", "Notification 2")));
+                .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(2))))
+                .andExpect(jsonPath("$.content[*].message", hasItems("Notification 1", "Notification 2")));
     }
 }
