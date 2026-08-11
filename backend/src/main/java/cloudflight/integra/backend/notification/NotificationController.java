@@ -42,11 +42,11 @@ public class NotificationController {
 
     /**
      * Retrieves a specific notification page with page and size
-     * @param page a page number
-     * @param size the size of the page
+     * @param pageNumber a page number
+     * @param pageSize the size of the page
      * @return a page of requested notifications
      */
-    @GetMapping
+    @GetMapping(params = {"pageNumber", "pageSize"})
     @Operation(
             summary = "Get a page of notifications",
             description = "Retrieves a page of notification with specific page and size")
@@ -67,8 +67,8 @@ public class NotificationController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Page<NotificationDto>> getAll(@RequestParam int page, @RequestParam int size) {
-        return ResponseEntity.ok(service.findAll(page, size).map(mapper::toDto));
+    public ResponseEntity<Page<NotificationDto>> getAll(@RequestParam int pageNumber, @RequestParam int pageSize) {
+        return ResponseEntity.ok(service.findAll(pageNumber, pageSize).map(mapper::toDto));
     }
 
     /**
