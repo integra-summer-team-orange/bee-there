@@ -2,9 +2,9 @@ package cloudflight.integra.backend.user.model;
 
 import cloudflight.integra.backend.user.validation.Phone;
 import cloudflight.integra.backend.user.validation.StrongPassword;
+import cloudflight.integra.backend.user.validation.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -21,4 +21,4 @@ public record UserRequestDto(
         @StrongPassword String password,
 
         @NotBlank(message = "Phone is required") @Phone String phone,
-        @NotNull(message = "Role is required") Role role) {}
+        @NotBlank(message = "Role is required") @UserRole String role) {}

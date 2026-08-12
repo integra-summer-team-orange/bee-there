@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import cloudflight.integra.backend.user.UserRepository;
-import cloudflight.integra.backend.user.model.Role;
 import cloudflight.integra.backend.user.model.UserRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,12 +35,12 @@ public class UserIntegrationTest {
         userRepository.deleteAll();
     }
 
-    private UserRequestDto buildUserRequest(String name, String email, String password, String phone, Role role) {
+    private UserRequestDto buildUserRequest(String name, String email, String password, String phone, String role) {
         return new UserRequestDto(name, email, password, phone, role);
     }
 
     private UserRequestDto buildDefaultUserRequest() {
-        return buildUserRequest("John Doe", "john.doe@example.com", "!Password123", "0741234567", Role.PARTICIPANT);
+        return buildUserRequest("John Doe", "john.doe@example.com", "!Password123", "0741234567", "PARTICIPANT");
     }
 
     private Long createAndReturnUserId(UserRequestDto request) throws Exception {
@@ -75,7 +74,7 @@ public class UserIntegrationTest {
     @Test
     void shouldGetUserById() throws Exception {
         UserRequestDto createRequest =
-                buildUserRequest("Jane Doe", "jane.doe@example.com", "!Password123", "0747654321", Role.ADMIN);
+                buildUserRequest("Jane Doe", "jane.doe@example.com", "!Password123", "0747654321", "ADMIN");
         Long id = createAndReturnUserId(createRequest);
 
         mockMvc.perform(get("/api/users/{id}", id))
@@ -88,11 +87,11 @@ public class UserIntegrationTest {
     @Test
     void shouldUpdateUser() throws Exception {
         UserRequestDto createRequest =
-                buildUserRequest("Update Me", "update.me@example.com", "!Password123", "0741111111", Role.PARTICIPANT);
+                buildUserRequest("Update Me", "update.me@example.com", "!Password123", "0741111111", "PARTICIPANT");
         Long id = createAndReturnUserId(createRequest);
 
-        UserRequestDto updateRequest = buildUserRequest(
-                "Updated Name", "updated.email@example.com", "!NewPassword123", "0742222222", Role.ADMIN);
+        UserRequestDto updateRequest =
+                buildUserRequest("Updated Name", "updated.email@example.com", "!NewPassword123", "0742222222", "ADMIN");
 
         mockMvc.perform(put("/api/users/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +105,7 @@ public class UserIntegrationTest {
     @Test
     void shouldDeleteUser() throws Exception {
         UserRequestDto createRequest =
-                buildUserRequest("Delete Me", "delete.me@example.com", "!Password123", "0743333333", Role.PARTICIPANT);
+                buildUserRequest("Delete Me", "delete.me@example.com", "!Password123", "0743333333", "PARTICIPANT");
         Long id = createAndReturnUserId(createRequest);
 
         mockMvc.perform(delete("/api/users/{id}", id)).andExpect(status().isNoContent());
@@ -116,9 +115,9 @@ public class UserIntegrationTest {
     @Test
     void shouldGetAllUsers() throws Exception {
         UserRequestDto user1 =
-                buildUserRequest("User One", "user1@example.com", "!Password123", "0741111111", Role.PARTICIPANT);
+                buildUserRequest("User One", "user1@example.com", "!Password123", "0741111111", "PARTICIPANT");
         UserRequestDto user2 =
-                buildUserRequest("User Two", "user2@example.com", "!Password123", "0742222222", Role.PARTICIPANT);
+                buildUserRequest("User Two", "user2@example.com", "!Password123", "0742222222", "PARTICIPANT");
 
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,9 +135,9 @@ public class UserIntegrationTest {
     @Test
     void shouldDenyDuplicateEmail() throws Exception {
         UserRequestDto user1 =
-                buildUserRequest("User One", "user1@example.com", "!Password123", "0741111111", Role.PARTICIPANT);
+                buildUserRequest("User One", "user1@example.com", "!Password123", "0741111111", "PARTICIPANT");
         UserRequestDto user1_1 =
-                buildUserRequest("User One (1)", "user1@example.com", "!Password123", "0742222222", Role.PARTICIPANT);
+                buildUserRequest("User One (1)", "user1@example.com", "!Password123", "0742222222", "PARTICIPANT");
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -164,7 +163,7 @@ public class UserIntegrationTest {
     @Test
     void shouldReturnNotFoundWhenUpdatingNonexistentUser() throws Exception {
         UserRequestDto updateRequest =
-                buildUserRequest("Waldo", "waldo@example.com", "!NewPassword123", "0742222222", Role.ADMIN);
+                buildUserRequest("Waldo", "waldo@example.com", "!NewPassword123", "0742222222", "ADMIN");
 
         mockMvc.perform(put("/api/users/99999")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +181,7 @@ public class UserIntegrationTest {
     @Test
     void shouldRejectInvalidEmail() throws Exception {
         UserRequestDto request =
-                buildUserRequest("Test User", "invalid-email", "!Password123", "0741234567", Role.PARTICIPANT);
+                buildUserRequest("Test User", "invalid-email", "!Password123", "0741234567", "PARTICIPANT");
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -192,8 +191,7 @@ public class UserIntegrationTest {
 
     @Test
     void shouldRejectWeakPassword() throws Exception {
-        UserRequestDto request =
-                buildUserRequest("Test User", "test@example.com", "123", "0741234567", Role.PARTICIPANT);
+        UserRequestDto request = buildUserRequest("Test User", "test@example.com", "123", "0741234567", "PARTICIPANT");
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -203,8 +201,7 @@ public class UserIntegrationTest {
 
     @Test
     void shouldRejectEmptyName() throws Exception {
-        UserRequestDto request =
-                buildUserRequest("", "test@example.com", "!Password123", "0741234567", Role.PARTICIPANT);
+        UserRequestDto request = buildUserRequest("", "test@example.com", "!Password123", "0741234567", "PARTICIPANT");
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -215,7 +212,7 @@ public class UserIntegrationTest {
     @Test
     void shouldNotReturnPasswordInResponse() throws Exception {
         UserRequestDto request =
-                buildUserRequest("Secure User", "secure@example.com", "!Password123", "0741234567", Role.PARTICIPANT);
+                buildUserRequest("Secure User", "secure@example.com", "!Password123", "0741234567", "PARTICIPANT");
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
