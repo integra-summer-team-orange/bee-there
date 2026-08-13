@@ -1,6 +1,9 @@
 ### Get all venues
 GET {{host}}/api/venues
 
+### Get all venues paginated
+GET {{host}}/api/venues?pageNumber=0&pageSize=10
+
 ### Get venue by id
 GET {{host}}/api/venues/1
 

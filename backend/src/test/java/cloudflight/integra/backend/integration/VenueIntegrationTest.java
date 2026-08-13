@@ -7,8 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import cloudflight.integra.backend.user.UserRepository;
 import cloudflight.integra.backend.user.model.Role;
 import cloudflight.integra.backend.user.model.User;
+import cloudflight.integra.backend.venue.VenueRepository;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +19,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 public class VenueIntegrationTest {
 
     @Autowired
@@ -32,9 +32,18 @@ public class VenueIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private VenueRepository venueRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private Long validUserId;
+
+    @AfterEach
+    void tearDown() {
+        venueRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @BeforeEach
     void setUp() {
