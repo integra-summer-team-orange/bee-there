@@ -19,7 +19,8 @@ public class SecurityConfiguration {
     private final AuthenticationTokenFilter authenticationTokenFilter;
     private final AuthEntryPointJwt authEntryPointJwt;
 
-    public SecurityConfiguration(AuthenticationTokenFilter authenticationTokenFilter,AuthEntryPointJwt authEntryPointJwt) {
+    public SecurityConfiguration(
+            AuthenticationTokenFilter authenticationTokenFilter, AuthEntryPointJwt authEntryPointJwt) {
         this.authenticationTokenFilter = authenticationTokenFilter;
         this.authEntryPointJwt = authEntryPointJwt;
     }
@@ -35,9 +36,7 @@ public class SecurityConfiguration {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authEntryPointJwt)
-                )
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
@@ -46,25 +45,24 @@ public class SecurityConfiguration {
                         .permitAll()
 
                         // venues
-                        .requestMatchers(HttpMethod.GET,"/api/venues/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN","PARTICIPANT")
-
+                        .requestMatchers(HttpMethod.GET, "/api/venues/**")
+                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
                         .requestMatchers("/api/venues/**")
                         .hasAnyRole("ADMIN", "VENUE_ADMIN")
 
-                        //users
+                        // users
                         .requestMatchers("/api/users/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN","PARTICIPANT")
+                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
 
-                        //todo:add for notification when is implemented get for user
+                        // todo:add for notification when is implemented get for user
 
-                        //inventory
-                        .requestMatchers(HttpMethod.GET,"/api/inventory/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN","PARTICIPANT")
+                        // inventory
+                        .requestMatchers(HttpMethod.GET, "/api/inventory/**")
+                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
 
-                        //resources
-                        .requestMatchers(HttpMethod.GET,"/api/resources/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN","PARTICIPANT")
+                        // resources
+                        .requestMatchers(HttpMethod.GET, "/api/resources/**")
+                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
 
                         // everything else
                         .anyRequest()

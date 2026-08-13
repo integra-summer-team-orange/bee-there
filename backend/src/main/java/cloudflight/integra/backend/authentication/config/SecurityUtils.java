@@ -7,14 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public final class SecurityUtils {
 
-    private SecurityUtils() {
-    }
+    private SecurityUtils() {}
 
     public static User getCurrentUser() {
-        return (User) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public static void checkOwnership(Long ownerId) {
@@ -25,9 +21,7 @@ public final class SecurityUtils {
         }
 
         if (!currentUser.getId().equals(ownerId)) {
-            throw new AccessDeniedException(
-                    "You are not allowed to manage this resource"
-            );
+            throw new AccessDeniedException("You are not allowed to manage this resource");
         }
     }
 }

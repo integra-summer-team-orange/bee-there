@@ -3,7 +3,6 @@ package cloudflight.integra.backend.authentication;
 import cloudflight.integra.backend.user.UserService;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.model.User;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +33,11 @@ public class AuthenticationService {
      * Registers a new user.
      *
      * @param user the user to register
+     * @throws DuplicateEmailException if there is already an email registered
      * @return the registered user
      */
     public User register(User user) {
-        if (userService.existsByEmail(user.getEmail())){
+        if (userService.existsByEmail(user.getEmail())) {
             throw new DuplicateEmailException("Email already in use");
         }
         return userService.create(user);

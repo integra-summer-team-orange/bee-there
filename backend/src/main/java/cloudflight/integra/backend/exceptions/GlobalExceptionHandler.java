@@ -2,7 +2,6 @@ package cloudflight.integra.backend.exceptions;
 
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -132,6 +131,4 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
-
-
 }

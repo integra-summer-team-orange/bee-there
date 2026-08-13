@@ -1,5 +1,7 @@
 package cloudflight.integra.backend.venue;
 
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
+
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
 import java.util.List;
@@ -8,8 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
 
 /**
  * Service class for managing {@link Venue} entities.
@@ -97,11 +97,11 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public void delete(Long id) {
-        Optional<Venue> venue= repository.findById(id);
+        Optional<Venue> venue = repository.findById(id);
         if (venue.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
-        checkOwnership(venue.get().getManagedBy());//todo: when mapping is implemented modify this
+        checkOwnership(venue.get().getManagedBy()); // todo: when mapping is implemented modify this
 
         repository.deleteById(id);
     }

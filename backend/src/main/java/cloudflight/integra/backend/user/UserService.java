@@ -1,20 +1,17 @@
 package cloudflight.integra.backend.user;
 
-import cloudflight.integra.backend.authentication.config.SecurityUtils;
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
+
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
-import cloudflight.integra.backend.user.model.Role;
 import cloudflight.integra.backend.user.model.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
 
 /**
  * Provides business logic for managing users.
@@ -143,7 +140,6 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
     }
 
-
     /**
      * Checks whether a user with the specified email exists.
      *
@@ -153,5 +149,4 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 }
