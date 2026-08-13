@@ -2,10 +2,10 @@ package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.exceptions.ErrorResponse;
+import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,21 +41,24 @@ public class VenueController {
     }
 
     /**
-     * Retrieves a list of all venues present in the system.
+     * Retrieves a paginated list of all venues present in the system.
      *
-     * @return A {@link ResponseEntity} containing a list of {@link VenueDto} with a 200 OK status.
+     * @param pageNumber The page index to retrieve (zero-based).
+     * @param pageSize The number of venues per page.
+     * @return A {@link ResponseEntity} containing a {@link Page} of {@link VenueDto} with a 200 OK status.
      */
-    @Operation(summary = "List all venues", description = "Returns every venue currently stored in the system.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "Venues retrieved successfully",
-            content =
-                    @Content(
-                            mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = VenueDto.class))))
+    @Operation(
+            summary = "List venues with pagination",
+            description = "Returns a paginated list of venues stored in the system.")
+    @ApiResponse(responseCode = "200", description = "Paginated venues retrieved successfully")
     @GetMapping
-    public ResponseEntity<List<VenueDto>> getAll() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+    public ResponseEntity<Page<VenueDto>> getAll(
+            @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+        Page<Venue> venuePage = service.getAll(pageNumber, pageSize);
+        Page<VenueDto> responsePage = venuePage.map(mapper::toDto);
+
+        return ResponseEntity.ok(responsePage);
     }
 
     /**

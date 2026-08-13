@@ -4,6 +4,9 @@ import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,6 +25,7 @@ public class VenueService {
     public VenueService(VenueRepository repository) {
         this.repository = repository;
     }
+
     /**
      * Retrieves all available venues from the system.
      *
@@ -29,6 +33,18 @@ public class VenueService {
      */
     public List<Venue> getAll() {
         return repository.findAll();
+    }
+
+    /**
+     * Retrieves a paginated list of venues.
+     *
+     * @param page the page index to retrieve (zero-based)
+     * @param size the number of venues to include on each page
+     * @return a {@code Page} containing the venues for the requested page
+     */
+    public Page<Venue> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
     /**
@@ -60,11 +76,15 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
-        if (repository.findById(id).isEmpty()) {
+        Optional<Venue> existing = repository.findById(id);
+        if (existing.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
 
-        return repository.update(venue);
+        venue.setId(id);
+        venue.setCreatedAt(existing.get().getCreatedAt());
+
+        return repository.save(venue);
     }
 
     /**

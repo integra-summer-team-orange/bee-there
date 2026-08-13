@@ -1,6 +1,9 @@
 ### Get all venues
 GET {{host}}/api/venues
 
+### Get all venues paginated
+GET {{host}}/api/venues?pageNumber=0&pageSize=10
+
 ### Get venue by id
 GET {{host}}/api/venues/1
 
@@ -12,7 +15,7 @@ POST {{host}}/api/venues
 Content-Type: application/json
 
 {
-    "managedBy": 2,
+    "managedBy": 1,
     "name": "Guild Hall",
     "description": "The place for board games",
     "address": "Cluj-Napoca"
@@ -23,6 +26,7 @@ POST {{host}}/api/venues
 Content-Type: application/json
 
 {
+    "managedBy": 1,
     "name": "Guild Hall 2",
     "address": "Cluj-Napoca"
 }
@@ -32,7 +36,7 @@ POST {{host}}/api/venues
 Content-Type: application/json
 
 {
-    "managedBy": 2,
+    "managedBy": 1,
     "description": "The place for board games"
 }
 
@@ -41,8 +45,20 @@ POST {{host}}/api/venues
 Content-Type: application/json
 
 {
+    "managedBy": 1,
     "name": "   ",
     "address": "Cluj-Napoca"
+}
+
+### Create venue error 400 (Non-existent managedBy)
+POST {{host}}/api/venues
+Content-Type: application/json
+
+{
+    "managedBy": 9999,
+    "name": "Ghost Venue",
+    "description": "Managed by nobody",
+    "address": "Nowhere"
 }
 
 ### Update venue
@@ -51,7 +67,7 @@ Content-Type: application/json
 
 {
     "id": 1,
-    "managedBy": 2,
+    "managedBy": 1,
     "name": "Checkpoint",
     "description": "The place for board games",
     "address": "Piata Cipariu",
@@ -64,6 +80,7 @@ Content-Type: application/json
 
 {
     "id": 9999,
+    "managedBy": 1,
     "name": "Checkpoint",
     "address": "Piata Cipariu",
     "createdAt": "2026-07-21T10:00:00"
