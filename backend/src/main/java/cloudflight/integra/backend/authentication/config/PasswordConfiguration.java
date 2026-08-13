@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.security;
+package cloudflight.integra.backend.authentication.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -6,7 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class SecurityConfiguration {
+public class PasswordConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {

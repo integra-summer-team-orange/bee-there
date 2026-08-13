@@ -1,78 +1,94 @@
 ### Get all users
+
 GET {{host}}/api/users
+Authorization: Bearer {{token}}
 
 ### Get user by id
-GET {{host}}/api/users/1
 
-### Get user by id(failed)
+GET {{host}}/api/users/1
+Authorization: Bearer {{token}}
+
+### Get user by id (failed - 404)
 
 GET {{host}}/api/users/123
+Authorization: Bearer {{token}}
 
 ### Create user
+
 POST {{host}}/api/users
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "ionel",
-    "email": "ionel@gmail.com",
-    "password": "!IonelCelSmecher123",
-    "phone": "0747474747",
-    "role": "PARTICIPANT"
+  "name": "ionel",
+  "email": "ionel@gmail.com",
+  "password": "!IonelCelSmecher123",
+  "phone": "0747474747",
+  "role": "PARTICIPANT"
 }
 
 ### Create user - same as above (failed)
+
 POST {{host}}/api/users
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "ionel",
-    "email": "ionel@gmail.com",
-    "password": "!IonelCelSmecher123",
-    "phone": "0747474747",
-    "role": "PARTICIPANT"
+  "name": "ionel",
+  "email": "ionel@gmail.com",
+  "password": "!IonelCelSmecher123",
+  "phone": "0747474747",
+  "role": "PARTICIPANT"
 }
 
 ### Create user - invalid fields
+
 POST {{host}}/api/users
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "",
-    "email": "ionel",
-    "password": "123",
-    "phone": "19fj352t",
-    "role": "PARTICIPANT"
+  "name": "",
+  "email": "ionel",
+  "password": "123",
+  "phone": "19fj352t",
+  "role": "PARTICIPANT"
 }
 
 ### Create user - invalid role field
+
 POST {{host}}/api/users
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "Johannis",
-    "email": "johannis@gmail.com",
-    "password": "!FicusMaximus123",
-    "phone": "0723232323",
-    "role": "PRESIDENT"
+  "name": "Johannis",
+  "email": "johannis@gmail.com",
+  "password": "!FicusMaximus123",
+  "phone": "0723232323",
+  "role": "PRESIDENT"
 }
 
 ### Update user
+
 PUT {{host}}/api/users/1
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "ionelionel",
-    "email": "ionel@gmail.com",
-    "password": "!IonelCelSmecher123",
-    "phone": "+40712121212",
-    "role": "PARTICIPANT"
+  "name": "ionelionel",
+  "email": "ionel@gmail.com",
+  "password": "!IonelCelSmecher123",
+  "phone": "+40712121212",
+  "role": "PARTICIPANT"
 }
 
 ### Delete user
+
 DELETE {{host}}/api/users/1
+Authorization: Bearer {{token}}
 
+### Delete user (failed - 404)
 
-### Delete user (failed)
 DELETE {{host}}/api/users/123
-
-
+Authorization: Bearer {{token}}

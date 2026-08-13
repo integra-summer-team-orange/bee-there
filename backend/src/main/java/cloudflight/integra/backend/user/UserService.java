@@ -1,15 +1,20 @@
 package cloudflight.integra.backend.user;
 
+import cloudflight.integra.backend.authentication.config.SecurityUtils;
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
+import cloudflight.integra.backend.user.model.Role;
 import cloudflight.integra.backend.user.model.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
 
 /**
  * Provides business logic for managing users.
@@ -92,6 +97,8 @@ public class UserService {
      */
     public User update(Long id, User user) {
 
+        checkOwnership(id);
+
         Optional<User> existing = userRepository.findById(id);
 
         if (existing.isEmpty()) {
@@ -112,6 +119,7 @@ public class UserService {
      * @throws EntityNotFoundException if no user with the specified identifier exists
      */
     public void delete(Long id) {
+        checkOwnership(id);
         userRepository
                 .findById(id)
                 .map(user -> {
@@ -120,4 +128,30 @@ public class UserService {
                 })
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
+
+    /**
+     * Finds a user with the specified email.
+     *
+     * @param email the identifier of the user
+     * @throws EntityNotFoundException if no user with the specified email exists
+     * @return the requested user
+     */
+    public User loadUserByEmail(String email) throws EntityNotFoundException {
+
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+    }
+
+
+    /**
+     * Checks whether a user with the specified email exists.
+     *
+     * @param email the email address to check
+     * @return {@code true} if a user with the email exists, {@code false} otherwise
+     */
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
 }

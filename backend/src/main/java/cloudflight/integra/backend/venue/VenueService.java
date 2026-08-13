@@ -9,6 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
+
 /**
  * Service class for managing {@link Venue} entities.
  * Handles the core business logic and acts as an intermediary between the controller and the repository.
@@ -76,6 +78,7 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
+        checkOwnership(venue.getManagedBy());//todo: when mapping is implemented modify this
         Optional<Venue> existing = repository.findById(id);
         if (existing.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
@@ -94,9 +97,11 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public void delete(Long id) {
-        if (repository.findById(id).isEmpty()) {
+        Optional<Venue> venue= repository.findById(id);
+        if (venue.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
+        checkOwnership(venue.get().getManagedBy());//todo: when mapping is implemented modify this
 
         repository.deleteById(id);
     }

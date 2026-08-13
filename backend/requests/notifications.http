@@ -1,5 +1,6 @@
 ### Get all notifications
 GET http://{{host}}/api/notifications
+Authorization: Bearer {{token}}
 
 ### Create a new notification with explicit sentAt
 POST http://{{host}}/api/notifications

@@ -1,0 +1,41 @@
+### Register user admin
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "ionel",
+  "email": "ionel1@gmail.com",
+  "password": "!IonelCelSmecher123",
+  "phone": "0747474747",
+  "role": "ADMIN"
+}
+
+### Register user participant
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "gigel",
+  "email": "gigel1@gmail.com",
+  "password": "!GigelCelSmecher123",
+  "phone": "0746464646",
+  "role": "PARTICIPANT"
+}
+
+### Login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ionel1@gmail.com",
+  "password": "!IonelCelSmecher123"
+}
+
+### Login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "gigel1@gmail.com",
+  "password": "!GigelCelSmecher123"
+}
