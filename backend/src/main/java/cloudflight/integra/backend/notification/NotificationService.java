@@ -3,6 +3,9 @@ package cloudflight.integra.backend.notification;
 import cloudflight.integra.backend.notification.model.Notification;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,6 +25,17 @@ public class NotificationService {
      */
     public NotificationService(NotificationRepository repository) {
         this.repository = repository;
+    }
+
+    /**
+     * Retrieves a page of notification entities with specific page number and size
+     * @param page page number
+     * @param size page size
+     * @return a page containing the requested notifications
+     */
+    public Page<Notification> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAll(pageable);
     }
 
     /**
@@ -52,29 +66,7 @@ public class NotificationService {
      * or if the notification type is null
      */
     public Notification create(Notification notification) {
-        validateNotification(notification);
         return repository.save(notification);
-    }
-
-    /**
-     * Validates the notification entity according to business rules.
-     *
-     * @param notification the notification to validate
-     * @throws IllegalArgumentException if validation fails
-     */
-    private void validateNotification(Notification notification) {
-        if (notification.getType() == null) {
-            throw new IllegalArgumentException("Notification type is required");
-        }
-        if (notification.getMessage() == null || notification.getMessage().isBlank()) {
-            throw new IllegalArgumentException("Message cannot be blank");
-        }
-        if (notification.getMessage().length() > 500) {
-            throw new IllegalArgumentException("Message must be under 500 characters");
-        }
-        if (notification.getRecipientId() == null) {
-            throw new IllegalArgumentException("Recipient ID is required");
-        }
     }
 
     /**

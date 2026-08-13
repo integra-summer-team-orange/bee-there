@@ -3,6 +3,7 @@ package cloudflight.integra.backend.notification;
 import cloudflight.integra.backend.notification.model.Notification;
 import cloudflight.integra.backend.notification.model.NotificationDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for converting {@link Notification} entities to {@link NotificationDto}s, and viceversa.
@@ -15,6 +16,7 @@ public interface NotificationMapper {
      * @param notification the entity to convert
      * @return the converted DTO
      */
+    @Mapping(source = "recipient.id", target = "recipientId")
     NotificationDto toDto(Notification notification);
 
     /**
@@ -23,5 +25,6 @@ public interface NotificationMapper {
      * @param notificationDto a DTO for {@link Notification}
      * @return the converted entity
      */
+    @Mapping(source = "recipientId", target = "recipient.id")
     Notification toEntity(NotificationDto notificationDto);
 }
