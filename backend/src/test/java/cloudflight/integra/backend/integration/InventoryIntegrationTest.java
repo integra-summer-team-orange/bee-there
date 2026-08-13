@@ -10,7 +10,6 @@ import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.model.Venue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
