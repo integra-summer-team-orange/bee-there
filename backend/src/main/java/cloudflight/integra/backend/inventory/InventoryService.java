@@ -4,6 +4,9 @@ import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.inventory.model.Inventory;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +33,19 @@ public class InventoryService {
      */
     public List<Inventory> getAll() {
         return repository.findAll();
+    }
+
+    /**
+     * Retrieves a paginated list of inventory items.
+     *
+     * @param pageNumber the zero-based page index to retrieve
+     * @param pageSize   the maximum number of items to return per page
+     * @return a {@link Page} containing the requested {@link Inventory} entities
+     */
+    // todo: validation
+    public Page<Inventory> getAll(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return repository.findAll(pageable);
     }
 
     /**

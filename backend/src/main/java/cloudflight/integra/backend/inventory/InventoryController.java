@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -67,6 +68,42 @@ public class InventoryController {
             })
     public ResponseEntity<List<InventoryDto>> getAll() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+    }
+
+    /**
+     * Retrieves a paginated list of inventory items.
+     *
+     * @param pageNumber the zero-based page index to retrieve
+     * @param pageSize   the maximum number of items to return per page
+     * @return A {@link ResponseEntity} containing the requested page of {@link InventoryDto} with a 200 OK status.
+     */
+    @GetMapping(params = {"pageNumber", "pageSize"})
+    @Operation(
+            summary = "Get all inventory items paged",
+            description = "Retrieves a list of all inventory items paged.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully retrieved paged inventory items",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = Page.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Page<InventoryDto>> getAll(
+            @Parameter(description = "Number of the desired page (0-based index)", example = "0", required = true)
+                    @RequestParam
+                    int pageNumber,
+            @Parameter(description = "Size of page", example = "10", required = true) @RequestParam int pageSize) {
+        return ResponseEntity.ok(service.getAll(pageNumber, pageSize).map(mapper::toDto));
     }
 
     /**
