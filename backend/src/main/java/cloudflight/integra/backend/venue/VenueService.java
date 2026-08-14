@@ -1,5 +1,7 @@
 package cloudflight.integra.backend.venue;
 
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
+
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
 import java.util.List;
@@ -76,6 +78,7 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
+        checkOwnership(venue.getManagedBy().getId());
         Optional<Venue> existing = repository.findById(id);
         if (existing.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
@@ -94,10 +97,11 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public void delete(Long id) {
-        if (repository.findById(id).isEmpty()) {
+        Optional<Venue> venue = repository.findById(id);
+        if (venue.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
-
+        checkOwnership(venue.get().getManagedBy().getId());
         repository.deleteById(id);
     }
 }

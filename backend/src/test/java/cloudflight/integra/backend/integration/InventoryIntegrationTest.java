@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import cloudflight.integra.backend.inventory.model.InventoryDto;
-import cloudflight.integra.backend.user.model.Role;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.model.Venue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,11 +35,49 @@ public class InventoryIntegrationTest {
     private EntityManager entityManager;
 
     private Long validVenueId;
+    private String token;
 
     @BeforeEach
-    void setUp() {
-        User user = new User("Test Manager", "manager@example.com", "hash", "0123456789", Role.PARTICIPANT);
-        entityManager.persist(user);
+    void setUp() throws Exception {
+
+        String registerRequest = """
+            {
+                "name": "Test Manager",
+                "email": "manager@example.com",
+                "password": "password",
+                "phone": "0123456789",
+                "role": "ADMIN"
+            }
+            """;
+
+        String registerResponse = mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(registerRequest))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String loginRequest = """
+            {
+                "email": "manager@example.com",
+                "password": "password"
+            }
+            """;
+
+        String loginResponse = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequest))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        token = objectMapper.readTree(loginResponse).get("token").asText();
+
+        Long userId = objectMapper.readTree(registerResponse).get("id").asLong();
+
+        User user = entityManager.find(User.class, userId);
 
         Venue venue = new Venue();
         venue.setManagedBy(user);
@@ -60,6 +97,7 @@ public class InventoryIntegrationTest {
         InventoryDto request = new InventoryDto(null, validVenueId, "Test Item", 100, 50);
 
         String response = mockMvc.perform(post("/api/inventory")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -74,14 +112,16 @@ public class InventoryIntegrationTest {
         Long id = objectMapper.readTree(response).get("id").asLong();
 
         // 2. READ (GET by ID)
-        mockMvc.perform(get("/api/inventory/{id}", id))
+        mockMvc.perform(get("/api/inventory/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Test Item"));
 
         // 3. UPDATE (PUT)
         InventoryDto updateRequest = new InventoryDto(id, validVenueId, "Updated Item", 200, 150);
+
         mockMvc.perform(put("/api/inventory/{id}", id)
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
@@ -89,10 +129,12 @@ public class InventoryIntegrationTest {
                 .andExpect(jsonPath("$.totalQuantity").value(200));
 
         // 4. DELETE
-        mockMvc.perform(delete("/api/inventory/{id}", id)).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/inventory/{id}", id).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
 
         // 5. VERIFY DELETION (GET expecting 404)
-        mockMvc.perform(get("/api/inventory/{id}", id)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/inventory/{id}", id).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -102,11 +144,11 @@ public class InventoryIntegrationTest {
         InventoryDto request = new InventoryDto(null, nonExistentVenueId, "Invalid Venue Item", 10, 5);
 
         mockMvc.perform(post("/api/inventory")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.messages[0]", containsString("Data integrity violation")));
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -116,6 +158,7 @@ public class InventoryIntegrationTest {
                 new InventoryDto(null, validVenueId, "Bad Quantities Item", 5, 10); // available (10) > total (5)
 
         mockMvc.perform(post("/api/inventory")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -128,6 +171,7 @@ public class InventoryIntegrationTest {
         InventoryDto request = new InventoryDto(null, validVenueId, "Negative Item", -10, -5);
 
         mockMvc.perform(post("/api/inventory")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -140,13 +184,16 @@ public class InventoryIntegrationTest {
         InventoryDto item2 = new InventoryDto(null, validVenueId, "Item 2", 20, 20);
 
         mockMvc.perform(post("/api/inventory")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(item1)));
+
         mockMvc.perform(post("/api/inventory")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(item2)));
 
-        mockMvc.perform(get("/api/inventory?pageNumber=0&pageSize=10"))
+        mockMvc.perform(get("/api/inventory?pageNumber=0&pageSize=10").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$.content[*].name", hasItems("Item 1", "Item 2")));

@@ -1,5 +1,7 @@
 package cloudflight.integra.backend.user;
 
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
+
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.model.User;
@@ -92,6 +94,8 @@ public class UserService {
      */
     public User update(Long id, User user) {
 
+        checkOwnership(id);
+
         Optional<User> existing = userRepository.findById(id);
 
         if (existing.isEmpty()) {
@@ -112,6 +116,7 @@ public class UserService {
      * @throws EntityNotFoundException if no user with the specified identifier exists
      */
     public void delete(Long id) {
+        checkOwnership(id);
         userRepository
                 .findById(id)
                 .map(user -> {
@@ -119,5 +124,29 @@ public class UserService {
                     return true;
                 })
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    /**
+     * Finds a user with the specified email.
+     *
+     * @param email the identifier of the user
+     * @throws EntityNotFoundException if no user with the specified email exists
+     * @return the requested user
+     */
+    public User loadUserByEmail(String email) throws EntityNotFoundException {
+
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+    }
+
+    /**
+     * Checks whether a user with the specified email exists.
+     *
+     * @param email the email address to check
+     * @return {@code true} if a user with the email exists, {@code false} otherwise
+     */
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
