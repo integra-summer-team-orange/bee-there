@@ -1,15 +1,37 @@
 package cloudflight.integra.backend.resources.model;
 
+import cloudflight.integra.backend.venue.model.Venue;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
+@Table(name = "resources")
 public class Resource {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long venueId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venue_id", nullable = false)
+    private Venue venue;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "activity_type", nullable = false)
     private String activityType;
+
+    @Column(name = "activity_description")
     private String activityDescription;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ResourceType type;
+
+    @Column(nullable = false)
     private Integer capacity;
+
+    @Column(name = "hourly_rate", nullable = false, precision = 10, scale = 2)
     private BigDecimal hourlyRate;
 
     public Long getId() {
@@ -20,12 +42,12 @@ public class Resource {
         this.id = id;
     }
 
-    public Long getVenueId() {
-        return venueId;
+    public Venue getVenue() {
+        return venue;
     }
 
-    public void setVenueId(Long venueId) {
-        this.venueId = venueId;
+    public void setVenue(Venue venue) {
+        this.venue = venue;
     }
 
     public String getName() {

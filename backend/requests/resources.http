@@ -2,6 +2,10 @@
 GET {{host}}/api/resources
 Accept: application/json
 
+### Get all resources paged
+GET {{host}}/api/resources?pageNumber=0&pageSize=10
+Accept: application/json
+
 ### Get resource by ID (Happy Path)
 GET {{host}}/api/resources/1
 Accept: application/json
@@ -36,6 +40,20 @@ Content-Type: application/json
     "type": "INVALID_TYPE_STRING",
     "capacity": -5,
     "hourlyRate": -10.00
+}
+
+### Create a resource with non-existent venue (400 FK violation)
+POST {{host}}/api/resources
+Content-Type: application/json
+
+{
+    "venueId": 999999,
+    "name": "Orphaned Court",
+    "activityType": "Basketball",
+    "activityDescription": "References a venue that does not exist",
+    "type": "INDOOR_SPORT",
+    "capacity": 10,
+    "hourlyRate": 25.00
 }
 
 ### Update a resource (Happy Path)
