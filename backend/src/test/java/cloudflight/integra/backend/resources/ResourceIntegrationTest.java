@@ -5,11 +5,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import cloudflight.integra.backend.resources.model.ResourceDto;
+import cloudflight.integra.backend.venue.VenueRepository;
 import cloudflight.integra.backend.venue.model.Venue;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,36 +18,40 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Transactional
 public class ResourceIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ResourceRepository resourceRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private VenueRepository venueRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Long validVenueId;
+
+    @AfterEach
+    void tearDown() {
+        resourceRepository.deleteAll();
+        venueRepository.deleteAll();
+    }
 
     @BeforeEach
     void setUp() {
         Venue venue = new Venue();
-        venue.setId(1L);
         venue.setManagedBy(1L);
         venue.setName("Test Venue");
         venue.setDescription("Test");
         venue.setAddress("Test Cluj");
-        venue.setCreatedAt(LocalDateTime.now());
-        entityManager.persist(venue);
-        entityManager.flush();
+        venue = venueRepository.save(venue);
         validVenueId = venue.getId();
     }
 
@@ -176,7 +180,7 @@ public class ResourceIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(item2)));
 
-        mockMvc.perform(get("/api/resources?page=0&size=10"))
+        mockMvc.perform(get("/api/resources?pageNumber=0&pageSize=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$.content[*].name", hasItems("Court 1", "Court 2")));

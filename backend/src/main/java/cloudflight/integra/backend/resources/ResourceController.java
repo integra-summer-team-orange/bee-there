@@ -5,7 +5,6 @@ import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.resources.model.ResourceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,41 +43,13 @@ public class ResourceController {
     }
 
     /**
-     * Retrieves all resources.
-     *
-     * @return A {@link ResponseEntity} containing a list of {@link ResourceDto} with a 200 OK status.
-     */
-    @GetMapping
-    @Operation(summary = "Get all resources", description = "Returns a list of all resources available in the system.")
-    @ApiResponses(
-            value = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "List of resources successfully retrieved",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        array = @ArraySchema(schema = @Schema(implementation = ResourceDto.class)))),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error occurred",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)))
-            })
-    public ResponseEntity<List<ResourceDto>> getAll() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
-    }
-
-    /**
      * Retrieves a paginated list of resources.
      *
-     * @param page the zero-based page index to retrieve
-     * @param size the maximum number of resources to return per page
+     * @param pageNumber the zero-based page index to retrieve
+     * @param pageSize the maximum number of resources to return per page
      * @return A {@link ResponseEntity} containing the requested page of {@link ResourceDto} with a 200 OK status.
      */
-    @GetMapping(params = {"page", "size"})
+    @GetMapping
     @Operation(summary = "Get all resources paged", description = "Retrieves a list of all resources paged.")
     @ApiResponses(
             value = {
@@ -99,9 +69,13 @@ public class ResourceController {
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<Page<ResourceDto>> getAll(
-            @Parameter(description = "Page index (0-based)", example = "0", required = true) @RequestParam int page,
-            @Parameter(description = "Page size", example = "10", required = true) @RequestParam int size) {
-        return ResponseEntity.ok(service.getAll(page, size).map(mapper::toDto));
+            @Parameter(description = "Page index (0-based)", example = "0")
+                    @RequestParam(defaultValue = "0", name = "pageNumber")
+                    int pageNumber,
+            @Parameter(description = "Page size", example = "10")
+                    @RequestParam(defaultValue = "10", name = "pageSize")
+                    int pageSize) {
+        return ResponseEntity.ok(service.getAll(pageNumber, pageSize).map(mapper::toDto));
     }
 
     /**

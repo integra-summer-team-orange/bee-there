@@ -2,7 +2,6 @@ package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.resources.model.Resource;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,15 +23,6 @@ public class ResourceService {
      */
     public ResourceService(ResourceRepository repository) {
         this.repository = repository;
-    }
-
-    /**
-     * Retrieves all resources.
-     *
-     * @return A list of all {@link Resource} entities.
-     */
-    public List<Resource> getAll() {
-        return repository.findAll();
     }
 
     /**
