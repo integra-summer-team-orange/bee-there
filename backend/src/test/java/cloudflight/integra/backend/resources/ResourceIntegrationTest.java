@@ -141,7 +141,7 @@ public class ResourceIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.messages[0]", containsString("Data integrity violation")));
+                .andExpect(jsonPath("$.messages[0]", containsString("constraint violation")));
     }
 
     @Test
