@@ -73,9 +73,7 @@ public class ResourceIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long managerId = objectMapper.readTree(registerResponse)
-                .get("id")
-                .asLong();
+        Long managerId = objectMapper.readTree(registerResponse).get("id").asLong();
 
         String loginRequest = """
             {
@@ -92,12 +90,9 @@ public class ResourceIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        token = objectMapper.readTree(loginResponse)
-                .get("token")
-                .asText();
+        token = objectMapper.readTree(loginResponse).get("token").asText();
 
-        User manager = userRepository.findById(managerId)
-                .orElseThrow();
+        User manager = userRepository.findById(managerId).orElseThrow();
 
         Venue venue = new Venue();
         venue.setManagedBy(manager);
@@ -137,8 +132,7 @@ public class ResourceIntegrationTest {
         Long id = objectMapper.readTree(response).get("id").asLong();
 
         // 2. READ (GET by ID)
-        mockMvc.perform(get("/api/resources/{id}", id)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/resources/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Main Court"));
@@ -163,13 +157,11 @@ public class ResourceIntegrationTest {
                 .andExpect(jsonPath("$.activityType").value("Volleyball"));
 
         // 4. DELETE
-        mockMvc.perform(delete("/api/resources/{id}", id)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(delete("/api/resources/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
 
         // 5. VERIFY DELETION (GET expecting 404)
-        mockMvc.perform(get("/api/resources/{id}", id)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/resources/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
 
@@ -247,8 +239,7 @@ public class ResourceIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(item2)));
 
-        mockMvc.perform(get("/api/resources?pageNumber=0&pageSize=10")
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/resources?pageNumber=0&pageSize=10").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$.content[*].name", hasItems("Court 1", "Court 2")));

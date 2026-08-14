@@ -73,13 +73,9 @@ public class InventoryIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-        token = objectMapper.readTree(loginResponse)
-                .get("token")
-                .asText();
+        token = objectMapper.readTree(loginResponse).get("token").asText();
 
-        Long userId = objectMapper.readTree(registerResponse)
-                .get("id")
-                .asLong();
+        Long userId = objectMapper.readTree(registerResponse).get("id").asLong();
 
         User user = entityManager.find(User.class, userId);
 
@@ -116,8 +112,7 @@ public class InventoryIntegrationTest {
         Long id = objectMapper.readTree(response).get("id").asLong();
 
         // 2. READ (GET by ID)
-        mockMvc.perform(get("/api/inventory/{id}", id)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/inventory/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Test Item"));
@@ -134,13 +129,11 @@ public class InventoryIntegrationTest {
                 .andExpect(jsonPath("$.totalQuantity").value(200));
 
         // 4. DELETE
-        mockMvc.perform(delete("/api/inventory/{id}", id)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(delete("/api/inventory/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
 
         // 5. VERIFY DELETION (GET expecting 404)
-        mockMvc.perform(get("/api/inventory/{id}", id)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/inventory/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
 
@@ -200,8 +193,7 @@ public class InventoryIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(item2)));
 
-        mockMvc.perform(get("/api/inventory?pageNumber=0&pageSize=10")
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/inventory?pageNumber=0&pageSize=10").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$.content[*].name", hasItems("Item 1", "Item 2")));

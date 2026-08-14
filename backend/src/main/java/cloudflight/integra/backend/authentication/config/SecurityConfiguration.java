@@ -35,7 +35,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)// todo: this can limit so only our site sends requests to this api
+                .cors(
+                        AbstractHttpConfigurer
+                                ::disable) // todo: this can limit so only our site sends requests to this api
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -59,14 +61,12 @@ public class SecurityConfiguration {
                         // inventory
                         .requestMatchers(HttpMethod.GET, "/api/inventory/**")
                         .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
-
                         .requestMatchers("/api/inventory/**")
                         .hasAnyRole("ADMIN", "VENUE_ADMIN")
 
                         // resources
                         .requestMatchers(HttpMethod.GET, "/api/resources/**")
                         .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
-
                         .requestMatchers("/api/resources/**")
                         .hasAnyRole("ADMIN", "VENUE_ADMIN")
 
