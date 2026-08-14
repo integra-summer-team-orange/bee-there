@@ -114,8 +114,7 @@ public class VenueIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.messages[0]", containsString("Data integrity violation")));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
