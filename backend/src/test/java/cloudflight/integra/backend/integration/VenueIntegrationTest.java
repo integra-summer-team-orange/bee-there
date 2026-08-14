@@ -80,7 +80,7 @@ public class VenueIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.messages[0]", containsString("constraint violation")));
+                .andExpect(jsonPath("$.messages[0]", containsString("Data integrity violation")));
     }
 
     @Test

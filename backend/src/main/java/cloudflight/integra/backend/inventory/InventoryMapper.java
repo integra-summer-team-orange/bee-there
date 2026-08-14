@@ -20,6 +20,7 @@ public interface InventoryMapper {
      * @return The resulting {@link Inventory} entity.
      */
     @Mapping(target = "id", ignore = true)
+    @Mapping(source = "venueId", target = "venue.id")
     Inventory toEntity(InventoryDto inventoryDto);
 
     /**
@@ -28,5 +29,6 @@ public interface InventoryMapper {
      * @param inventory The entity to be mapped.
      * @return The corresponding {@link InventoryDto} containing the formatted data.
      */
+    @Mapping(source = "venue.id", target = "venueId")
     InventoryDto toDto(Inventory inventory);
 }

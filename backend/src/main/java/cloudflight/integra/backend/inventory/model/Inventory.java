@@ -1,10 +1,30 @@
 package cloudflight.integra.backend.inventory.model;
 
+import cloudflight.integra.backend.venue.model.Venue;
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+@Entity
+@Table(name = "inventory")
 public class Inventory {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long venueId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venue_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Venue venue;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "total_quantity", nullable = false)
     private int totalQuantity;
+
+    @Column(name = "available_quantity", nullable = false)
     private int availableQuantity;
 
     public Inventory() {}
@@ -17,12 +37,12 @@ public class Inventory {
         this.id = id;
     }
 
-    public Long getVenueId() {
-        return venueId;
+    public Venue getVenue() {
+        return venue;
     }
 
-    public void setVenueId(Long venueId) {
-        this.venueId = venueId;
+    public void setVenue(Venue venue) {
+        this.venue = venue;
     }
 
     public String getName() {
