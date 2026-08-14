@@ -5,6 +5,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import cloudflight.integra.backend.resources.model.ResourceDto;
+import cloudflight.integra.backend.user.UserRepository;
+import cloudflight.integra.backend.user.model.Role;
+import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.VenueRepository;
 import cloudflight.integra.backend.venue.model.Venue;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +37,9 @@ public class ResourceIntegrationTest {
     private VenueRepository venueRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private Long validVenueId;
@@ -42,12 +48,16 @@ public class ResourceIntegrationTest {
     void tearDown() {
         resourceRepository.deleteAll();
         venueRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @BeforeEach
     void setUp() {
+        User manager = new User("Test Manager", "manager@example.com", "hash", "0123456789", Role.PARTICIPANT);
+        manager = userRepository.save(manager);
+
         Venue venue = new Venue();
-        venue.setManagedBy(1L);
+        venue.setManagedBy(manager);
         venue.setName("Test Venue");
         venue.setDescription("Test");
         venue.setAddress("Test Cluj");

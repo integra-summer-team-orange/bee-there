@@ -72,8 +72,7 @@ public class ResourceController {
             @Parameter(description = "Page index (0-based)", example = "0")
                     @RequestParam(defaultValue = "0", name = "pageNumber")
                     int pageNumber,
-            @Parameter(description = "Page size", example = "10")
-                    @RequestParam(defaultValue = "10", name = "pageSize")
+            @Parameter(description = "Page size", example = "10") @RequestParam(defaultValue = "10", name = "pageSize")
                     int pageSize) {
         return ResponseEntity.ok(service.getAll(pageNumber, pageSize).map(mapper::toDto));
     }
