@@ -1,5 +1,6 @@
 ### Get all resources
 GET {{host}}/api/resources
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Get all resources paged
@@ -8,38 +9,42 @@ Accept: application/json
 
 ### Get resource by ID (Happy Path)
 GET {{host}}/api/resources/1
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Get resource by ID (404 Error Path)
 GET {{host}}/api/resources/9999
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Create a resource (Happy Path)
 POST {{host}}/api/resources
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "venueId": 1,
-    "name": "Main Court",
-    "activityType": "Basketball",
-    "activityDescription": "Full court indoor basketball",
-    "type": "INDOOR_SPORT",
-    "capacity": 20,
-    "hourlyRate": 50.00
+  "venueId": 1,
+  "name": "Main Court",
+  "activityType": "Basketball",
+  "activityDescription": "Full court indoor basketball",
+  "type": "INDOOR_SPORT",
+  "capacity": 20,
+  "hourlyRate": 50.00
 }
 
 ### Create a resource (400 Validation Error Path)
 POST {{host}}/api/resources
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "venueId": null,
-    "name": "",
-    "activityType": "Basketball",
-    "activityDescription": "Missing required fields and invalid constraints",
-    "type": "INVALID_TYPE_STRING",
-    "capacity": -5,
-    "hourlyRate": -10.00
+  "venueId": null,
+  "name": "",
+  "activityType": "Basketball",
+  "activityDescription": "Missing required fields and invalid constraints",
+  "type": "INVALID_TYPE_STRING",
+  "capacity": -5,
+  "hourlyRate": -10.00
 }
 
 ### Create a resource with non-existent venue (400 FK violation)
@@ -58,20 +63,23 @@ Content-Type: application/json
 
 ### Update a resource (Happy Path)
 PUT {{host}}/api/resources/1
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "venueId": 1,
-    "name": "Main Court Updated",
-    "activityType": "Volleyball",
-    "activityDescription": "Net adjusted for volleyball",
-    "type": "INDOOR_SPORT",
-    "capacity": 24,
-    "hourlyRate": 60.00
+  "venueId": 1,
+  "name": "Main Court Updated",
+  "activityType": "Volleyball",
+  "activityDescription": "Net adjusted for volleyball",
+  "type": "INDOOR_SPORT",
+  "capacity": 24,
+  "hourlyRate": 60.00
 }
 
 ### Delete a resource (Happy Path)
 DELETE {{host}}/api/resources/1
+Authorization: Bearer {{token}}
 
 ### Delete a resource (404 Error Path)
 DELETE {{host}}/api/resources/9999
+Authorization: Bearer {{token}}

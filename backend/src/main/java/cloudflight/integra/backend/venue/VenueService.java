@@ -78,7 +78,7 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
-        checkOwnership(venue.getManagedBy());//todo: when mapping is implemented modify this
+        checkOwnership(venue.getManagedBy().getId());
         Optional<Venue> existing = repository.findById(id);
         if (existing.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
@@ -101,8 +101,7 @@ public class VenueService {
         if (venue.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
-        checkOwnership(venue.get().getManagedBy()); // todo: when mapping is implemented modify this
-
+        checkOwnership(venue.get().getManagedBy().getId());
         repository.deleteById(id);
     }
 }

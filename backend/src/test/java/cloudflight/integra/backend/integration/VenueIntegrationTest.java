@@ -5,8 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import cloudflight.integra.backend.user.UserRepository;
-import cloudflight.integra.backend.user.model.Role;
-import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.VenueRepository;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +36,7 @@ public class VenueIntegrationTest {
     private ObjectMapper objectMapper;
 
     private Long validUserId;
+    private String token;
 
     @AfterEach
     void tearDown() {
@@ -46,10 +45,44 @@ public class VenueIntegrationTest {
     }
 
     @BeforeEach
-    void setUp() {
-        User user = new User("Test Manager", "manager@example.com", "hash", "0123456789", Role.PARTICIPANT);
-        user = userRepository.save(user);
-        validUserId = user.getId();
+    void setUp() throws Exception {
+
+        String registerRequest = """
+            {
+                "name": "Test Manager",
+                "email": "manager@example.com",
+                "password": "password",
+                "phone": "0123456789",
+                "role": "ADMIN"
+            }
+            """;
+
+        String registerResponse = mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(registerRequest))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        validUserId = objectMapper.readTree(registerResponse).get("id").asLong();
+
+        String loginRequest = """
+            {
+                "email": "manager@example.com",
+                "password": "password"
+            }
+            """;
+
+        String loginResponse = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequest))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        token = objectMapper.readTree(loginResponse).get("token").asText();
     }
 
     private VenueDto createValidVenueDto(String name) {
@@ -61,6 +94,7 @@ public class VenueIntegrationTest {
         VenueDto request = createValidVenueDto("Main Hall");
 
         mockMvc.perform(post("/api/venues")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -77,6 +111,7 @@ public class VenueIntegrationTest {
         VenueDto request = new VenueDto(null, 99999L, "Main Hall", "A large hall", "123 Main St", null);
 
         mockMvc.perform(post("/api/venues")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -88,6 +123,7 @@ public class VenueIntegrationTest {
         VenueDto createRequest = createValidVenueDto("Conference Room");
 
         String response = mockMvc.perform(post("/api/venues")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
@@ -97,7 +133,7 @@ public class VenueIntegrationTest {
 
         Long id = objectMapper.readTree(response).get("id").asLong();
 
-        mockMvc.perform(get("/api/venues/{id}", id))
+        mockMvc.perform(get("/api/venues/{id}", id).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Conference Room"))
@@ -109,6 +145,7 @@ public class VenueIntegrationTest {
         VenueDto createRequest = createValidVenueDto("Old Name");
 
         String response = mockMvc.perform(post("/api/venues")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
@@ -121,6 +158,7 @@ public class VenueIntegrationTest {
         VenueDto updateRequest = new VenueDto(null, validUserId, "New Name", "New Desc", "New Address", null);
 
         mockMvc.perform(put("/api/venues/{id}", id)
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
@@ -134,6 +172,7 @@ public class VenueIntegrationTest {
         VenueDto updateRequest = createValidVenueDto("Non Existent");
 
         mockMvc.perform(put("/api/venues/{id}", 99999L)
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isNotFound());
@@ -144,6 +183,7 @@ public class VenueIntegrationTest {
         VenueDto createRequest = createValidVenueDto("To Delete");
 
         String response = mockMvc.perform(post("/api/venues")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
@@ -153,14 +193,17 @@ public class VenueIntegrationTest {
 
         Long id = objectMapper.readTree(response).get("id").asLong();
 
-        mockMvc.perform(delete("/api/venues/{id}", id)).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/venues/{id}", id).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/venues/{id}", id)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/venues/{id}", id).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldReturn404WhenDeletingNonExistentVenue() throws Exception {
-        mockMvc.perform(delete("/api/venues/{id}", 99999L)).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/venues/{id}", 99999L).header("Authorization", "Bearer " + token))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -169,13 +212,16 @@ public class VenueIntegrationTest {
         VenueDto venue2 = createValidVenueDto("Venue 2");
 
         mockMvc.perform(post("/api/venues")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(venue1)));
+
         mockMvc.perform(post("/api/venues")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(venue2)));
 
-        mockMvc.perform(get("/api/venues"))
+        mockMvc.perform(get("/api/venues").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[*].name", containsInAnyOrder("Venue 1", "Venue 2")));
