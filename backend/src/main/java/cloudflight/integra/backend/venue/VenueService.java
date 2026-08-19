@@ -78,11 +78,11 @@ public class VenueService {
      * @throws EntityNotFoundException if the venue does not exist.
      */
     public Venue update(Long id, Venue venue) {
-        checkOwnership(venue.getManagedBy().getId());
         Optional<Venue> existing = repository.findById(id);
         if (existing.isEmpty()) {
             throw new EntityNotFoundException("Venue with id: " + id + " not found!");
         }
+        checkOwnership(existing.get().getManagedBy().getId());
 
         venue.setId(id);
         venue.setCreatedAt(existing.get().getCreatedAt());

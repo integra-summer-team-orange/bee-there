@@ -4,70 +4,11 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import cloudflight.integra.backend.user.UserRepository;
 import cloudflight.integra.backend.user.model.UserRequestDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-public class UserIntegrationTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private String token;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        userRepository.deleteAll();
-
-        String registerRequest = """
-            {
-                "name": "test",
-                "email": "test@gmail.com",
-                "password": "password",
-                "phone": "0777777777",
-                "role": "ADMIN"
-            }
-            """;
-
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(registerRequest))
-                .andExpect(status().isCreated());
-
-        String loginRequest = """
-            {
-                "email": "test@gmail.com",
-                "password": "password"
-            }
-            """;
-
-        String loginResponse = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(loginRequest))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        token = objectMapper.readTree(loginResponse).get("token").asText();
-    }
+public class UserIntegrationTest extends AbstractIntegrationTest {
 
     private UserRequestDto buildUserRequest(String name, String email, String password, String phone, String role) {
         return new UserRequestDto(name, email, password, phone, role);
@@ -78,8 +19,7 @@ public class UserIntegrationTest {
     }
 
     private Long createAndReturnUserId(UserRequestDto request) throws Exception {
-        String response = mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        String response = mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -94,8 +34,7 @@ public class UserIntegrationTest {
     void shouldCreateUser() throws Exception {
         UserRequestDto request = buildDefaultUserRequest();
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -114,7 +53,7 @@ public class UserIntegrationTest {
 
         Long id = createAndReturnUserId(createRequest);
 
-        mockMvc.perform(get("/api/users/{id}", id).header("Authorization", "Bearer " + token))
+        mockMvc.perform(authed(get("/api/users/{id}", id)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("Jane Doe"))
@@ -131,8 +70,7 @@ public class UserIntegrationTest {
         UserRequestDto updateRequest =
                 buildUserRequest("Updated Name", "updated.email@example.com", "!NewPassword123", "0742222222", "ADMIN");
 
-        mockMvc.perform(put("/api/users/{id}", id)
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(put("/api/users/{id}", id))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
@@ -148,11 +86,9 @@ public class UserIntegrationTest {
 
         Long id = createAndReturnUserId(createRequest);
 
-        mockMvc.perform(delete("/api/users/{id}", id).header("Authorization", "Bearer " + token))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(authed(delete("/api/users/{id}", id))).andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/users/{id}", id).header("Authorization", "Bearer " + token))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(authed(get("/api/users/{id}", id))).andExpect(status().isNotFound());
     }
 
     @Test
@@ -163,21 +99,19 @@ public class UserIntegrationTest {
         UserRequestDto user2 =
                 buildUserRequest("User Two", "user2@example.com", "!Password123", "0742222222", "PARTICIPANT");
 
-        mockMvc.perform(post("/api/users")
-                .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user1)));
 
-        mockMvc.perform(post("/api/users")
-                .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user2)));
 
-        mockMvc.perform(get("/api/users").header("Authorization", "Bearer " + token))
+        mockMvc.perform(authed(get("/api/users")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath(
-                        "$[*].email", containsInAnyOrder("test@gmail.com", "user1@example.com", "user2@example.com")));
+                        "$[*].email", containsInAnyOrder(ADMIN_EMAIL, "user1@example.com", "user2@example.com")));
     }
 
     @Test
@@ -188,14 +122,12 @@ public class UserIntegrationTest {
         UserRequestDto user1_1 =
                 buildUserRequest("User One (1)", "user1@example.com", "!Password123", "0742222222", "PARTICIPANT");
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user1)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user1_1)))
                 .andExpect(status().isBadRequest())
@@ -206,7 +138,7 @@ public class UserIntegrationTest {
 
     @Test
     void shouldNotGetNonExistentUser() throws Exception {
-        mockMvc.perform(get("/api/users/99999").header("Authorization", "Bearer " + token))
+        mockMvc.perform(authed(get("/api/users/99999")))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }
@@ -216,8 +148,7 @@ public class UserIntegrationTest {
         UserRequestDto updateRequest =
                 buildUserRequest("Waldo", "waldo@example.com", "!NewPassword123", "0742222222", "ADMIN");
 
-        mockMvc.perform(put("/api/users/99999")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(put("/api/users/99999"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isNotFound());
@@ -225,7 +156,7 @@ public class UserIntegrationTest {
 
     @Test
     void shouldNotDeleteNonExistentUser() throws Exception {
-        mockMvc.perform(delete("/api/users/99999").header("Authorization", "Bearer " + token))
+        mockMvc.perform(authed(delete("/api/users/99999")))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }
@@ -235,8 +166,7 @@ public class UserIntegrationTest {
         UserRequestDto request =
                 buildUserRequest("Test User", "invalid-email", "!Password123", "0741234567", "PARTICIPANT");
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -246,8 +176,7 @@ public class UserIntegrationTest {
     void shouldRejectWeakPassword() throws Exception {
         UserRequestDto request = buildUserRequest("Test User", "test@example.com", "123", "0741234567", "PARTICIPANT");
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -257,8 +186,7 @@ public class UserIntegrationTest {
     void shouldRejectEmptyName() throws Exception {
         UserRequestDto request = buildUserRequest("", "test@example.com", "!Password123", "0741234567", "PARTICIPANT");
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -269,8 +197,7 @@ public class UserIntegrationTest {
         UserRequestDto request =
                 buildUserRequest("Secure User", "secure@example.com", "!Password123", "0741234567", "PARTICIPANT");
 
-        mockMvc.perform(post("/api/users")
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(authed(post("/api/users"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
