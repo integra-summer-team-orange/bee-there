@@ -1,0 +1,69 @@
+<header class="bg-[#FAF084] py-4 px-6 md:px-20 flex justify-between items-center flex-wrap gap-4">
+  <a routerLink="/" class="flex items-center gap-3 cursor-pointer">
+    <img src="/assets/logo.png" alt="BeeThere logo" class="h-10 w-10" />
+    <span class="text-[24px] font-bold text-[#765B00]">BeeThere</span>
+  </a>
+  <button pButton routerLink="/login" class="rounded-[6px]">
+    <span pButtonLabel class="text-[16px] font-bold">Login</span>
+  </button>
+</header>
+<div class="flex items-center justify-center px-6 py-6 md:px-20">
+  <div class="bg-white p-8 md:p-12 shadow-sm rounded-[6px] border-2 border-[#CCAA20] w-full max-w-sm mx-auto flex flex-col gap-8">
+    <div class="flex flex-col items-center gap-4">
+      <img src="/assets/logo.png" alt="BeeThere logo" class="h-16 w-16" />
+      <div class="flex flex-col items-center gap-2 w-full">
+        <div class="text-[57px] font-bold leading-tight text-center w-full text-[#765B00]">Register</div>
+      </div>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-8 w-full">
+      @if (errorMessage()) {
+        <p-message severity="error" styleClass="w-full">{{ errorMessage() }}</p-message>
+      }
+      <div class="flex flex-col gap-6 w-full">
+        <div class="flex flex-col gap-2 w-full">
+          <label for="name1" class="text-[14px] font-medium leading-normal text-[#494551]">Name</label>
+          <input pInputText id="name1" formControlName="name" type="text" placeholder="John" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+          @if (fieldError('name', 'Name'); as error) {
+            <p-message severity="error" size="small" variant="simple">{{ error }}</p-message>
+          }
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label for="phone1" class="text-[14px] font-medium leading-normal text-[#494551]">Phone</label>
+          <input pInputText id="phone1" formControlName="phone" type="tel" placeholder="0712345678" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+          @if (fieldError('phone', 'Phone'); as error) {
+            <p-message severity="error" size="small" variant="simple">{{ error }}</p-message>
+          }
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label for="email1" class="text-[14px] font-medium leading-normal text-[#494551]">Email</label>
+          <input pInputText id="email1" formControlName="email" type="text" placeholder="johndoe@gmail.com" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+          @if (fieldError('email', 'Email'); as error) {
+            <p-message severity="error" size="small" variant="simple">{{ error }}</p-message>
+          }
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label for="password1" class="text-[14px] font-medium leading-normal text-[#494551]">Password</label>
+          <input pInputText id="password1" formControlName="password" type="password" placeholder="••••••••" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+          @if (fieldError('password', 'Password'); as error) {
+            <p-message severity="error" size="small" variant="simple">{{ error }}</p-message>
+          }
+        </div>
+        <div class="flex flex-col gap-2 w-full">
+          <label for="confirmpassword1" class="text-[14px] font-medium leading-normal text-[#494551]">Confirm Password</label>
+          <input pInputText id="confirmpassword1" formControlName="confirmPassword" type="password" placeholder="••••••••" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+          @if (fieldError('confirmPassword', 'Confirm Password'); as error) {
+            <p-message severity="error" size="small" variant="simple">{{ error }}</p-message>
+          }
+        </div>
+      </div>
+      <button pButton type="submit" [loading]="loading()" class="w-full py-2 rounded-[6px] flex justify-center items-center gap-2">
+        <i pButtonIcon class="pi pi-user text-base! leading-normal!"></i>
+        <span pButtonLabel class="text-[16px] font-bold">Register</span>
+      </button>
+    </form>
+    <div class="text-center w-full">
+      <span class="text-[14px] font-normal leading-normal text-[#6A7582]">Already have an account?</span>
+      <a routerLink="/login" class="text-[14px] font-bold ml-1 cursor-pointer text-[#7C4F14] hover:opacity-80">Sign in</a>
+    </div>
+  </div>
+</div>
