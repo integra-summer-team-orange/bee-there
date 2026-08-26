@@ -13,7 +13,7 @@
           placeholder="Search venues"
           aria-label="Search venues"
           [ngModel]="search()"
-          (ngModelChange)="search.set($event)"
+          (ngModelChange)="onSearchChange($event)"
         />
       </p-iconfield>
 
@@ -25,17 +25,14 @@
     <div class="flex justify-center py-16">
       <p-progressSpinner ariaLabel="Loading venues" />
     </div>
-  } @else if (visibleVenues().length === 0) {
+  } @else if (results().length === 0) {
     <div
       class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center"
     >
       <i class="pi pi-map-marker text-4xl text-slate-300" aria-hidden="true"></i>
 
       @if (search().trim()) {
-        <p class="font-semibold" i18n>No venue on this page matches "{{ search() }}".</p>
-        <p class="text-sm text-slate-500" i18n>
-          Search looks at the venues loaded on the current page.
-        </p>
+        <p class="font-semibold" i18n>No venue matches "{{ search() }}".</p>
       } @else {
         <p class="font-semibold" i18n>You do not manage any venues yet.</p>
         <p class="text-sm text-slate-500" i18n>Use "Add venue" to create your first one.</p>
@@ -43,7 +40,7 @@
     </div>
   } @else {
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-      @for (venue of visibleVenues(); track venue.id) {
+      @for (venue of results(); track venue.id) {
         <app-venue-card
           [venue]="venue"
           [manageable]="manageable(venue)"

@@ -6,10 +6,8 @@ interface BackendError {
 }
 
 /**
- * Turns a failed venue request into a message worth showing.
- *
- * A 403 is the ownership check firing server-side, and a 401 means the stored token is missing or expired;
- * both deserve a clearer sentence than the raw body, which is empty for role-based denials.
+ * Turns a failed venue request into a message worth showing. Role denials come back with an empty body,
+ * so 401 and 403 get their own text.
  */
 export function describeVenueError(error: HttpErrorResponse): string {
   if (error.status === 401) {

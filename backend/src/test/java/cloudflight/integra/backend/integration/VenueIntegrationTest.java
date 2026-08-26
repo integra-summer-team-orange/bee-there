@@ -192,6 +192,23 @@ public class VenueIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void shouldFilterManagedVenuesBySearchText() throws Exception {
+        AuthenticatedUser venueAdmin = registerAndLogin("search.admin@example.com", DEFAULT_PASSWORD, Role.VENUE_ADMIN);
+
+        createVenue("Cluj Arena", venueAdmin.token());
+        createVenue("Tennis Court", venueAdmin.token());
+
+        mockMvc.perform(authed(get("/api/venues/my").param("search", "arena"), venueAdmin.token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].name").value("Cluj Arena"));
+
+        mockMvc.perform(authed(get("/api/venues/my").param("search", "test st"), venueAdmin.token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)));
+    }
+
+    @Test
     void shouldKeepTheOriginalOwnerWhenUpdating() throws Exception {
         AuthenticatedUser venueAdmin = registerAndLogin("venue.admin@example.com", DEFAULT_PASSWORD, Role.VENUE_ADMIN);
         Long venueId = createVenue("Managed Venue", venueAdmin.token());

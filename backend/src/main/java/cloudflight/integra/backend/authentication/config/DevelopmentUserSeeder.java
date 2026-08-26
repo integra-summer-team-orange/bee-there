@@ -12,12 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates the account that requests without a token are attributed to, and hands it to {@link SecurityUtils}.
+ * Creates the account that requests without a token are attributed to. Skipped under the {@code test}
+ * profile so integration tests keep control of the user table.
  *
- * <p>RESTORE-AUTH: this whole class exists only because there is no login screen yet. Delete it, along with
- * the development-user branch in {@link SecurityUtils}, once login lands.
- *
- * <p>It is skipped under the {@code test} profile so integration tests keep full control of the user table.
+ * <p>RESTORE-AUTH: delete this class and the development-user branch in {@link SecurityUtils} once login lands.
  */
 @Component
 @Profile("!test")
@@ -56,11 +54,7 @@ public class DevelopmentUserSeeder implements ApplicationRunner {
 
     private User create() {
         User user = new User(
-                "Local Development",
-                DEVELOPMENT_EMAIL,
-                passwordEncoder.encode("!Password123"),
-                "0000000000",
-                Role.VENUE_ADMIN);
+                "Dev User", DEVELOPMENT_EMAIL, passwordEncoder.encode("!Password123"), "0000000000", Role.VENUE_ADMIN);
 
         return userRepository.save(user);
     }

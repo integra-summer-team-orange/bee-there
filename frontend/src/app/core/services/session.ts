@@ -4,11 +4,8 @@ import { Injectable, computed, signal } from '@angular/core';
 export const TOKEN_STORAGE_KEY = 'integra.token';
 
 /**
- * RESTORE-AUTH: while the backend has authorization switched off there is no login screen to produce a
- * token, and a token left in storage from earlier testing would silently change who the backend thinks you
- * are — requests would be attributed to that user instead of the seeded development account, and "my venues"
- * would come back empty for no visible reason. So stored tokens are ignored outright until login lands.
- * Setting this to false restores normal token handling.
+ * RESTORE-AUTH: there is no login screen yet, so a leftover token would attribute requests to that user
+ * instead of the seeded development account. Set this to false once login lands.
  */
 export const AUTH_DISABLED = true;
 
@@ -20,11 +17,7 @@ interface TokenClaims {
   exp?: number;
 }
 
-/**
- * Holds the bearer token of the current user and the claims decoded from it.
- *
- * Once the authentication feature lands this service is the single place that has to change.
- */
+/** Holds the bearer token of the current user and the claims decoded from it. */
 @Injectable({ providedIn: 'root' })
 export class Session {
   private readonly claims = signal<TokenClaims | null>(this.decode(this.readToken()));
@@ -56,7 +49,7 @@ export class Session {
     try {
       localStorage.setItem(TOKEN_STORAGE_KEY, token);
     } catch {
-      // storage is unavailable; the claims below still reflect this token for the current page
+      // storage is unavailable, but the claims below still reflect this token
     }
     this.claims.set(this.decode(token));
   }
@@ -66,15 +59,14 @@ export class Session {
     try {
       localStorage.removeItem(TOKEN_STORAGE_KEY);
     } catch {
-      // nothing to clean up when storage is unavailable
+      // storage is unavailable, nothing to clean up
     }
     this.claims.set(null);
   }
 
   /** True when the given user id is the signed-in user, or when the signed-in user is an admin. */
   canManage(ownerId: number | null | undefined): boolean {
-    // RESTORE-AUTH: an anonymous session may manage anything, matching the backend not enforcing ownership.
-    // Hiding every action would otherwise leave nothing to develop against.
+    // RESTORE-AUTH: the backend does not enforce ownership either while login is missing.
     if (this.claims() === null) {
       return true;
     }

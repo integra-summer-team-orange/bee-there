@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -29,11 +30,23 @@ const SOMEONE_ELSES: VenueDto = {
 /** Stands in for the generated client so the specs never touch HTTP. */
 class VenuesServiceStub {
   page: PageVenueDto = { content: [MINE, SOMEONE_ELSES], totalElements: 2 };
+  searches: (string | undefined)[] = [];
   deleted: number[] = [];
   deleteError: HttpErrorResponse | null = null;
 
-  getMine(): Observable<PageVenueDto> {
-    return of(this.page);
+  getMine(pageNumber?: number, pageSize?: number, search?: string): Observable<PageVenueDto> {
+    this.searches.push(search);
+
+    if (!search) {
+      return of(this.page);
+    }
+
+    const term = search.toLowerCase();
+    const content = (this.page.content ?? []).filter((venue) =>
+      venue.name?.toLowerCase().includes(term),
+    );
+
+    return of({ content, totalElements: content.length });
   }
 
   _delete(id: number): Observable<unknown> {
@@ -93,11 +106,16 @@ describe('VenueOverview', () => {
     expect(cards[1].textContent).not.toContain('Delete');
   });
 
-  it('filters the loaded page by name', async () => {
+  it('sends the search term to the backend instead of filtering the loaded page', async () => {
     await fixture.whenStable();
 
-    fixture.componentInstance['search'].set('polivalenta');
+    vi.useFakeTimers();
+    fixture.componentInstance['onSearchChange']('polivalenta');
+    vi.advanceTimersByTime(300);
+    vi.useRealTimers();
     await fixture.whenStable();
+
+    expect(venues.searches).toContain('polivalenta');
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
 

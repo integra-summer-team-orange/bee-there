@@ -19,6 +19,9 @@ import { describeVenueError } from '../venue-error';
 
 const PAGE_SIZE = 6;
 
+/** How long to wait after the last keystroke before asking the backend again. */
+const SEARCH_DEBOUNCE_MS = 300;
+
 /** Lists the venues the signed-in user manages and lets them be created, opened or deleted. */
 @Component({
   selector: 'app-venue-overview',
@@ -50,28 +53,12 @@ export class VenueOverview {
   protected readonly search = signal('');
   protected readonly venueToDelete = signal<VenueDto | null>(null);
 
-  private readonly loaded = signal<VenueDto[]>([]);
+  protected readonly results = signal<VenueDto[]>([]);
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly first = computed(() => this.page() * PAGE_SIZE);
 
-  /**
-   * The venues shown in the grid. Filtering happens over the page that is currently loaded; the backend has no
-   * search parameter yet, so this deliberately does not claim to search across every page.
-   */
-  protected readonly visibleVenues = computed(() => {
-    const term = this.search().trim().toLowerCase();
-    const venues = this.loaded();
-
-    if (!term) {
-      return venues;
-    }
-
-    return venues.filter(
-      (venue) =>
-        venue.name?.toLowerCase().includes(term) || venue.address?.toLowerCase().includes(term),
-    );
-  });
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
     this.load();
@@ -82,13 +69,13 @@ export class VenueOverview {
     return this.session.canManage(venue.managedBy);
   }
 
-  /** Loads the current page of venues managed by the signed-in user. */
+  /** Loads the current page of venues managed by the signed-in user, narrowed by the search term. */
   protected load(): void {
     this.loading.set(true);
 
-    this.venues.getMine(this.page(), PAGE_SIZE).subscribe({
+    this.venues.getMine(this.page(), PAGE_SIZE, this.search().trim() || undefined).subscribe({
       next: (page) => {
-        this.loaded.set(page.content ?? []);
+        this.results.set(page.content ?? []);
         this.totalRecords.set(page.totalElements ?? 0);
         this.loading.set(false);
       },
@@ -101,6 +88,16 @@ export class VenueOverview {
         });
       },
     });
+  }
+
+  /** Searches again from the first page once the user stops typing. */
+  protected onSearchChange(term: string): void {
+    this.search.set(term);
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      this.page.set(0);
+      this.load();
+    }, SEARCH_DEBOUNCE_MS);
   }
 
   /** Moves to another page of results. */
@@ -153,7 +150,7 @@ export class VenueOverview {
 
   /** Steps back a page when the last venue on it was just deleted, then reloads. */
   private afterDelete(): void {
-    if (this.loaded().length === 1 && this.page() > 0) {
+    if (this.results().length === 1 && this.page() > 0) {
       this.page.update((page) => page - 1);
     }
 

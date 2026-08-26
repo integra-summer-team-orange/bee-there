@@ -34,9 +34,7 @@ public final class SecurityUtils {
             return user;
         }
 
-        // RESTORE-AUTH: without a login screen most requests arrive with no token at all, so they are
-        // attributed to the seeded development user instead of failing. Restoring auth means dropping this
-        // branch and letting the call fail loudly again.
+        // RESTORE-AUTH: requests arrive without a token, so they act as the seeded development user.
         if (developmentUser != null) {
             return developmentUser;
         }
@@ -45,9 +43,7 @@ public final class SecurityUtils {
     }
 
     public static void checkOwnership(Long ownerId) {
-        // RESTORE-AUTH: ownership is deliberately not enforced while the venue screens are being built
-        // without a login screen. Uncomment the block below to put it back — the call sites in the services
-        // were left in place on purpose so the intent stays visible.
+        // RESTORE-AUTH: uncomment once login lands. The call sites in the services stay as they are.
         //
         // User currentUser = getCurrentUser();
         //
