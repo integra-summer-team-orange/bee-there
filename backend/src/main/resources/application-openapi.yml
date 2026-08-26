@@ -14,6 +14,10 @@ spring:
     console:
       enabled: false
 
+jwt:
+  secret: asdqwe123r24g45h1v930idpmlzka03i93j
+  expiration-ms: 86400000 #24h
+
 # disable anything external
 spring.main.banner-mode: off
 logging.level.root: warn

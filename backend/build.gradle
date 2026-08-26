@@ -80,8 +80,6 @@ openApi {
     outputDir.set(layout.buildDirectory.dir("openapi").get().asFile)
     outputFileName.set("openapi.json")
 
-    waitTimeInSeconds.set(10)
-
     waitTimeInSeconds.set(20)
 
     customBootRun {
@@ -97,7 +95,7 @@ tasks.register('generateAngularClient', GenerateTask) {
 
     outputDir.set(file("${projectDir}/../frontend/src/api/generated").absolutePath)
     apiPackage.set("api")
-    modelPackage.set("models")
+    modelPackage.set("model")
 
     configOptions.set([
         npmName    : "api-client",
