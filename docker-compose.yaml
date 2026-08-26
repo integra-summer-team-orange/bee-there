@@ -1,22 +1,22 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: student-skeleton-db
+    container_name: bee-there-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: bee-there
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pass
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d bee-there" ]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
   db-data:
-    name: student-skeleton-db-data
+    name: bee-there-db-data

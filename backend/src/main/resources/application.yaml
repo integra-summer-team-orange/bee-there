@@ -2,16 +2,16 @@ server:
   port: 8080
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: p39gn67vfql39457th593403nbvunxmzlaien39o
   expiration-ms: 86400000 #24h
 
 spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://localhost:${POSTGRES_PORT:5432}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/bee-there
+    username: admin
+    password: pass
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
