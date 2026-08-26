@@ -17,3 +17,6 @@ spring:
 # disable anything external
 spring.main.banner-mode: off
 logging.level.root: warn
+
+jwt:
+  secret: "un_secret_oarecare_doar_pentru_generarea_openapi_care_sa_fie_lung"

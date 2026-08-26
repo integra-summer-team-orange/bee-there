@@ -97,7 +97,7 @@ tasks.register('generateAngularClient', GenerateTask) {
 
     outputDir.set(file("${projectDir}/../frontend/src/api/generated").absolutePath)
     apiPackage.set("api")
-    modelPackage.set("models")
+    modelPackage.set("model")
 
     configOptions.set([
         npmName    : "api-client",
