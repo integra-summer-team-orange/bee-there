@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.venue;
 
 import static cloudflight.integra.backend.authentication.config.SecurityUtils.checkOwnership;
+import static cloudflight.integra.backend.authentication.config.SecurityUtils.getCurrentUser;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.venue.model.Venue;
@@ -50,6 +51,18 @@ public class VenueService {
     }
 
     /**
+     * Retrieves a paginated list of the venues managed by the currently authenticated user.
+     *
+     * @param page the page index to retrieve (zero-based)
+     * @param size the number of venues to include on each page
+     * @return a {@code Page} containing only the venues the caller manages
+     */
+    public Page<Venue> getManagedByCurrentUser(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findAllByManagedById(getCurrentUser().getId(), pageable);
+    }
+
+    /**
      * Retrieves a specific venue by its unique identifier.
      *
      * @param id The unique identifier of the venue to retrieve.
@@ -60,17 +73,22 @@ public class VenueService {
     }
 
     /**
-     * Persists a new venue in the system.
+     * Persists a new venue in the system, owned by the currently authenticated user.
+     * The managing user is taken from the security context rather than the request, so a caller cannot
+     * create a venue on someone else's behalf.
      *
      * @param venue The {@link Venue} entity containing the data to be saved.
      * @return The saved {@link Venue} entity with its generated ID and creation timestamp.
      */
     public Venue create(Venue venue) {
+        venue.setManagedBy(getCurrentUser());
         return repository.save(venue);
     }
 
     /**
      * Updates an existing venue with new data.
+     * The managing user and creation timestamp are carried over from the stored row, so an update can never
+     * transfer a venue to a different owner.
      *
      * @param id The unique identifier of the venue to be updated.
      * @param venue The {@link Venue} entity containing the updated information.
@@ -86,8 +104,15 @@ public class VenueService {
 
         venue.setId(id);
         venue.setCreatedAt(existing.get().getCreatedAt());
+        venue.setManagedBy(existing.get().getManagedBy());
 
-        return repository.save(venue);
+        repository.save(venue);
+
+        // Saving an entity that already has an id merges it, and the merge hands the managing user back as a
+        // lazy proxy. Re-read through the entity graph so the caller still sees an initialised owner.
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Venue with id: " + id + " not found!"));
     }
 
     /**

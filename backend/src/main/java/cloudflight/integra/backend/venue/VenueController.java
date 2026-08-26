@@ -73,6 +73,27 @@ public class VenueController {
     }
 
     /**
+     * Retrieves a paginated list of the venues managed by the currently authenticated user.
+     *
+     * @param pageNumber The page index to retrieve (zero-based).
+     * @param pageSize The number of venues per page.
+     * @return A {@link ResponseEntity} containing a {@link Page} of {@link VenueDto} with a 200 OK status.
+     */
+    @Operation(
+            summary = "List the venues managed by the current user",
+            description = "Returns a paginated list of the venues the authenticated caller manages. Callers who"
+                    + " manage no venues receive an empty page rather than an error.")
+    @ApiResponse(responseCode = "200", description = "Managed venues retrieved successfully")
+    @GetMapping("/my")
+    public ResponseEntity<Page<VenueDto>> getMine(
+            @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+        Page<Venue> venuePage = service.getManagedByCurrentUser(pageNumber, pageSize);
+
+        return ResponseEntity.ok(venuePage.map(mapper::toDto));
+    }
+
+    /**
      * Retrieves the details of a specific venue based on its ID.
      *
      * @param id The unique identifier of the requested venue.
@@ -122,6 +143,7 @@ public class VenueController {
                                                 {
                                                     "id": 1,
                                                     "managedBy": 1,
+                                                    "managedByName": "Venue Admin",
                                                     "name": "Cloudflight Arena",
                                                     "description": "Indoor hall with 3 basketball courts",
                                                     "address": "Strada Republicii 42, Cluj-Napoca, Romania",
@@ -159,6 +181,7 @@ public class VenueController {
                                                 {
                                                     "id": 1,
                                                     "managedBy": 1,
+                                                    "managedByName": "Venue Admin",
                                                     "name": "Cloudflight Arena - Renovated Wing",
                                                     "description": "Indoor hall, renovated east wing, 4 courts",
                                                     "address": "Strada Republicii 42, Cluj-Napoca, Romania",
@@ -167,6 +190,10 @@ public class VenueController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "The caller does not manage this venue",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "400",
@@ -193,6 +220,10 @@ public class VenueController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "The caller does not manage this venue",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{id}")

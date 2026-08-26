@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import cloudflight.integra.backend.user.model.Role;
 import cloudflight.integra.backend.venue.VenueRepository;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +23,19 @@ public class VenueIntegrationTest extends AbstractIntegrationTest {
     }
 
     private VenueDto createValidVenueDto(String name) {
-        return new VenueDto(null, adminUserId, name, "Test Description", "123 Test St", null);
+        return new VenueDto(null, null, null, name, "Test Description", "123 Test St", null);
+    }
+
+    private Long createVenue(String name, String token) throws Exception {
+        String response = mockMvc.perform(authed(post("/api/venues"), token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createValidVenueDto(name))))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return objectMapper.readTree(response).get("id").asLong();
     }
 
     @Test
@@ -35,6 +48,7 @@ public class VenueIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.managedBy").value(adminUserId))
+                .andExpect(jsonPath("$.managedByName").value("Test ADMIN"))
                 .andExpect(jsonPath("$.name").value("Main Hall"))
                 .andExpect(jsonPath("$.description").value("Test Description"))
                 .andExpect(jsonPath("$.address").value("123 Test St"))
@@ -42,13 +56,15 @@ public class VenueIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldReturnClean400WhenManagedByDoesNotExist() throws Exception {
-        VenueDto request = new VenueDto(null, 99999L, "Main Hall", "A large hall", "123 Main St", null);
+    void shouldIgnoreManagedByFromThePayloadAndUseTheCaller() throws Exception {
+        VenueDto request = new VenueDto(null, 99999L, "Someone Else", "Main Hall", "A large hall", "123 Main St", null);
 
         mockMvc.perform(authed(post("/api/venues"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.managedBy").value(adminUserId))
+                .andExpect(jsonPath("$.managedByName").value("Test ADMIN"));
     }
 
     @Test
@@ -86,7 +102,7 @@ public class VenueIntegrationTest extends AbstractIntegrationTest {
 
         Long id = objectMapper.readTree(response).get("id").asLong();
 
-        VenueDto updateRequest = new VenueDto(null, adminUserId, "New Name", "New Desc", "New Address", null);
+        VenueDto updateRequest = new VenueDto(null, null, null, "New Name", "New Desc", "New Address", null);
 
         mockMvc.perform(authed(put("/api/venues/{id}", id))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -148,5 +164,44 @@ public class VenueIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[*].name", containsInAnyOrder("Venue 1", "Venue 2")));
+    }
+
+    @Test
+    void shouldListOnlyTheVenuesManagedByTheCaller() throws Exception {
+        AuthenticatedUser venueAdmin = registerAndLogin("venue.admin@example.com", DEFAULT_PASSWORD, Role.VENUE_ADMIN);
+
+        createVenue("Admin Venue", adminToken);
+        createVenue("Managed Venue", venueAdmin.token());
+
+        mockMvc.perform(authed(get("/api/venues/my"), venueAdmin.token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].name").value("Managed Venue"))
+                .andExpect(jsonPath("$.content[0].managedBy").value(venueAdmin.id()));
+    }
+
+    @Test
+    void shouldReturnAnEmptyPageWhenTheCallerManagesNoVenues() throws Exception {
+        AuthenticatedUser participant = registerAndLogin("participant@example.com", DEFAULT_PASSWORD, Role.PARTICIPANT);
+
+        createVenue("Admin Venue", adminToken);
+
+        mockMvc.perform(authed(get("/api/venues/my"), participant.token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)));
+    }
+
+    @Test
+    void shouldKeepTheOriginalOwnerWhenUpdating() throws Exception {
+        AuthenticatedUser venueAdmin = registerAndLogin("venue.admin@example.com", DEFAULT_PASSWORD, Role.VENUE_ADMIN);
+        Long venueId = createVenue("Managed Venue", venueAdmin.token());
+
+        VenueDto handover = new VenueDto(null, adminUserId, "Test ADMIN", "Managed Venue", "Desc", "Address", null);
+
+        mockMvc.perform(authed(put("/api/venues/{id}", venueId), venueAdmin.token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(handover)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.managedBy").value(venueAdmin.id()));
     }
 }

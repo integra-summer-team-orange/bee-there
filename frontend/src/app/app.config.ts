@@ -1,17 +1,20 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
-import { providePrimeNG } from 'primeng/config';
-
-import {provideHttpClient, withInterceptors} from '@angular/common/http';
-
-import {provideApi} from '../api/generated';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { routes } from './app.routes';
+import { providePrimeNG } from 'primeng/config';
+import { provideApi } from '../api/generated';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
-import {authInterceptor} from './auth/auth.interceptor';
 
+/**
+ * Aura with the violet from the design as the primary colour. Aura ships with emerald, which is why every
+ * button came out green. Only the palette is overridden; every other Aura default is left alone.
+ */
 const IntegraPreset = definePreset(Aura, {
   semantic: {
     primary: {
@@ -32,21 +35,22 @@ const IntegraPreset = definePreset(Aura, {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    ),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
+    // Requests go out same-origin and the dev server proxies /api to the backend (see proxy.conf.json),
+    // which keeps the browser away from CORS entirely.
     provideApi(''),
+    MessageService,
+    ConfirmationService,
     providePrimeNG({
       theme: {
         preset: IntegraPreset,
         options: {
-          darkModeSelector: '.my-app-dark'
-        }
-      }
-    })
-  ]
+          darkModeSelector: '.my-app-dark',
+        },
+      },
+    }),
+  ],
 };
