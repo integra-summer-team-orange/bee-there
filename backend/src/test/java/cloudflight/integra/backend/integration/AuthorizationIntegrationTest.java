@@ -16,10 +16,15 @@ import cloudflight.integra.backend.venue.model.VenueDto;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
+@Disabled("RESTORE-AUTH: authorization is switched off while the venue screens are built without a login "
+        + "screen, so every 401, 403 and ownership expectation in this class currently describes behaviour "
+        + "the application no longer has. Re-enable this class in the same change that restores the matchers "
+        + "in SecurityConfiguration and the body of SecurityUtils.checkOwnership.")
 public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -38,11 +43,11 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
     void setUp() throws Exception {
         participant = registerAndLogin("participant@example.com", DEFAULT_PASSWORD, Role.PARTICIPANT);
         venueAdmin = registerAndLogin("venue.admin@example.com", DEFAULT_PASSWORD, Role.VENUE_ADMIN);
-        adminVenueId = createVenue("Admin Venue", adminUserId, adminToken);
+        adminVenueId = createVenue("Admin Venue", adminToken);
     }
 
-    private Long createVenue(String name, Long ownerId, String token) throws Exception {
-        VenueDto request = new VenueDto(null, ownerId, name, "Test Description", "1 Test St", null);
+    private Long createVenue(String name, String token) throws Exception {
+        VenueDto request = new VenueDto(null, null, null, name, "Test Description", "1 Test St", null);
 
         String response = mockMvc.perform(authed(post("/api/venues"), token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,6 +63,7 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
     @Test
     void shouldReturn401WhenNoTokenIsSent() throws Exception {
         mockMvc.perform(get("/api/venues")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/venues/my")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/resources")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/inventory")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/users")).andExpect(status().isUnauthorized());
@@ -66,7 +72,7 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn401WhenWritingWithoutToken() throws Exception {
-        VenueDto request = new VenueDto(null, adminUserId, "No Token Venue", "Nope", "1 Nope St", null);
+        VenueDto request = new VenueDto(null, null, null, "No Token Venue", "Nope", "1 Nope St", null);
 
         mockMvc.perform(post("/api/venues")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,8 +94,7 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldReturn403WhenParticipantWritesToVenues() throws Exception {
-        VenueDto request =
-                new VenueDto(null, participant.id(), "Participant Venue", "Not allowed", "1 Denied St", null);
+        VenueDto request = new VenueDto(null, null, null, "Participant Venue", "Not allowed", "1 Denied St", null);
 
         mockMvc.perform(authed(post("/api/venues"), participant.token())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +134,7 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAllowVenueAdminToWriteVenues() throws Exception {
-        VenueDto request = new VenueDto(null, venueAdmin.id(), "Venue Admin Venue", "Allowed", "1 Allowed St", null);
+        VenueDto request = new VenueDto(null, null, null, "Venue Admin Venue", "Allowed", "1 Allowed St", null);
 
         mockMvc.perform(authed(post("/api/venues"), venueAdmin.token())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -201,7 +206,7 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAllowVenueAdminDeletingItsOwnVenue() throws Exception {
-        Long ownVenueId = createVenue("Own Venue", venueAdmin.id(), venueAdmin.token());
+        Long ownVenueId = createVenue("Own Venue", venueAdmin.token());
 
         mockMvc.perform(authed(delete("/api/venues/{id}", ownVenueId), venueAdmin.token()))
                 .andExpect(status().isNoContent());
@@ -209,7 +214,7 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldDenyVenueAdminUpdatingAVenueItDoesNotOwnWhileClaimingOwnership() throws Exception {
-        VenueDto hijack = new VenueDto(null, venueAdmin.id(), "Taken Over", "hijacked", "1 Evil St", null);
+        VenueDto hijack = new VenueDto(null, null, null, "Taken Over", "hijacked", "1 Evil St", null);
 
         mockMvc.perform(authed(put("/api/venues/{id}", adminVenueId), venueAdmin.token())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -226,9 +231,9 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAllowVenueAdminUpdatingItsOwnVenue() throws Exception {
-        Long ownVenueId = createVenue("Own Venue", venueAdmin.id(), venueAdmin.token());
+        Long ownVenueId = createVenue("Own Venue", venueAdmin.token());
 
-        VenueDto update = new VenueDto(null, venueAdmin.id(), "Renamed Venue", "Updated", "2 Allowed St", null);
+        VenueDto update = new VenueDto(null, null, null, "Renamed Venue", "Updated", "2 Allowed St", null);
 
         mockMvc.perform(authed(put("/api/venues/{id}", ownVenueId), venueAdmin.token())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -239,9 +244,9 @@ public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAllowAdminToUpdateAVenueOwnedBySomeoneElse() throws Exception {
-        Long ownVenueId = createVenue("Venue Admin Venue", venueAdmin.id(), venueAdmin.token());
+        Long ownVenueId = createVenue("Venue Admin Venue", venueAdmin.token());
 
-        VenueDto update = new VenueDto(null, venueAdmin.id(), "Renamed By Admin", "Updated", "3 Admin St", null);
+        VenueDto update = new VenueDto(null, null, null, "Renamed By Admin", "Updated", "3 Admin St", null);
 
         mockMvc.perform(authed(put("/api/venues/{id}", ownVenueId))
                         .contentType(MediaType.APPLICATION_JSON)

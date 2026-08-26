@@ -1,4 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+/*
+ * Brand palette taken from the design. PrimeNG's own components are themed through the Aura preset in
+ * app.config.ts; these variables exist so anything hand-written (header, footer, page chrome) can reach for
+ * the same colours instead of inventing new ones.
+ */
+:root {
+  --brand-yellow: #f6e05e;
+  --brand-yellow-soft: #fdf6c3;
+  --brand-violet: #8b5cf6;
+  --brand-violet-strong: #6d43e8;
+  --brand-ink: #1f2430;
+  --brand-muted: #6b7280;
+  --brand-surface: #ffffff;
+  --brand-surface-sunken: #f3f4f6;
+  --brand-border: #e5e7eb;
+}
+
+body {
+  color: var(--brand-ink);
+}
 
 @theme {
   /* =========================================

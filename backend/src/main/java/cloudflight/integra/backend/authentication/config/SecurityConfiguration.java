@@ -4,7 +4,6 @@ import cloudflight.integra.backend.authentication.AuthEntryPointJwt;
 import cloudflight.integra.backend.authentication.AuthenticationTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,42 +39,48 @@ public class SecurityConfiguration {
                                 ::disable) // todo: this can limit so only our site sends requests to this api
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        // openapi & swagger
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                        .permitAll()
 
-                        // login/register
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
+                // RESTORE-AUTH: the rules below are switched off until the login screen exists. The filter
+                // still runs, so a request that carries a valid token is authenticated as usual.
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 
-                        // venues
-                        .requestMatchers(HttpMethod.GET, "/api/venues/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
-                        .requestMatchers("/api/venues/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN")
+                // .authorizeHttpRequests(auth -> auth
+                //         // openapi & swagger
+                //         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                //         .permitAll()
+                //
+                //         // login/register
+                //         .requestMatchers("/api/auth/**")
+                //         .permitAll()
+                //
+                //         // venues
+                //         .requestMatchers(HttpMethod.GET, "/api/venues/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
+                //         .requestMatchers("/api/venues/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN")
+                //
+                //         // users
+                //         .requestMatchers("/api/users/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
+                //
+                //         // todo:add for notification when is implemented get for user
+                //
+                //         // inventory
+                //         .requestMatchers(HttpMethod.GET, "/api/inventory/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
+                //         .requestMatchers("/api/inventory/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN")
+                //
+                //         // resources
+                //         .requestMatchers(HttpMethod.GET, "/api/resources/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
+                //         .requestMatchers("/api/resources/**")
+                //         .hasAnyRole("ADMIN", "VENUE_ADMIN")
+                //
+                //         // everything else
+                //         .anyRequest()
+                //         .hasRole("ADMIN"))
 
-                        // users
-                        .requestMatchers("/api/users/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
-
-                        // todo:add for notification when is implemented get for user
-
-                        // inventory
-                        .requestMatchers(HttpMethod.GET, "/api/inventory/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
-                        .requestMatchers("/api/inventory/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN")
-
-                        // resources
-                        .requestMatchers(HttpMethod.GET, "/api/resources/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
-                        .requestMatchers("/api/resources/**")
-                        .hasAnyRole("ADMIN", "VENUE_ADMIN")
-
-                        // everything else
-                        .anyRequest()
-                        .hasRole("ADMIN"))
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
