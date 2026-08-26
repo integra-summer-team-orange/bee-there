@@ -77,12 +77,7 @@ export class VenueDetail {
   /** Whether the signed-in user may edit this venue. */
   protected readonly manageable = computed(() => this.session.canManage(this.venue()?.managedBy));
 
-  /**
-   * True while the form is actually editable.
-   *
-   * The edit route can be opened directly, so reaching it is not enough: a venue someone else manages stays
-   * read-only here, which matches the refusal the backend would return anyway.
-   */
+  /** True while the form is editable. The edit route can be opened directly, so reaching it is not enough. */
   protected readonly editing = computed(
     () => this.mode() === 'create' || (this.mode() === 'edit' && this.manageable()),
   );
@@ -205,20 +200,22 @@ export class VenueDetail {
   }
 
   /**
-   * Loads the resources and inventory belonging to this venue.
-   *
-   * Neither endpoint can filter by venue yet, so a generous page is fetched and narrowed here. A failure is
-   * swallowed on purpose: these summary cards are secondary and must not take the whole screen down with them.
+   * Loads the resources and inventory belonging to this venue. Neither endpoint can filter by venue yet,
+   * so a large page is fetched and narrowed here. Failures are swallowed, the cards are secondary.
    */
   private loadRelated(id: number): void {
     forkJoin({
       resources: this.resources.getAll2(0, RELATED_PAGE_SIZE).pipe(catchError(() => of(null))),
       inventory: this.inventory.getAll4(0, RELATED_PAGE_SIZE).pipe(catchError(() => of([]))),
     }).subscribe(({ resources, inventory }) => {
-      const all = (resources?.content ?? []) as ResourceDto[];
+      const allResources = (resources?.content ?? []) as ResourceDto[];
+      // /api/inventory has two overloads on one path, so the spec says array while this call answers a page.
+      const allInventory = Array.isArray(inventory)
+        ? inventory
+        : ((inventory as { content?: InventoryDto[] }).content ?? []);
 
-      this.venueResources.set(all.filter((resource) => resource.venueId === id));
-      this.venueInventory.set(inventory.filter((item) => item.venueId === id));
+      this.venueResources.set(allResources.filter((resource) => resource.venueId === id));
+      this.venueInventory.set(allInventory.filter((item) => item.venueId === id));
     });
   }
 }

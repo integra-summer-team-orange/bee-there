@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,6 +78,7 @@ public class VenueController {
      *
      * @param pageNumber The page index to retrieve (zero-based).
      * @param pageSize The number of venues per page.
+     * @param search Text matched against the venue name and address, or {@code null} for no filtering.
      * @return A {@link ResponseEntity} containing a {@link Page} of {@link VenueDto} with a 200 OK status.
      */
     @Operation(
@@ -84,11 +86,14 @@ public class VenueController {
             description = "Returns a paginated list of the venues the authenticated caller manages. Callers who"
                     + " manage no venues receive an empty page rather than an error.")
     @ApiResponse(responseCode = "200", description = "Managed venues retrieved successfully")
-    @GetMapping("/my")
+    @GetMapping(value = "/my", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<VenueDto>> getMine(
             @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
-            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
-        Page<Venue> venuePage = service.getManagedByCurrentUser(pageNumber, pageSize);
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
+            @Parameter(description = "Text matched against the venue name and address")
+                    @RequestParam(required = false, name = "search")
+                    String search) {
+        Page<Venue> venuePage = service.getManagedByCurrentUser(pageNumber, pageSize, search);
 
         return ResponseEntity.ok(venuePage.map(mapper::toDto));
     }

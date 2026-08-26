@@ -27,9 +27,7 @@ describe('authInterceptor', () => {
   });
 
   it('ignores a token left in storage while authorization is switched off', () => {
-    // RESTORE-AUTH: a stale token used to be attached to every request, which made the backend attribute
-    // the call to that user instead of the seeded development account — "my venues" then came back empty
-    // with nothing on screen to explain why. This expectation flips once login lands.
+    // RESTORE-AUTH: this expectation flips once login lands.
     TestBed.inject(Session).setToken(
       `header.${btoa(JSON.stringify({ userId: 99, role: 'ADMIN' }))}.signature`,
     );

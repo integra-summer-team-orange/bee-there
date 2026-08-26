@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -55,4 +57,22 @@ public interface VenueRepository extends JpaRepository<Venue, Long> {
      */
     @EntityGraph(attributePaths = "managedBy")
     Page<Venue> findAllByManagedById(Long managedById, Pageable pageable);
+
+    /**
+     * Retrieves a page of the venues managed by a given user whose name or address contains the search text.
+     *
+     * @param managedById the id of the managing user
+     * @param search the text to look for, matched case-insensitively
+     * @param pageable the requested page and size
+     * @return a page containing only the matching venues
+     */
+    @EntityGraph(attributePaths = "managedBy")
+    @Query("""
+            select v from Venue v
+            where v.managedBy.id = :managedById
+              and (lower(v.name) like lower(concat('%', :search, '%'))
+                or lower(v.address) like lower(concat('%', :search, '%')))
+            """)
+    Page<Venue> findAllByManagedByIdMatching(
+            @Param("managedById") Long managedById, @Param("search") String search, Pageable pageable);
 }

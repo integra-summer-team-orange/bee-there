@@ -51,15 +51,23 @@ public class VenueService {
     }
 
     /**
-     * Retrieves a paginated list of the venues managed by the currently authenticated user.
+     * Retrieves a paginated list of the venues managed by the currently authenticated user, optionally
+     * narrowed to those whose name or address contains the search text.
      *
      * @param page the page index to retrieve (zero-based)
      * @param size the number of venues to include on each page
+     * @param search the text to match against name and address, or {@code null} for no filtering
      * @return a {@code Page} containing only the venues the caller manages
      */
-    public Page<Venue> getManagedByCurrentUser(int page, int size) {
+    public Page<Venue> getManagedByCurrentUser(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size);
-        return repository.findAllByManagedById(getCurrentUser().getId(), pageable);
+        Long managedById = getCurrentUser().getId();
+
+        if (search == null || search.isBlank()) {
+            return repository.findAllByManagedById(managedById, pageable);
+        }
+
+        return repository.findAllByManagedByIdMatching(managedById, search.trim(), pageable);
     }
 
     /**

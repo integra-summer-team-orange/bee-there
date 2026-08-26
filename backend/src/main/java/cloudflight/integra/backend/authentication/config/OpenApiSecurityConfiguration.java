@@ -10,12 +10,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Security wiring that applies only while the OpenAPI document is being exported.
- *
- * <p>The main {@link SecurityConfiguration} falls back to {@code anyRequest().hasRole("ADMIN")}, which also
- * covers {@code /v3/api-docs}. That makes the spec unreachable for the Gradle task that boots the app purely to
- * scrape it, so {@code generateAngularClient} cannot produce a client. This chain takes precedence under the
- * throwaway {@code openapi} profile and opens the app up, leaving every other profile untouched.
+ * Security wiring for the spec-export run. {@link SecurityConfiguration} locks down {@code /v3/api-docs}
+ * too, which leaves {@code generateAngularClient} with no spec to read.
  */
 @Configuration
 @Profile("openapi")
