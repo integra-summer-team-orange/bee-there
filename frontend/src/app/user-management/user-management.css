@@ -1,0 +1,23 @@
+.top-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-input {
+  border-color: black;
+  border-radius: 16px;
+}
+
+:host ::ng-deep .add-user-button{
+  --p-button-primary-background: #8069BF;
+  --p-button-primary-hover-background: #8069BF;
+  --p-button-primary-active-background: #8069BF;
+  --p-button-primary-color: #ffffff;
+}
