@@ -1,9 +1,10 @@
 import {Routes} from '@angular/router';
-import {Home} from './features/home/home';
+import {UserManagement} from './user-management/user-management';
+
 
 export const routes: Routes = [
   {
     path: '',
-    component: Home,
+    component: UserManagement,
   }
 ];
