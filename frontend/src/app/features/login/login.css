@@ -1,0 +1,20 @@
+:host {
+  font-family: 'Inter', sans-serif;
+
+  --p-button-primary-background: #CCAA20;
+  --p-button-primary-hover-background: #B89A1D;
+  --p-button-primary-active-background: #A38617;
+  --p-button-primary-color: #FFFFFF;
+  --p-button-border-radius: 6px;
+
+  --p-checkbox-checked-background: #CCAA20;
+  --p-checkbox-checked-border-color: #CCAA20;
+  --p-checkbox-checked-hover-background: #B89A1D;
+  --p-checkbox-checked-hover-border-color: #B89A1D;
+  --p-checkbox-border-radius: 6px;
+
+  --p-inputtext-border-color: #CCAA20;
+  --p-inputtext-hover-border-color: #CCAA20;
+  --p-inputtext-focus-border-color: #CCAA20;
+  --p-inputtext-border-radius: 6px;
+}
