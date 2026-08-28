@@ -1,0 +1,34 @@
+<header class="flex items-center justify-between px-8 py-4 bg-tertiary-fixed shadow-sm">
+
+  <!-- Left side: Logo -->
+  <div class="flex items-center gap-2 cursor-pointer" routerLink="/">
+    <!-- Placeholder for logo-->
+    <span class="text-4xl font-bold text-on-tertiary-fixed-variant tracking-wide">BeeThere</span>
+  </div>
+
+  <!-- Center: Navigation -->
+  <nav>
+    <!-- todo: dynamic role -->
+    <ul class="flex items-center gap-8 font-semibold text-on-surface text-lg">
+      <li><a routerLink="/dashboard" class="hover:text-general-highlight transition-colors">Dashboard</a></li>
+      <li><a routerLink="/management" class="text-general-highlight">Management</a></li>
+      <li><a routerLink="/venues" class="hover:text-general-highlight transition-colors">Venues</a></li>
+      <li><a routerLink="/reservations" class="hover:text-general-highlight transition-colors">My Reservations</a></li>
+      <li><a routerLink="/contact" class="hover:text-general-highlight transition-colors">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Right side: User Profile -->
+  <div class="flex items-center gap-4">
+    <!-- todo: dynamic role -->
+    <span class="font-medium text-on-surface text-lg">Admin</span>
+
+    <p-avatar
+      label="A"
+      class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
+      size="large"
+      shape="circle">
+    </p-avatar>
+  </div>
+
+</header>

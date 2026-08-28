@@ -1,13 +1,7 @@
-<div class="min-h-screen flex flex-col justify-between">
-  <header>
-    <h1>My Application</h1>
-  </header>
+<app-header></app-header>
 
-  <main class="m-4 flex-grow">
-    <router-outlet/>
-  </main>
+<main class="min-h-screen">
+  <router-outlet></router-outlet>
+</main>
 
-  <footer class="text-center text-xs">
-    <app-about/>
-  </footer>
-</div>
+<app-footer></app-footer>
