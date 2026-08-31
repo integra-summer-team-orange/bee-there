@@ -1,0 +1,33 @@
+<div class="user-card">
+
+  <div class="user-info">
+    <h3>{{ user().name }}</h3>
+
+    <p>{{ user().email }}</p>
+    <p>{{ user().phone }}</p>
+    <p>{{ user().role }}</p>
+  </div>
+
+  <div class="actions">
+
+    <p-button
+      label="Details"
+      styleClass="details-button"
+      (onClick)="onDetails()">
+    </p-button>
+
+    <p-button
+      label="Edit"
+      styleClass="edit-button"
+      (onClick)="onEdit()">
+    </p-button>
+
+    <p-button
+      label="Delete"
+      class="delete-button"
+      (onClick)="onDelete()">
+    </p-button>
+
+  </div>
+
+</div>

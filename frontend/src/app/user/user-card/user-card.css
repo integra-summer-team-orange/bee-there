@@ -1,0 +1,72 @@
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-info h3 {
+  margin: 0;
+}
+
+.user-info p {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* buttons */
+
+:host ::ng-deep .details-button {
+  --p-button-primary-background: purple;
+  --p-button-primary-hover-background: purple;
+  --p-button-primary-active-background: purple;
+
+  --p-button-primary-border-color: purple;
+  --p-button-primary-hover-border-color: purple;
+  --p-button-primary-active-border-color: purple;
+
+  --p-button-primary-color: white;
+  --p-button-primary-hover-color: white;
+  --p-button-primary-active-color: white;
+}
+
+:host ::ng-deep .edit-button {
+  --p-button-primary-background: white;
+  --p-button-primary-hover-background: white;
+  --p-button-primary-active-background: white;
+
+  --p-button-primary-border-color: black;
+  --p-button-primary-hover-border-color: black;
+  --p-button-primary-active-border-color: black;
+
+  --p-button-primary-color: black;
+  --p-button-primary-hover-color: black;
+  --p-button-primary-active-color: black;
+}
+
+:host ::ng-deep .delete-button {
+  --p-button-primary-background: white;
+  --p-button-primary-hover-background: white;
+  --p-button-primary-active-background: white;
+
+  --p-button-primary-border-color: black;
+  --p-button-primary-hover-border-color: black;
+  --p-button-primary-active-border-color: black;
+
+  --p-button-primary-color: red;
+  --p-button-primary-hover-color: red;
+  --p-button-primary-active-color: red;
+}
