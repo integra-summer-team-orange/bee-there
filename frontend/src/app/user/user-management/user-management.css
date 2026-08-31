@@ -1,0 +1,36 @@
+.top-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-input {
+  border-color: black;
+  border-radius: 16px;
+}
+
+.users {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+:host ::ng-deep .add-user-button {
+  --p-button-primary-background: purple;
+  --p-button-primary-hover-background: purple;
+  --p-button-primary-active-background: purple;
+
+  --p-button-primary-border-color: purple;
+  --p-button-primary-hover-border-color: purple;
+  --p-button-primary-active-border-color: purple;
+
+  --p-button-primary-color: white;
+  --p-button-primary-hover-color: white;
+  --p-button-primary-active-color: white;
+}
