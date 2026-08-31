@@ -1,0 +1,43 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.field input,
+.field p-select {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+
+:host ::ng-deep .save-button{
+
+  --p-button-primary-background: purple;
+  --p-button-primary-hover-background: purple;
+  --p-button-primary-active-background: purple;
+
+  --p-button-primary-border-color: purple;
+  --p-button-primary-hover-border-color: purple;
+  --p-button-primary-active-border-color: purple;
+
+  --p-button-primary-color: white;
+  --p-button-primary-hover-color: white;
+  --p-button-primary-active-color: white;
+}
