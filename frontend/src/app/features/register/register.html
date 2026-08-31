@@ -10,31 +10,67 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-col gap-6 w-full">
+    <form (ngSubmit)="onSubmit()" class="flex flex-col gap-6 w-full">
       <div class="flex flex-col gap-2 w-full">
         <label for="name1" class="text-[14px] font-medium leading-normal text-[#494551]">Name</label>
-        <input pInputText id="name1" type="text" placeholder="Full name" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        <input [formControl]="name" pInputText id="name1" type="text" placeholder="Full name" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        @if (name.invalid && name.touched) {
+          <span class="text-[12px] text-red-600">Name is required.</span>
+        }
       </div>
       <div class="flex flex-col gap-2 w-full">
         <label for="phone1" class="text-[14px] font-medium leading-normal text-[#494551]">Phone</label>
-        <input pInputText id="phone1" type="text" placeholder="Phone number" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        <input [formControl]="phone" pInputText id="phone1" type="text" placeholder="Phone number" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        @if (phone.invalid && phone.touched) {
+          <span class="text-[12px] text-red-600">
+            @if (phone.hasError('required')) {
+              Phone is required.
+            } @else if (phone.hasError('pattern')) {
+              Enter a valid phone number (digits only, optional leading +).
+            }
+          </span>
+        }
       </div>
       <div class="flex flex-col gap-2 w-full">
         <label for="email1" class="text-[14px] font-medium leading-normal text-[#494551]">Email Address</label>
-        <input pInputText id="email1" type="text" placeholder="Email address" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        <input [formControl]="email" pInputText id="email1" type="text" placeholder="Email address" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        @if (email.invalid && email.touched) {
+          <span class="text-[12px] text-red-600">
+            @if (email.hasError('required')) {
+              Email is required.
+            } @else if (email.hasError('email')) {
+              Enter a valid email address.
+            }
+          </span>
+        }
       </div>
       <div class="flex flex-col gap-2 w-full">
         <label for="password1" class="text-[14px] font-medium leading-normal text-[#494551]">Password</label>
-        <input pInputText id="password1" type="password" placeholder="Password" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        <input [formControl]="password" pInputText id="password1" type="password" placeholder="Password" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        @if (password.invalid && password.touched) {
+          <span class="text-[12px] text-red-600">Password is required.</span>
+        }
       </div>
       <div class="flex flex-col gap-2 w-full">
         <label for="confirmpassword1" class="text-[14px] font-medium leading-normal text-[#494551]">Confirm Password</label>
-        <input pInputText id="confirmpassword1" type="password" placeholder="Confirm password" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        <input [formControl]="confirmPassword" pInputText id="confirmpassword1" type="password" placeholder="Confirm password" class="w-full px-3 py-2 shadow-sm rounded-[6px] text-[16px] font-normal text-[#1E1E1E]" />
+        @if (confirmPassword.invalid && confirmPassword.touched) {
+          <span class="text-[12px] text-red-600">
+            @if (confirmPassword.hasError('required')) {
+              Please confirm your password.
+            } @else if (confirmPassword.hasError('mismatch')) {
+              Passwords do not match.
+            }
+          </span>
+        }
       </div>
-    </div>
-    <button pButton class="w-full py-2 rounded-[6px] flex justify-center items-center gap-2">
-      <i pButtonIcon class="pi pi-user text-base! leading-normal!"></i>
-      <span pButtonLabel class="text-[16px] font-bold">Create Account</span>
-    </button>
+      @if (errorMessage()) {
+        <div class="text-[14px] text-red-600">{{ errorMessage() }}</div>
+      }
+      <button pButton type="submit" class="w-full py-2 rounded-[6px] flex justify-center items-center gap-2">
+        <i pButtonIcon class="pi pi-user text-base! leading-normal!"></i>
+        <span pButtonLabel class="text-[16px] font-bold">Create Account</span>
+      </button>
+    </form>
   </div>
 </div>
