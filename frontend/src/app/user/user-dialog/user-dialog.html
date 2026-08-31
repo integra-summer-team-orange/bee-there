@@ -1,0 +1,106 @@
+<p-dialog
+  [header]="
+    mode() === 'add'
+      ? 'Add user'
+      : mode() === 'edit'
+        ? 'Edit user'
+        : 'User details'
+  "
+  [visible]="visible()"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onHide)="close()">
+
+  <form [formGroup]="form">
+
+    <div class="form">
+
+      <div class="field">
+        <label for="name">Name</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.name }}</span>
+        } @else {
+          <input
+            pInputText
+            id="name"
+            formControlName="name"
+            placeholder="Name"
+          />
+        }
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.email }}</span>
+        } @else {
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            placeholder="Email"
+          />
+        }
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.phone }}</span>
+        } @else {
+          <input
+            pInputText
+            id="phone"
+            formControlName="phone"
+            placeholder="Phone"
+          />
+        }
+      </div>
+
+      <div class="field">
+        <label for="role">Role</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.role }}</span>
+        } @else {
+          <p-select
+            id="role"
+            formControlName="role"
+            [options]="roles"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select role">
+          </p-select>
+        }
+      </div>
+
+    </div>
+
+  </form>
+
+  <div class="actions">
+
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="close()">
+    </p-button>
+    @if (mode() !== 'details') {
+
+      <p-button
+        label="Save"
+        styleClass="save-button"
+        icon="pi pi-plus"
+        (onClick)="submit()">
+      </p-button>
+    }
+
+
+
+
+  </div>
+
+</p-dialog>
