@@ -16,15 +16,10 @@ import cloudflight.integra.backend.venue.model.VenueDto;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-@Disabled("RESTORE-AUTH: authorization is switched off while the venue screens are built without a login "
-        + "screen, so every 401, 403 and ownership expectation in this class currently describes behaviour "
-        + "the application no longer has. Re-enable this class in the same change that restores the matchers "
-        + "in SecurityConfiguration and the body of SecurityUtils.checkOwnership.")
 public class AuthorizationIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired

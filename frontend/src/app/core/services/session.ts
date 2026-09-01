@@ -5,7 +5,7 @@ export const TOKEN_STORAGE_KEY = 'integra.token';
 
 /**
  * RESTORE-AUTH: there is no login screen yet, so a leftover token would attribute requests to that user
- * instead of the seeded development account. Set this to false once login lands.
+ * instead of the development account the backend falls back to. Set this to false once login lands.
  */
 export const AUTH_DISABLED = true;
 
@@ -66,7 +66,7 @@ export class Session {
 
   /** True when the given user id is the signed-in user, or when the signed-in user is an admin. */
   canManage(ownerId: number | null | undefined): boolean {
-    // RESTORE-AUTH: the backend does not enforce ownership either while login is missing.
+    // RESTORE-AUTH: the backend attributes tokenless requests to an ADMIN development account.
     if (this.claims() === null) {
       return true;
     }
