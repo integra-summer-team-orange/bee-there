@@ -64,9 +64,9 @@ public class UserController {
             })
     public ResponseEntity<Page<UserResponseDto>> getAllUsers(
             @Parameter(description = "Number of the desired page (0-based index)", example = "0", required = true)
-                    @RequestParam
+                    @RequestParam(defaultValue = "0")
                     int pageNumber,
-            @Parameter(description = "Size of page", example = "10", required = true) @RequestParam int pageSize) {
+            @Parameter(description = "Size of page", example = "10", required = true) @RequestParam(defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(userService.getAll(pageNumber, pageSize).map(userMapper::toDto));
     }
 
