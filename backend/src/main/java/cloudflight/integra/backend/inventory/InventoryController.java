@@ -5,7 +5,6 @@ import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.inventory.model.InventoryDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,66 +41,41 @@ public class InventoryController {
     }
 
     /**
-     * Retrieves a list of all inventory items present in the system.
-     *
-     * @return A {@link ResponseEntity} containing a list of {@link InventoryDto} with a 200 OK status.
-     */
-    @GetMapping
-    @Operation(summary = "Get all inventory items", description = "Retrieves a list of all inventory items.")
-    @ApiResponses(
-            value = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Successfully retrieved inventory items",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        array = @ArraySchema(schema = @Schema(implementation = InventoryDto.class)))),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)))
-            })
-    public ResponseEntity<List<InventoryDto>> getAll() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
-    }
-
-    /**
      * Retrieves a paginated list of inventory items.
      *
      * @param pageNumber the zero-based page index to retrieve
      * @param pageSize   the maximum number of items to return per page
      * @return A {@link ResponseEntity} containing the requested page of {@link InventoryDto} with a 200 OK status.
      */
-    @GetMapping(params = {"pageNumber", "pageSize"})
+    @GetMapping
     @Operation(
             summary = "Get all inventory items paged",
             description = "Retrieves a list of all inventory items paged.")
     @ApiResponses(
             value = {
+                @ApiResponse(responseCode = "200", description = "Successfully retrieved paged inventory items"),
                 @ApiResponse(
-                        responseCode = "200",
-                        description = "Successfully retrieved paged inventory items",
+                        responseCode = "400",
+                        description = "Invalid pagination parameters",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = Page.class))),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
-                        description = "Internal server error",
+                        description = "Internal server error occurred",
                         content =
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Page<InventoryDto>> getAll(
+    public ResponseEntity<Page<InventoryDto>> getAllInventoryItems(
             @Parameter(description = "Number of the desired page (0-based index)", example = "0", required = true)
-                    @RequestParam
+                    @RequestParam(defaultValue = "0", name = "pageNumber")
                     int pageNumber,
-            @Parameter(description = "Size of page", example = "10", required = true) @RequestParam int pageSize) {
+            @Parameter(description = "Size of page", example = "10", required = true)
+                    @RequestParam(defaultValue = "10", name = "pageSize")
+                    int pageSize) {
         return ResponseEntity.ok(service.getAll(pageNumber, pageSize).map(mapper::toDto));
     }
 
@@ -148,7 +121,7 @@ public class InventoryController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<InventoryDto> getById(
+    public ResponseEntity<InventoryDto> getInventoryItemById(
             @Parameter(description = "ID of the inventory item to retrieve", example = "1", required = true)
                     @PathVariable
                     Long id) {
@@ -199,7 +172,7 @@ public class InventoryController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<InventoryDto> create(
+    public ResponseEntity<InventoryDto> createInventoryItem(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             required = true,
                             description = "InventoryDto for create",
@@ -275,7 +248,7 @@ public class InventoryController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<InventoryDto> update(
+    public ResponseEntity<InventoryDto> updateInventoryItem(
             @Parameter(description = "ID of the inventory item to update", example = "1", required = true) @PathVariable
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -341,7 +314,7 @@ public class InventoryController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteInventoryItem(
             @Parameter(description = "ID of the inventory item to delete", example = "1", required = true) @PathVariable
                     Long id) {
         service.delete(id);

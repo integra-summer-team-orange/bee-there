@@ -5,7 +5,6 @@ import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.notification.model.NotificationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,61 +44,31 @@ public class NotificationController {
      * @param pageSize the size of the page
      * @return a page of requested notifications
      */
-    @GetMapping(params = {"pageNumber", "pageSize"})
+    @GetMapping
     @Operation(
             summary = "Get a page of notifications",
-            description = "Retrieves a page of notification with specific page and size")
+            description = "Retrieves a page of notifications with a specific page and size")
     @ApiResponses(
             value = {
+                @ApiResponse(responseCode = "200", description = "Successfully retrieved a page of notifications"),
                 @ApiResponse(
-                        responseCode = "200",
-                        description = "Successfully retrieved a page of notifications",
+                        responseCode = "400",
+                        description = "Invalid pagination parameters",
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = Page.class))),
+                                        schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
-                        description = "Internal server error",
+                        description = "Internal server error occurred",
                         content =
                                 @Content(
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Page<NotificationDto>> getAll(@RequestParam int pageNumber, @RequestParam int pageSize) {
+    public ResponseEntity<Page<NotificationDto>> getAllNotifications(
+            @RequestParam int pageNumber, @RequestParam int pageSize) {
         return ResponseEntity.ok(service.findAll(pageNumber, pageSize).map(mapper::toDto));
-    }
-
-    /**
-     * Retrieves all notifications.
-     *
-     * @return a list of all notifications.
-     */
-    @GetMapping
-    @Operation(summary = "Get all notifications", description = "Retrieves a list of all available notifications.")
-    @ApiResponses(
-            value = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Successfully retrieved list of notifications",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        array =
-                                                @ArraySchema(
-                                                        schema = @Schema(implementation = NotificationDto.class)))),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)))
-            })
-    public ResponseEntity<List<NotificationDto>> getAll() {
-        List<NotificationDto> notifications =
-                service.findAll().stream().map(mapper::toDto).toList();
-        return ResponseEntity.ok(notifications);
     }
 
     /**
@@ -145,7 +113,7 @@ public class NotificationController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<NotificationDto> getById(
+    public ResponseEntity<NotificationDto> getNotificationById(
             @Parameter(description = "ID of the notification to be retrieved", example = "1", required = true)
                     @PathVariable
                     Long id) {
@@ -200,7 +168,7 @@ public class NotificationController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<NotificationDto> create(
+    public ResponseEntity<NotificationDto> createNotification(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             description = "Data required to create a new notification",
                             required = true,
@@ -279,7 +247,7 @@ public class NotificationController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<NotificationDto> update(
+    public ResponseEntity<NotificationDto> updateNotification(
             @Parameter(description = "ID of the notification to be updated", example = "1", required = true)
                     @PathVariable
                     Long id,
@@ -400,7 +368,7 @@ public class NotificationController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteNotification(
             @Parameter(description = "ID of the notification to be deleted", example = "1", required = true)
                     @PathVariable
                     Long id) {

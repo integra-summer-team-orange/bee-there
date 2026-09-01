@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,33 +40,29 @@ public class UserController {
     }
 
     /**
-     * Retrieves all users.
-     *
-     * @return a response containing the list of all users
-     */
-    @Operation(summary = "List of users", description = "Returns a list of users stored in the system.")
-    @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
-    @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        return ResponseEntity.ok(
-                userService.getAll().stream().map(userMapper::toDto).toList());
-    }
-
-    /**
      * Retrieves a paginated list of users.
      *
      * @param pageNumber the zero-based page index to retrieve
      * @param pageSize   the maximum number of items to return per page
      * @return A {@link ResponseEntity} containing the requested page of {@link UserResponseDto} with a 200 OK status.
      */
-    @GetMapping(
-            path = "/paged",
-            params = {"pageNumber", "pageSize"})
+    @GetMapping
     @Operation(
             summary = "Gets a page of users",
             description = "Returns a paginated list of users stored in the system.")
-    @ApiResponse(responseCode = "200", description = "Paginated users retrieved successfully")
-    public ResponseEntity<Page<UserResponseDto>> getAllUsersPaginated(
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "Paginated users retrieved successfully"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid pagination parameters",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Page<UserResponseDto>> getAllUsers(
             @Parameter(description = "Number of the desired page (0-based index)", example = "0", required = true)
                     @RequestParam
                     int pageNumber,
