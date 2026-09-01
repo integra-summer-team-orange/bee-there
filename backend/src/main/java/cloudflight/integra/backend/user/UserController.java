@@ -6,9 +6,7 @@ import cloudflight.integra.backend.user.model.UserRequestDto;
 import cloudflight.integra.backend.user.model.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "Users", description = "API endpoints for managing users")
+@Tag(name = "Users", description = "Endpoints for creating, retrieving, updating, and deleting users.")
 public class UserController {
 
     private final UserService userService;
@@ -47,45 +45,10 @@ public class UserController {
      *
      * @return a response containing the list of all users
      */
+    @Operation(summary = "List of users", description = "Returns a list of users stored in the system.")
+    @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
     @GetMapping
-    @Operation(summary = "Retrieves all users", description = "Returns a response containing the list of all users")
-    @ApiResponses(
-            value = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Found users",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class)),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Valid Response",
-                                                    value = "[ { \"id\": 1, "
-                                                            + "\"name\": \"Dan\", "
-                                                            + "\"email\": \"dan@gmail.com\", "
-                                                            + "\"phone\": \"0747474747\", "
-                                                            + "\"role\": \"PARTICIPANT\", "
-                                                            + "\"createdAt\": \"2026-07-21T10:00:00\" } ]"))
-                        }),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Server Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 500, "
-                                                            + "\"error\": \"Internal Server Error\", "
-                                                            + "\"messages\": [\"An unexpected error occurred\"], "
-                                                            + "\"path\": \"/api/users\" }"))
-                        })
-            })
-    public ResponseEntity<List<UserResponseDto>> getAll() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         return ResponseEntity.ok(
                 userService.getAll().stream().map(userMapper::toDto).toList());
     }
@@ -97,26 +60,14 @@ public class UserController {
      * @param pageSize   the maximum number of items to return per page
      * @return A {@link ResponseEntity} containing the requested page of {@link UserResponseDto} with a 200 OK status.
      */
-    @GetMapping(params = {"pageNumber", "pageSize"})
-    @Operation(summary = "Get all users paged", description = "Retrieves a list of all users paged.")
-    @ApiResponses(
-            value = {
-                @ApiResponse(
-                        responseCode = "200",
-                        description = "Successfully retrieved paged users",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = Page.class))),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)))
-            })
-    public ResponseEntity<Page<UserResponseDto>> getAll(
+    @GetMapping(
+            path = "/paged",
+            params = {"pageNumber", "pageSize"})
+    @Operation(
+            summary = "Gets a page of users",
+            description = "Returns a paginated list of users stored in the system.")
+    @ApiResponse(responseCode = "200", description = "Paginated users retrieved successfully")
+    public ResponseEntity<Page<UserResponseDto>> getAllUsersPaginated(
             @Parameter(description = "Number of the desired page (0-based index)", example = "0", required = true)
                     @RequestParam
                     int pageNumber,
@@ -130,80 +81,24 @@ public class UserController {
      * @param id the identifier of the user to retrieve
      * @return a response containing the requested user
      */
-    @GetMapping("/{id}")
-    @Operation(
-            summary = "Retrieves a user by its unique identifier",
-            description = "Returns a response containing the requested user")
+    @Operation(summary = "Get a user by ID", description = "Retrieves a single user by its unique identifier.")
     @ApiResponses(
             value = {
                 @ApiResponse(
                         responseCode = "200",
-                        description = "Found the user",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResponseDto.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Valid Response",
-                                                    value = "{ \"id\": 1, "
-                                                            + "\"name\": \"Dan\", "
-                                                            + "\"email\": \"dan@gmail.com\", "
-                                                            + "\"phone\": \"0747474747\", "
-                                                            + "\"role\": \"PARTICIPANT\", "
-                                                            + "\"createdAt\": \"2026-07-21T10:00:00\" }"))
-                        }),
-                @ApiResponse(
-                        responseCode = "400",
-                        description = "Invalid id supplied",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Bad Request",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 400, "
-                                                            + "\"error\": \"Bad Request\", "
-                                                            + "\"messages\": [\"Invalid id format\"], "
-                                                            + "\"path\": \"/api/users/invalid-id\" }"))
-                        }),
+                        description = "User found",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponseDto.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "User not found",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Not Found",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 404, "
-                                                            + "\"error\": \"Not Found\", "
-                                                            + "\"messages\": [\"User not found\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        }),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Server Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 500, "
-                                                            + "\"error\": \"Internal Server Error\", "
-                                                            + "\"messages\": [\"An unexpected error occurred\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        })
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<UserResponseDto> getById(
-            @Parameter(description = "the identifier of the user to retrieve", example = "1") @PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(
+            @Parameter(description = "ID of the user to be retrieved", required = true) @PathVariable Long id) {
         User user = userService.getById(id);
         return ResponseEntity.ok(userMapper.toDto(user));
     }
@@ -214,80 +109,23 @@ public class UserController {
      * @param dto the user data used to create the new user
      * @return a response containing the created user
      */
-    @PostMapping
-    @Operation(summary = "Creates a new user", description = "Returns a response containing the created user")
+    @Operation(summary = "Create a new user", description = "Adds a new user to the system.")
     @ApiResponses(
             value = {
                 @ApiResponse(
                         responseCode = "201",
-                        description = "User created successfully",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResponseDto.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Valid Response",
-                                                    value = "{ \"id\": 1, "
-                                                            + "\"name\": \"Dan\", "
-                                                            + "\"email\": \"dan@gmail.com\", "
-                                                            + "\"phone\": \"0747474747\", "
-                                                            + "\"role\": \"PARTICIPANT\", "
-                                                            + "\"createdAt\": \"2026-07-21T10:00:00\" }"))
-                        }),
+                        description = "User successfully created",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponseDto.class))),
                 @ApiResponse(
                         responseCode = "400",
-                        description = "Invalid input provided",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Validation Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 400, "
-                                                            + "\"error\": \"Bad Request\", "
-                                                            + "\"messages\": [\"Name is required\", "
-                                                            + "\"Invalid email format\"], "
-                                                            + "\"path\": \"/api/users\" }"))
-                        }),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Server Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 500, "
-                                                            + "\"error\": \"Internal Server Error\", "
-                                                            + "\"messages\": [\"An unexpected error occurred\"], "
-                                                            + "\"path\": \"/api/users\" }"))
-                        })
+                        description = "Invalid input data",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<UserResponseDto> create(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            description = "UserRequestDto to create",
-                            required = true,
-                            content =
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = UserRequestDto.class),
-                                            examples =
-                                                    @ExampleObject(
-                                                            name = "Valid User",
-                                                            value = "{ \"name\": \"Dan\", "
-                                                                    + "\"email\": \"dan@gmail.com\", "
-                                                                    + "\"password\": \"!DanIsAwesome123\", "
-                                                                    + "\"phone\": \"0747474747\", "
-                                                                    + "\"role\": \"PARTICIPANT\" }")))
-                    @RequestBody
-                    @Valid
-                    UserRequestDto dto) {
+    @PostMapping
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid UserRequestDto dto) {
         User user = userService.create(userMapper.fromDto(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
     }
@@ -299,96 +137,29 @@ public class UserController {
      * @param userRequestDto the updated user data
      * @return a response containing the updated user
      */
-    @PutMapping("/{id}")
-    @Operation(summary = "Updates an existing user", description = "Returns a response containing the updated user")
+    @Operation(summary = "Update an existing user", description = "Updates the user details for the given ID.")
     @ApiResponses(
             value = {
                 @ApiResponse(
                         responseCode = "200",
-                        description = "User updated successfully",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResponseDto.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Valid Response",
-                                                    value = "{ \"id\": 1, "
-                                                            + "\"name\": \"Dan\", "
-                                                            + "\"email\": \"dan@gmail.com\", "
-                                                            + "\"phone\": \"+40747474747\", "
-                                                            + "\"role\": \"PARTICIPANT\", "
-                                                            + "\"createdAt\": \"2026-07-21T10:00:00\" }"))
-                        }),
-                @ApiResponse(
-                        responseCode = "400",
-                        description = "Invalid input provided",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Validation Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 400, "
-                                                            + "\"error\": \"Bad Request\", "
-                                                            + "\"messages\": [\"Name is required\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        }),
+                        description = "User successfully updated",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponseDto.class))),
                 @ApiResponse(
                         responseCode = "404",
                         description = "User not found",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Not Found",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 404, "
-                                                            + "\"error\": \"Not Found\", "
-                                                            + "\"messages\": [\"User not found\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        }),
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Server Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 500, "
-                                                            + "\"error\": \"Internal Server Error\", "
-                                                            + "\"messages\": [\"An unexpected error occurred\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        })
+                        responseCode = "400",
+                        description = "Invalid input data",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<UserResponseDto> update(
-            @Parameter(description = "the identifier of the user to update", example = "1") @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            description = "UserRequestDto to update",
-                            required = true,
-                            content =
-                                    @Content(
-                                            mediaType = "application/json",
-                                            schema = @Schema(implementation = UserRequestDto.class),
-                                            examples =
-                                                    @ExampleObject(
-                                                            name = "Valid User",
-                                                            value = "{ \"name\": \"Dan\", "
-                                                                    + "\"email\": \"dan@gmail.com\", "
-                                                                    + "\"password\": \"!DanIsNotAwesome123\", "
-                                                                    + "\"phone\": \"+40747474747\", "
-                                                                    + "\"role\": \"PARTICIPANT\" }")))
-                    @RequestBody
-                    @Valid
-                    UserRequestDto userRequestDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDto> updateUser(
+            @Parameter(description = "ID of the user to be updated", required = true) @PathVariable Long id,
+            @RequestBody @Valid UserRequestDto userRequestDto) {
         User user = userService.update(id, userMapper.fromDto(userRequestDto));
         return ResponseEntity.ok(userMapper.toDto(user));
     }
@@ -399,64 +170,18 @@ public class UserController {
      * @param id the identifier of the user to delete
      * @return a response indicating that the user was successfully deleted
      */
-    @DeleteMapping("/{id}")
-    @Operation(
-            summary = "Deletes a user by its unique identifier",
-            description = "Returns a response indicating that the user was successfully deleted")
+    @Operation(summary = "Delete a user", description = "Removes a user by its unique identifier.")
     @ApiResponses(
             value = {
-                @ApiResponse(responseCode = "204", description = "User deleted successfully", content = @Content),
-                @ApiResponse(
-                        responseCode = "400",
-                        description = "Invalid input provided",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Bad Request",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 400, "
-                                                            + "\"error\": \"Bad Request\", "
-                                                            + "\"messages\": [\"Invalid id format\"], "
-                                                            + "\"path\": \"/api/users/invalid-id\" }"))
-                        }),
+                @ApiResponse(responseCode = "204", description = "User successfully deleted", content = @Content),
                 @ApiResponse(
                         responseCode = "404",
                         description = "User not found",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Not Found",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 404, "
-                                                            + "\"error\": \"Not Found\", "
-                                                            + "\"messages\": [\"User not found\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        }),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "Internal server error",
-                        content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    examples =
-                                            @ExampleObject(
-                                                    name = "Server Error",
-                                                    value = "{ \"timestamp\": \"2026-07-21T10:00:00\", "
-                                                            + "\"status\": 500, "
-                                                            + "\"error\": \"Internal Server Error\", "
-                                                            + "\"messages\": [\"An unexpected error occurred\"], "
-                                                            + "\"path\": \"/api/users/1\" }"))
-                        })
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Void> delete(
-            @Parameter(description = "the identifier of the user to delete", example = "1") @PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(
+            @Parameter(description = "ID of the user to be deleted", required = true) @PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
