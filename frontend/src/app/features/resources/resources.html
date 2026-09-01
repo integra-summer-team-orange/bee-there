@@ -1,0 +1,154 @@
+<!-- ================= HEADER SECTION ================= -->
+<div class="flex justify-between items-end px-8 py-6">
+  <div>
+    <p class="text-outline text-sm">< Venues / {{venueName}} / <span class="text-general-highlight font-bold">Resources</span></p>
+    <h1 class="text-4xl font-bold mt-2">{{venueName}} Resources</h1>
+  </div>
+
+  <div class="flex gap-4 items-center text-sm">
+    <div class="relative">
+      <span class="absolute left-3 top-2.5 text-outline-variant">🔍</span>
+      <input class="border border-outline-variant rounded-lg pl-9 pr-3 py-2 bg-surface-container-lowest w-64" placeholder="Search resources...">
+    </div>
+
+    <select class="border border-outline-variant rounded-lg px-4 py-2 bg-surface-container-lowest font-medium text-on-surface">
+      <option value="" selected>Type</option>
+      <option value="INDOOR_SPORT">Indoor Sport</option>
+      <option value="OUTDOOR_SPORT">Outdoor Sport</option>
+      <option value="BOARDGAME_SOCIAL">Boardgame & Social</option>
+    </select>
+
+    <button class="bg-general-highlight text-on-primary px-5 py-2 rounded-lg font-bold shadow-sm hover:opacity-90 transition-opacity" (click)="openAddModal()">
+      + Add resource
+    </button>
+  </div>
+</div>
+
+<!-- ================= CARDS GRID ================= -->
+<div class="grid grid-cols-3 gap-6 mt-6 px-8">
+  @for(r of resourceList; track r.id) {
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+
+      <!-- Card title -->
+      <h2 class="text-2xl font-bold text-on-surface mb-4">{{r.name}}</h2>
+
+      <!-- Card details -->
+      <div class="flex flex-col gap-2 text-sm mb-6 flex-grow">
+        <p><span class="font-bold text-on-surface">Activity Type: </span> <span class="text-on-surface-variant">{{r.activityType | titlecase}}</span></p>
+        <p><span class="font-bold text-on-surface">Description: </span> <span class="text-on-surface-variant">{{r.activityDescription}}</span></p>
+        <p><span class="font-bold text-on-surface">Type: </span> <span class="text-on-surface-variant">{{r.type}}</span></p>
+        <p><span class="font-bold text-on-surface">Capacity: </span> <span class="text-on-surface-variant">{{r.capacity}}</span></p>
+        <p><span class="font-bold text-on-surface">Hourly rate: </span> <span class="text-on-surface-variant">${{r.hourlyRate}}/hr</span></p>
+      </div>
+
+      <!-- Card buttons-->
+      <div class="flex justify-end gap-3 mt-auto">
+        <button class="bg-general-highlight text-on-primary px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity" (click)="openInfoModal(r)">Info</button>
+        <button class="border border-outline-variant text-on-surface px-4 py-2 rounded-lg font-medium hover:bg-surface-container-high transition-colors" (click)="openUpdateModal(r)">Edit</button>
+        <button class="border border-error text-error px-4 py-2 rounded-lg font-medium hover:bg-error-container transition-colors" (click)="openDeleteModal(r)">Delete</button>
+      </div>
+
+    </div>
+  }
+</div>
+
+<!-- ================= PAGINATION ================= -->
+<div class="flex justify-center items-center gap-4 my-12 text-sm font-medium text-on-surface-variant">
+  <button class="hover:text-on-surface transition-colors">&larr; Previous</button>
+
+  <div class="flex gap-2 items-center">
+    <button class="w-8 h-8 bg-on-surface text-surface-container-lowest rounded-md flex items-center justify-center">1</button>
+    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">2</button>
+    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">3</button>
+    <span class="flex items-center justify-center px-1">...</span>
+    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">67</button>
+    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">68</button>
+  </div>
+
+  <button class="hover:text-on-surface transition-colors">Next &rarr;</button>
+</div>
+
+<!-- ================= DELETE MODAL ================= -->
+<p-dialog header="Delete Resource" [(visible)]="isDeleteModalVisible" [modal]="true">
+  <p class="mb-6">Are you sure you want to delete this resource? This action cannot be undone.</p>
+
+  <div class="flex justify-end gap-3">
+    <button class="border border-outline-variant px-4 py-2 rounded-lg font-medium"
+            (click)="isDeleteModalVisible = false">Cancel</button>
+    <button class="bg-error text-on-error px-4 py-2 rounded-lg font-medium"
+            (click)="confirmDelete()">Delete</button>
+  </div>
+</p-dialog>
+
+<!-- ================= ADD / EDIT FORM MODAL ================= -->
+<p-dialog [header]="selectedResource ? 'Edit resource' : 'Add resource'" [(visible)]="isFormModalVisible" [modal]="true">
+  <form [formGroup]="resourceForm" (ngSubmit)="saveResource()" id="resourceForm" class="flex flex-col gap-4 w-96 py-2">
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-on-surface">Name</label>
+      <input formControlName="name" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest" placeholder="Resource name">
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-on-surface">Activity Type</label>
+      <select formControlName="activityType" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest">
+        <option value="" disabled selected>Select activity type</option>
+        <option value="PLAYING">Playing</option>
+        <option value="TRAINING">Training</option>
+        <option value="MATCH">Match</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-on-surface">Activity Description</label>
+      <textarea formControlName="activityDescription" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest resize-none h-20" placeholder="Description..."></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-on-surface">Type</label>
+      <select formControlName="type" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest">
+        <option value="" disabled selected>Select type</option>
+        <option value="INDOOR_SPORT">Indoor Sport</option>
+        <option value="OUTDOOR_SPORT">Outdoor Sport</option>
+        <option value="BOARDGAME_SOCIAL">Boardgame & Social</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-on-surface">Capacity</label>
+      <input type="number" formControlName="capacity" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest" placeholder="20">
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-on-surface">Hourly Rate</label>
+      <input type="number" formControlName="hourlyRate" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest" placeholder="75">
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3 mt-4">
+      <button class="border border-outline-variant px-4 py-2 rounded-lg font-medium text-on-surface hover:bg-surface-container-high transition-colors"
+              (click)="isFormModalVisible = false">Cancel</button>
+      <button type="submit" form="resourceForm" class="bg-general-highlight text-on-primary px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+        Save
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ================= INFO MODAL ================= -->
+<p-dialog header="Info resource" [(visible)]="isInfoModalVisible" [modal]="true">
+  <div class="flex flex-col gap-3 py-2 w-72">
+    <p class="text-sm text-on-surface-variant font-medium">Scheduled slots for {{selectedResource?.name}}:</p>
+    <div class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-low text-on-surface font-medium">18/08</div>
+    <div class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-low text-on-surface font-medium">23/08</div>
+    <div class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-low text-on-surface font-medium">27/08</div>
+    <div class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-low text-on-surface font-medium">30/08</div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button class="bg-general-highlight text-on-primary px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity"
+            (click)="isInfoModalVisible = false">Close</button>
+  </ng-template>
+</p-dialog>
