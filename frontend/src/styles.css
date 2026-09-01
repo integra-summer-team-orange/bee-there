@@ -1,3 +1,77 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+@theme {
+  /* =========================================
+     🎨 SURFACE & BACKGROUND
+     ========================================= */
+  --color-surface: #FDF7FF;
+  --color-surface-dim: #DED8E0;
+  --color-surface-bright: #FDF7FF;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F8F2FA;
+  --color-surface-container: #F2ECF4;
+  --color-surface-container-high: #ECE6EE;
+  --color-surface-container-highest: #E6E0E9;
+  --color-on-surface: #1D1B20;
+  --color-on-surface-variant: #494551;
+  --color-inverse-surface: #322F35;
+  --color-inverse-on-surface: #F5EFF7;
+  --color-surface-tint: #6750A4;
+  --color-surface-variant: #E6E0E9;
+  --color-background: #FDF7FF;
+  --color-on-background: #1D1B20;
+
+  /* =========================================
+     🔲 OUTLINES
+     ========================================= */
+  --color-outline: #7A7582;
+  --color-outline-variant: #CBC4D2;
+
+  /* =========================================
+     💜 PRIMARY
+     ========================================= */
+  --color-primary: #4F378A;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #6750A4;
+  --color-on-primary-container: #E0D2FF;
+  --color-inverse-primary: #CFBCFF;
+  --color-primary-fixed: #E9DDFF;
+  --color-primary-fixed-dim: #CFBCFF;
+  --color-on-primary-fixed: #22005D;
+  --color-on-primary-fixed-variant: #4F378A;
+
+  /* =========================================
+     🟣 SECONDARY
+     ========================================= */
+  --color-secondary: #63597C;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-fixed: #E9DDFF;
+  --color-secondary-fixed-dim: #CDC0E9;
+  --color-on-secondary-fixed: #1F1635;
+  --color-on-secondary-fixed-variant: #4B4263;
+
+  /* =========================================
+     🟡 TERTIARY
+     ========================================= */
+  --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #C9A74D;
+  --color-on-tertiary-container: #503D00;
+  --color-tertiary-fixed: #FFDF93;
+  --color-tertiary-fixed-dim: #E7C365;
+  --color-on-tertiary-fixed: #241A00;
+  --color-on-tertiary-fixed-variant: #594400;
+
+  /* =========================================
+     🔴 ERROR
+     ========================================= */
+  --color-error: #BA1A1A;
+  --color-on-error: #FFFFFF;
+  --color-error-container: #FFDAD6;
+  --color-on-error-container: #93000A;
+
+  /* =========================================
+     ✨ HIGHLIGHTS
+     ========================================= */
+  --color-general-highlight: #8069BF;
+  --color-text-highlight: #8069BF;
+}
