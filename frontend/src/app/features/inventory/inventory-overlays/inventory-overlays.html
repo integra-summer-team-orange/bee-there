@@ -1,0 +1,62 @@
+<p-dialog
+  [header]="headerText"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onHide)="onHide()">
+
+  @if (mode === 'delete') {
+    <div class="confirmation-content flex items-center gap-3">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+      <span>Are you sure you want to delete <b>{{ item.name }}</b>?</span>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-4">
+      <div class="field">
+        <label for="name" class="block font-bold mb-2">Name</label>
+        <input
+          type="text"
+          pInputText
+          id="name"
+          [(ngModel)]="item.name"
+          required
+          autofocus
+          class="w-full" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="field">
+          <label for="total" class="block font-bold mb-2">Total Quantity</label>
+          <p-inputNumber
+            id="total"
+            [(ngModel)]="item.total_quantity"
+            class="w-full"
+            [min]="0" />
+        </div>
+        <div class="field">
+          <label for="available" class="block font-bold mb-2">Available Quantity</label>
+          <p-inputNumber
+            id="available"
+            [(ngModel)]="item.available_quantity"
+            class="w-full"
+            [min]="0"
+            [max]="item.total_quantity || 0" />
+        </div>
+      </div>
+    </div>
+  }
+
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      severity="secondary"
+      [text]="true"
+      (onClick)="onHide()" />
+    <p-button
+      [label]="mode === 'delete' ? 'Delete' : 'Save'"
+      [icon]="mode === 'delete' ? 'pi pi-trash' : 'pi pi-check'"
+      [severity]="mode === 'delete' ? 'danger' : 'primary'"
+      (onClick)="onConfirm()" />
+  </ng-template>
+</p-dialog>

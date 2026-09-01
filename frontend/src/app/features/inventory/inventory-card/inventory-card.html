@@ -1,0 +1,21 @@
+<div class="mb-4 p-8 flex items-center justify-center">
+  <p-card [style]="{ width: '100%', overflow: 'hidden' }">
+    <ng-template #title> {{ item.name }} </ng-template>
+    <ng-template #content let-value>
+      <span>Available: </span>
+      <span>{{ item.available_quantity }}/{{ item.total_quantity }}</span>
+    </ng-template>
+    <p-progressBar
+      [value]="percentage"
+      [showValue]="false"
+      class="custom-progress-bar"
+      [ngClass]="statusColorClass">
+    </p-progressBar>
+    <ng-template #footer>
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button label="Edit" severity="secondary" [outlined]="true" (onClick)="edit.emit(item)" />
+        <p-button label="Delete" severity="danger" [outlined]="true" (onClick)="delete.emit(item.id)" />
+      </div>
+    </ng-template>
+  </p-card>
+</div>
