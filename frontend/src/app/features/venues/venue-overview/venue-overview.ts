@@ -125,7 +125,7 @@ export class VenueOverview {
 
     this.deleting.set(true);
 
-    this.venues._delete(venue.id).subscribe({
+    this.venues.deleteVenue(venue.id).subscribe({
       next: () => {
         this.deleting.set(false);
         this.venueToDelete.set(null);
