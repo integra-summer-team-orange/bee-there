@@ -49,7 +49,7 @@ class VenuesServiceStub {
     return of({ content, totalElements: content.length });
   }
 
-  _delete(id: number): Observable<unknown> {
+  deleteVenue(id: number): Observable<unknown> {
     if (this.deleteError) {
       return throwError(() => this.deleteError);
     }

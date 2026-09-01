@@ -6,7 +6,8 @@ import { Observable, of } from 'rxjs';
 import {
   InventoryDto,
   InventoryService,
-  Page,
+  PageInventoryDto,
+  PageResourceDto,
   ResourcesService,
   VenueDto,
   VenuesService,
@@ -28,17 +29,17 @@ class VenuesServiceStub {
   created: unknown[] = [];
   updated: { id: number; body: unknown }[] = [];
 
-  getById(): Observable<VenueDto> {
+  getVenueById(): Observable<VenueDto> {
     return of(VENUE);
   }
 
-  create(body: unknown): Observable<VenueDto> {
+  createVenue(body: unknown): Observable<VenueDto> {
     this.created.push(body);
 
     return of({ ...VENUE, id: 42 });
   }
 
-  update(id: number, body: unknown): Observable<VenueDto> {
+  updateVenue(id: number, body: unknown): Observable<VenueDto> {
     this.updated.push({ id, body });
 
     return of(VENUE);
@@ -46,8 +47,10 @@ class VenuesServiceStub {
 }
 
 class ResourcesServiceStub {
-  getAll2(): Observable<Page> {
-    return of({ content: [{ id: 1, venueId: 1, name: 'Court A', capacity: 20 }] } as Page);
+  getAllResources(): Observable<PageResourceDto> {
+    return of({
+      content: [{ id: 1, venueId: 1, name: 'Court A', capacity: 20 }],
+    } as PageResourceDto);
   }
 }
 
@@ -57,8 +60,8 @@ class InventoryServiceStub {
     { id: 2, venueId: 2, name: 'Elsewhere', totalQuantity: 10, availableQuantity: 0 },
   ];
 
-  getAll4(): Observable<InventoryDto[]> {
-    return of(this.items);
+  getAllInventoryItems(): Observable<PageInventoryDto> {
+    return of({ content: this.items, totalElements: this.items.length });
   }
 }
 

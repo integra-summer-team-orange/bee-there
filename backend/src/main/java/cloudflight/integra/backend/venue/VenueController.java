@@ -63,7 +63,7 @@ public class VenueController {
                         description = "Internal server error occurred",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<VenueDto>> getAllVenues(
             @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
             @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {

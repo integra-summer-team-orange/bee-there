@@ -152,7 +152,7 @@ export class VenueDetail {
     const creating = this.mode() === 'create';
     const payload = this.form.getRawValue();
     const id = this.venue()?.id;
-    const request = creating || !id ? this.venues.create(payload) : this.venues.update(id, payload);
+    const request = creating || !id ? this.venues.createVenue(payload) : this.venues.updateVenue(id, payload);
 
     request.subscribe({
       next: (saved) => {
@@ -178,7 +178,7 @@ export class VenueDetail {
   private load(id: number): void {
     this.loading.set(true);
 
-    this.venues.getById(id).subscribe({
+    this.venues.getVenueById(id).subscribe({
       next: (venue) => {
         this.venue.set(venue);
         this.form.patchValue({
@@ -205,14 +205,11 @@ export class VenueDetail {
    */
   private loadRelated(id: number): void {
     forkJoin({
-      resources: this.resources.getAll2(0, RELATED_PAGE_SIZE).pipe(catchError(() => of(null))),
-      inventory: this.inventory.getAll4(0, RELATED_PAGE_SIZE).pipe(catchError(() => of([]))),
+      resources: this.resources.getAllResources(0, RELATED_PAGE_SIZE).pipe(catchError(() => of(null))),
+      inventory: this.inventory.getAllInventoryItems(0, RELATED_PAGE_SIZE).pipe(catchError(() => of(null))),
     }).subscribe(({ resources, inventory }) => {
-      const allResources = (resources?.content ?? []) as ResourceDto[];
-      // /api/inventory has two overloads on one path, so the spec says array while this call answers a page.
-      const allInventory = Array.isArray(inventory)
-        ? inventory
-        : ((inventory as { content?: InventoryDto[] }).content ?? []);
+      const allResources = resources?.content ?? [];
+      const allInventory = inventory?.content ?? [];
 
       this.venueResources.set(allResources.filter((resource) => resource.venueId === id));
       this.venueInventory.set(allInventory.filter((item) => item.venueId === id));

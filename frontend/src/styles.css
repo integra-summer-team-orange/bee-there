@@ -1,56 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
-
-/*
- * Brand palette taken from the design. PrimeNG's own components are themed through the Aura preset in
- * app.config.ts; these variables exist so anything hand-written (header, footer, page chrome) can reach for
- * the same colours instead of inventing new ones.
- */
-:root {
-  --brand-yellow: #f6e05e;
-  --brand-yellow-soft: #fdf6c3;
-  --brand-violet: #8b5cf6;
-  --brand-violet-strong: #6d43e8;
-  --brand-ink: #1f2430;
-  --brand-muted: #6b7280;
-  --brand-surface: #ffffff;
-  --brand-surface-sunken: #f3f4f6;
-  --brand-border: #e5e7eb;
-}
-
-/*
- * Only colours declared here become Tailwind utilities. Primary points at the Aura preset rather than
- * repeating its hex values, so the utilities and the PrimeNG components stay on the same violet.
- */
-@theme {
-  --color-primary-50: var(--p-primary-50);
-  --color-primary-100: var(--p-primary-100);
-  --color-primary-200: var(--p-primary-200);
-  --color-primary-300: var(--p-primary-300);
-  --color-primary-400: var(--p-primary-400);
-  --color-primary-500: var(--p-primary-500);
-  --color-primary-600: var(--p-primary-600);
-  --color-primary-700: var(--p-primary-700);
-  --color-primary-800: var(--p-primary-800);
-  --color-primary-900: var(--p-primary-900);
-  --color-primary-950: var(--p-primary-950);
-
-  --color-brand-yellow: var(--brand-yellow);
-  --color-brand-yellow-soft: var(--brand-yellow-soft);
-  --color-brand-violet: var(--brand-violet);
-  --color-brand-violet-strong: var(--brand-violet-strong);
-  --color-brand-ink: var(--brand-ink);
-  --color-brand-muted: var(--brand-muted);
-  --color-brand-surface: var(--brand-surface);
-  --color-brand-surface-sunken: var(--brand-surface-sunken);
-  --color-brand-border: var(--brand-border);
-}
-
-body {
-  color: var(--brand-ink);
-}
 
 @theme {
   /* =========================================
