@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../core/services/auth.service';
@@ -8,7 +8,7 @@ import { UserRequestDto } from '../../shared/models/user.model';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, ReactiveFormsModule, ButtonModule, InputTextModule],
+  imports: [FormsModule, ReactiveFormsModule, ButtonModule, InputTextModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
