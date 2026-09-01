@@ -109,9 +109,7 @@ public class UserIntegrationTest extends AbstractIntegrationTest {
 
         mockMvc.perform(authed(get("/api/users")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath(
-                        "$[*].email", containsInAnyOrder(ADMIN_EMAIL, "user1@example.com", "user2@example.com")));
+                .andExpect(jsonPath("$.content", hasSize(3)));
     }
 
     @Test

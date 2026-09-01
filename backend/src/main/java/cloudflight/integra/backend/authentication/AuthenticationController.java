@@ -2,8 +2,15 @@ package cloudflight.integra.backend.authentication;
 
 import cloudflight.integra.backend.authentication.model.LoginRequestDto;
 import cloudflight.integra.backend.authentication.model.LoginResponseDto;
+import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.user.UserMapper;
 import cloudflight.integra.backend.user.model.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "API endpoints for authentication")
 public class AuthenticationController {
 
     private AuthenticationService service;
@@ -45,6 +53,33 @@ public class AuthenticationController {
      * @return a response containing the newly registered user
      */
     @PostMapping("/register")
+    @Operation(
+            summary = "register a new user into system",
+            description = "the user provides all the data needed for account creation an the account is created")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "Successfully created an account",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponseDto.class))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid credentials",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
     public ResponseEntity<UserResponseDto> register(@RequestBody UserRequestDto dto) {
         User user = service.register(mapper.fromDto(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(user));
@@ -60,6 +95,33 @@ public class AuthenticationController {
      * @return a response containing the generated JWT token
      */
     @PostMapping("/login")
+    @Operation(
+            summary = "Logs a user into account",
+            description = "the user provides email and password and is logged in")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successful login",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = UserResponseDto.class))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid credentials",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content =
+                                @Content(
+                                        mediaType = "application/json",
+                                        schema = @Schema(implementation = ErrorResponse.class)))
+            })
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
         String token = service.login(dto.email(), dto.password());
 

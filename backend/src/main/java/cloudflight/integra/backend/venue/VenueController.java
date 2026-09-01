@@ -50,9 +50,20 @@ public class VenueController {
     @Operation(
             summary = "List venues with pagination",
             description = "Returns a paginated list of venues stored in the system.")
-    @ApiResponse(responseCode = "200", description = "Paginated venues retrieved successfully")
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "200", description = "Paginated venues retrieved successfully"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid pagination parameters",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @GetMapping
-    public ResponseEntity<Page<VenueDto>> getAll(
+    public ResponseEntity<Page<VenueDto>> getAllVenues(
             @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
             @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
         Page<Venue> venuePage = service.getAll(pageNumber, pageSize);
@@ -84,7 +95,7 @@ public class VenueController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping("/{id}")
-    public ResponseEntity<VenueDto> getById(
+    public ResponseEntity<VenueDto> getVenueById(
             @Parameter(description = "ID of the venue to be retrieved", required = true) @PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id)
                 .map(mapper::toDto)
@@ -122,7 +133,7 @@ public class VenueController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping
-    public ResponseEntity<VenueDto> create(@RequestBody @Valid VenueDto dto) {
+    public ResponseEntity<VenueDto> createVenue(@RequestBody @Valid VenueDto dto) {
         VenueDto createdVenue = mapper.toDto(service.create(mapper.toEntity(dto)));
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
     }
@@ -163,7 +174,7 @@ public class VenueController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PutMapping("/{id}")
-    public ResponseEntity<VenueDto> update(
+    public ResponseEntity<VenueDto> updateVenue(
             @Parameter(description = "ID of the venue to be updated", required = true) @PathVariable Long id,
             @RequestBody @Valid VenueDto dto) {
         return ResponseEntity.ok(mapper.toDto(service.update(id, mapper.toEntity(dto))));
@@ -185,7 +196,7 @@ public class VenueController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteVenue(
             @Parameter(description = "ID of the venue to be deleted", required = true) @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

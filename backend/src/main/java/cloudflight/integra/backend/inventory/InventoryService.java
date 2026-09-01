@@ -42,7 +42,6 @@ public class InventoryService {
      * @param pageSize   the maximum number of items to return per page
      * @return a {@link Page} containing the requested {@link Inventory} entities
      */
-    // todo: validation
     public Page<Inventory> getAll(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return repository.findAll(pageable);

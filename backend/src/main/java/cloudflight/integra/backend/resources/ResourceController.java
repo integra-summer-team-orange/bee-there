@@ -49,31 +49,25 @@ public class ResourceController {
      * @param pageSize the maximum number of resources to return per page
      * @return A {@link ResponseEntity} containing the requested page of {@link ResourceDto} with a 200 OK status.
      */
-    @GetMapping
-    @Operation(summary = "Get all resources paged", description = "Retrieves a list of all resources paged.")
+    @Operation(
+            summary = "List resources with pagination",
+            description = "Returns a paginated list of resources stored in the system.")
     @ApiResponses(
             value = {
+                @ApiResponse(responseCode = "200", description = "Paginated resources retrieved successfully"),
                 @ApiResponse(
-                        responseCode = "200",
-                        description = "Successfully retrieved paged resources",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = Page.class))),
+                        responseCode = "400",
+                        description = "Invalid pagination parameters",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "500",
                         description = "Internal server error occurred",
-                        content =
-                                @Content(
-                                        mediaType = "application/json",
-                                        schema = @Schema(implementation = ErrorResponse.class)))
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Page<ResourceDto>> getAll(
-            @Parameter(description = "Page index (0-based)", example = "0")
-                    @RequestParam(defaultValue = "0", name = "pageNumber")
-                    int pageNumber,
-            @Parameter(description = "Page size", example = "10") @RequestParam(defaultValue = "10", name = "pageSize")
-                    int pageSize) {
+    @GetMapping
+    public ResponseEntity<Page<ResourceDto>> getAllResources(
+            @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
         return ResponseEntity.ok(service.getAll(pageNumber, pageSize).map(mapper::toDto));
     }
 
@@ -110,7 +104,7 @@ public class ResourceController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<ResourceDto> getById(
+    public ResponseEntity<ResourceDto> getResourceById(
             @Parameter(description = "The unique identifier of the resource", example = "1") @PathVariable Long id) {
         return service.getById(id)
                 .map(mapper::toDto)
@@ -165,7 +159,7 @@ public class ResourceController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<ResourceDto> create(
+    public ResponseEntity<ResourceDto> createResource(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                             required = true,
                             description = "The resource data to create. "
@@ -249,7 +243,7 @@ public class ResourceController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<ResourceDto> update(
+    public ResponseEntity<ResourceDto> updateResource(
             @Parameter(description = "The unique identifier of the resource to update", example = "1") @PathVariable
                     Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -307,7 +301,7 @@ public class ResourceController {
                                         mediaType = "application/json",
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteResource(
             @Parameter(description = "The unique identifier of the resource to delete", example = "1") @PathVariable
                     Long id) {
         service.delete(id);
