@@ -1,0 +1,17 @@
+/* Thinner bar height */
+:host ::ng-deep .custom-progress-bar {
+  height: 10px;
+}
+
+/* Color Overrides using CSS Variable targeting */
+:host ::ng-deep .bg-success .p-progressbar-value {
+  background: #22c55e;
+}
+
+:host ::ng-deep .bg-warning .p-progressbar-value {
+  background: #eab308;
+}
+
+:host ::ng-deep .bg-danger .p-progressbar-value {
+  background: #ef4444;
+}

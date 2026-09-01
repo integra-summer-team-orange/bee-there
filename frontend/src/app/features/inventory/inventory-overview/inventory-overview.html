@@ -1,0 +1,51 @@
+<main>
+  <!--Breadcrumb Bar-->
+  <nav aria-label="Breadcrumb">
+    < <span>Venues</span> / <span>Cluj Arena</span> / <span>Inventory</span>
+  </nav>
+
+  <div class="toolbar flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Cluj Arena Inventory</h1>
+    <div class="actions flex items-center gap-3">
+      <p-iconfield iconPosition="right" class="custom-search">
+        <p-inputicon class="pi pi-search" />
+        <input
+          type="text"
+          pInputText
+          placeholder="Search inventory..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); first.set(0);" />
+      </p-iconfield>
+
+      <p-button label="+ Add item" class="purple-btn" (onClick)="openCreate()" />
+    </div>
+  </div>
+
+  <!-- Dynamic Grid Loop -->
+  <section class="cards-grid">
+    @for (item of paginatedItems(); track item.id) {
+      <inventory-card
+        [item]="item"
+        (delete)="openDelete($event)"
+        (edit)="openEdit($event)" />
+    }
+  </section>
+
+  <inventory-overlays
+    [(visible)]="overlayVisible"
+    [mode]="overlayMode"
+    [item]="selectedItem"
+    (confirm)="handleConfirm($event)"
+    (delete)="deleteItem($event)" />
+
+  <!-- Paginator -->
+  <p-paginator
+    (onPageChange)="onPageChange($event)"
+    [first]="first()"
+    [rows]="rows()"
+    [totalRecords]="filteredItems().length"
+    [showFirstLastIcon]="false"
+    [showPageLinks]="true"
+    [pageLinkSize]="3" />
+
+</main>
