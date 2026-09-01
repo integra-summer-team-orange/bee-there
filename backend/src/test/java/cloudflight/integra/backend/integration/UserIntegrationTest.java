@@ -107,10 +107,9 @@ public class UserIntegrationTest extends AbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user2)));
 
-                mockMvc.perform(authed(get("/api/users")))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.content", hasSize(3)));
-
+        mockMvc.perform(authed(get("/api/users")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(3)));
     }
 
     @Test
