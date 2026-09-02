@@ -3,14 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
-
-export interface InventoryItem {
-  id: string;
-  venue_id: string;
-  name: string;
-  total_quantity: number;
-  available_quantity: number;
-}
+import { InventoryItem } from '../inventory-service/inventory-model';
 
 @Component({
   selector: 'inventory-card',

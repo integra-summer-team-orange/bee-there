@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { InventoryCard, InventoryItem } from './inventory-card';
+import { InventoryCard } from './inventory-card';
+import { InventoryItem } from '../inventory-service/inventory-model';
 import { By } from '@angular/platform-browser';
 
 describe('InventoryCard', () => {

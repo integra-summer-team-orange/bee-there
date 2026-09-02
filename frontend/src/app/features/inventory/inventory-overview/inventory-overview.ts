@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -10,18 +10,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
 
-import { InventoryCard, InventoryItem } from '../inventory-card/inventory-card';
+import { InventoryCard } from '../inventory-card/inventory-card';
 import { InventoryOverlays } from '../inventory-overlays/inventory-overlays';
-
-const DUMMY_DATA: InventoryItem[] = [
-  { id: '1', venue_id: 'cluj-arena', name: 'Basketballs', total_quantity: 60, available_quantity: 20 },
-  { id: '2', venue_id: 'cluj-arena', name: 'Tennis Rackets', total_quantity: 12, available_quantity: 10 },
-  { id: '3', venue_id: 'cluj-arena', name: 'Footballs', total_quantity: 120, available_quantity: 0 },
-  { id: '4', venue_id: 'cluj-arena', name: 'Badminton Rackets', total_quantity: 8, available_quantity: 1 },
-  { id: '5', venue_id: 'cluj-arena', name: 'Volleyballs', total_quantity: 30, available_quantity: 15 },
-  { id: '6', venue_id: 'cluj-arena', name: 'Table Tennis Paddles', total_quantity: 16, available_quantity: 14 },
-  { id: '7', venue_id: 'cluj-arena', name: 'Yoga Mats', total_quantity: 25, available_quantity: 25 },
-];
+import { InventoryService } from '../inventory-service/inventory-service';
+import { InventoryItem } from '../inventory-service/inventory-model';
 
 @Component({
   selector: 'app-inventory-overview',
@@ -44,8 +36,10 @@ const DUMMY_DATA: InventoryItem[] = [
   styleUrl: './inventory-overview.css',
 })
 export class InventoryOverview {
+  private inventoryService = inject(InventoryService);
+
   // Master state
-  readonly items = signal<InventoryItem[]>(DUMMY_DATA);
+  readonly items = this.inventoryService.items;
   readonly searchQuery = signal<string>('');
 
   // Pagination state
@@ -91,7 +85,7 @@ export class InventoryOverview {
   }
 
   openDelete(id: string) {
-    const item = this.items().find(i => i.id === id);
+    const item = this.inventoryService.getById(id);
     if (item) {
       this.selectedItem = { ...item };
       this.overlayMode = 'delete';
@@ -101,33 +95,14 @@ export class InventoryOverview {
 
   handleConfirm(item: Partial<InventoryItem>) {
     if (this.overlayMode === 'create') {
-      this.addItem(item.name || '', item.total_quantity || 0, item.available_quantity || 0);
+      this.inventoryService.addItem(item.name || '', item.total_quantity || 0, item.available_quantity || 0);
     } else if (this.overlayMode === 'edit') {
-      this.updateItem(item as InventoryItem);
+      this.inventoryService.updateItem(item as InventoryItem);
     }
-  }
-
-  // CREATE
-  addItem(name: string, total: number, available: number) {
-    const newItem: InventoryItem = {
-      id: crypto.randomUUID(),
-      venue_id: 'cluj-arena',
-      name,
-      total_quantity: total,
-      available_quantity: available
-    };
-    this.items.update(list => [newItem, ...list]);
-  }
-
-  // UPDATE
-  updateItem(updatedItem: InventoryItem) {
-    this.items.update(list =>
-      list.map(item => (item.id === updatedItem.id ? updatedItem : item))
-    );
   }
 
   // DELETE
   deleteItem(id: string) {
-    this.items.update(list => list.filter(item => item.id !== id));
+    this.inventoryService.deleteItem(id);
   }
 }

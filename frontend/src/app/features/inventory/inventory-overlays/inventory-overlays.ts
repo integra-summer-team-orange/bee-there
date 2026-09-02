@@ -5,7 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InventoryItem } from '../inventory-card/inventory-card';
+import { InventoryItem } from '../inventory-service/inventory-model';
 
 @Component({
   selector: 'inventory-overlays',
