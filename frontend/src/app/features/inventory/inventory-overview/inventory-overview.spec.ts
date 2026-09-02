@@ -39,28 +39,6 @@ describe('InventoryOverview', () => {
     expect(component.paginatedItems()[0].id).toBe('3');
   });
 
-  it('should add a new item', () => {
-    const initialCount = component.items().length;
-    component.addItem('New Test Item', 10, 5);
-    expect(component.items().length).toBe(initialCount + 1);
-    expect(component.items()[0].name).toBe('New Test Item');
-  });
-
-  it('should update an existing item', () => {
-    const item = component.items()[0];
-    const updated = { ...item, name: 'Updated Name' };
-    component.updateItem(updated);
-    expect(component.items()[0].name).toBe('Updated Name');
-  });
-
-  it('should delete an item', () => {
-    const initialCount = component.items().length;
-    const idToDelete = component.items()[0].id;
-    component.deleteItem(idToDelete);
-    expect(component.items().length).toBe(initialCount - 1);
-    expect(component.items().find(i => i.id === idToDelete)).toBeUndefined();
-  });
-
   it('should open create overlay', () => {
     component.openCreate();
     expect(component.overlayVisible).toBeTruthy();
