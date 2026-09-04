@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      @if (!isQuantityValid) {
+      @if (isQuantityInvalid) {
         <small class="text-red-500 font-medium">
           Available quantity cannot exceed total quantity.
         </small>
@@ -62,7 +62,7 @@
       [label]="mode === 'delete' ? 'Delete' : 'Save'"
       [icon]="mode === 'delete' ? 'pi pi-trash' : 'pi pi-check'"
       [severity]="mode === 'delete' ? 'danger' : 'primary'"
-      [disabled]="isQuantityValid"
+      [disabled]="isQuantityInvalid"
       (onClick)="onConfirm()" />
   </ng-template>
 </p-dialog>
