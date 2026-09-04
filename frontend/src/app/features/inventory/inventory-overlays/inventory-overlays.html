@@ -29,7 +29,7 @@
           <label for="total" class="block font-bold mb-2">Total Quantity</label>
           <p-inputNumber
             id="total"
-            [(ngModel)]="item.total_quantity"
+            [(ngModel)]="item.totalQuantity"
             class="w-full"
             [min]="0" />
         </div>
@@ -37,12 +37,17 @@
           <label for="available" class="block font-bold mb-2">Available Quantity</label>
           <p-inputNumber
             id="available"
-            [(ngModel)]="item.available_quantity"
+            [(ngModel)]="item.availableQuantity"
             class="w-full"
-            [min]="0"
-            [max]="item.total_quantity || 0" />
+            [min]="0" />
         </div>
       </div>
+
+      @if (!isQuantityValid) {
+        <small class="text-red-500 font-medium">
+          Available quantity cannot exceed total quantity.
+        </small>
+      }
     </div>
   }
 
@@ -57,6 +62,7 @@
       [label]="mode === 'delete' ? 'Delete' : 'Save'"
       [icon]="mode === 'delete' ? 'pi pi-trash' : 'pi pi-check'"
       [severity]="mode === 'delete' ? 'danger' : 'primary'"
+      [disabled]="isQuantityValid"
       (onClick)="onConfirm()" />
   </ng-template>
 </p-dialog>

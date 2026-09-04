@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InventoryCard } from './inventory-card';
-import { InventoryItem } from '../inventory-service/inventory-model';
+import { InventoryModel } from '../inventory-service/inventory-model';
 import { By } from '@angular/platform-browser';
 
 describe('InventoryCard', () => {
   let component: InventoryCard;
   let fixture: ComponentFixture<InventoryCard>;
 
-  const mockItem: InventoryItem = {
+  const mockItem: InventoryModel = {
     id: '1',
-    venue_id: 'v1',
+    venueId: 'v1',
     name: 'Test Item',
-    total_quantity: 100,
-    available_quantity: 50
+    totalQuantity: 100,
+    availableQuantity: 50
   };
 
   beforeEach(async () => {
@@ -42,15 +42,15 @@ describe('InventoryCard', () => {
   it('should return correct status color class based on stock level', () => {
     expect(component.statusColorClass).toBe('bg-warning');
 
-    component.item = { ...mockItem, available_quantity: 80 };
+    component.item = { ...mockItem, availableQuantity: 80 };
     expect(component.statusColorClass).toBe('bg-success');
 
-    component.item = { ...mockItem, available_quantity: 10 };
+    component.item = { ...mockItem, availableQuantity: 10 };
     expect(component.statusColorClass).toBe('bg-danger');
   });
 
   it('should emit item on edit action', () => {
-    let emittedItem: InventoryItem | null = null;
+    let emittedItem: InventoryModel | null = null;
     component.edit.subscribe((val) => (emittedItem = val));
 
     const editBtn = fixture.debugElement.queryAll(By.css('p-button'))[0];

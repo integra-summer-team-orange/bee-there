@@ -13,7 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { InventoryCard } from '../inventory-card/inventory-card';
 import { InventoryOverlays } from '../inventory-overlays/inventory-overlays';
 import { InventoryService } from '../inventory-service/inventory-service';
-import { InventoryItem } from '../inventory-service/inventory-model';
+import { InventoryModel } from '../inventory-service/inventory-model';
 
 @Component({
   selector: 'app-inventory-overview',
@@ -49,7 +49,7 @@ export class InventoryOverview {
   // Overlay state
   overlayVisible = false;
   overlayMode: 'create' | 'edit' | 'delete' = 'create';
-  selectedItem: Partial<InventoryItem> = {};
+  selectedItem: Partial<InventoryModel> = {};
 
   // Filtered & Paginated items
   readonly filteredItems = computed(() => {
@@ -73,12 +73,12 @@ export class InventoryOverview {
   // --- CRUD Operations ---
 
   openCreate() {
-    this.selectedItem = { name: '', total_quantity: 0, available_quantity: 0 };
+    this.selectedItem = { name: '', totalQuantity: 0, availableQuantity: 0 };
     this.overlayMode = 'create';
     this.overlayVisible = true;
   }
 
-  openEdit(item: InventoryItem) {
+  openEdit(item: InventoryModel) {
     this.selectedItem = { ...item };
     this.overlayMode = 'edit';
     this.overlayVisible = true;
@@ -93,11 +93,11 @@ export class InventoryOverview {
     }
   }
 
-  handleConfirm(item: Partial<InventoryItem>) {
+  handleConfirm(item: Partial<InventoryModel>) {
     if (this.overlayMode === 'create') {
-      this.inventoryService.addItem(item.name || '', item.total_quantity || 0, item.available_quantity || 0);
+      this.inventoryService.addItem(item.name || '', item.totalQuantity || 0, item.availableQuantity || 0);
     } else if (this.overlayMode === 'edit') {
-      this.inventoryService.updateItem(item as InventoryItem);
+      this.inventoryService.updateItem(item as InventoryModel);
     }
   }
 

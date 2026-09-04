@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { InventoryItem } from '../inventory-service/inventory-model';
+import { InventoryModel } from '../inventory-service/inventory-model';
 
 @Component({
   selector: 'inventory-card',
@@ -13,13 +13,13 @@ import { InventoryItem } from '../inventory-service/inventory-model';
   styleUrl: './inventory-card.css',
 })
 export class InventoryCard {
-  @Input({ required: true }) item!: InventoryItem;
-  @Output() edit = new EventEmitter<InventoryItem>();
+  @Input({ required: true }) item!: InventoryModel;
+  @Output() edit = new EventEmitter<InventoryModel>();
   @Output() delete = new EventEmitter<string>();
 
   get percentage(): number {
-    if (!this.item?.total_quantity) return 0;
-    return (this.item.available_quantity / this.item.total_quantity) * 100;
+    if (!this.item?.totalQuantity) return 0;
+    return (this.item.availableQuantity / this.item.totalQuantity) * 100;
   }
 
   get statusColorClass(): string {

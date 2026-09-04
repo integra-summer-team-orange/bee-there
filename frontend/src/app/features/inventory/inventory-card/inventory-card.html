@@ -3,7 +3,7 @@
     <ng-template #title> {{ item.name }} </ng-template>
     <ng-template #content let-value>
       <span>Available: </span>
-      <span>{{ item.available_quantity }}/{{ item.total_quantity }}</span>
+      <span>{{ item.availableQuantity }}/{{ item.totalQuantity }}</span>
     </ng-template>
     <p-progressBar
       [value]="percentage"
