@@ -1,13 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-/** Key the bearer token is stored under. */
-export const TOKEN_STORAGE_KEY = 'integra.token';
-
-/**
- * RESTORE-AUTH: there is no login screen yet, so a leftover token would attribute requests to that user
- * instead of the development account the backend falls back to. Set this to false once login lands.
- */
-export const AUTH_DISABLED = true;
+/** Key the bearer token is stored under. The login screen writes the token under this key. */
+export const TOKEN_STORAGE_KEY = 'auth_token';
 
 /** Claims the backend puts in the JWT payload. */
 interface TokenClaims {
@@ -31,17 +25,22 @@ export class Session {
   /** Whether the signed-in user is an administrator, who may manage any venue. */
   readonly isAdmin = computed(() => this.role() === 'ADMIN');
 
-  /** Reads the stored token. Returns null when storage is unavailable, empty, or auth is switched off. */
+  /**
+   * Reads the stored token, or null when storage is unavailable, empty, or the token is unusable.
+   *
+   * A token that has expired — or that carries no expiry at all — counts as absent, so no
+   * Authorization header goes out for it. Until login lands that is what makes a token left over
+   * from an earlier session harmless: the request arrives without a header and the backend
+   * attributes it to the development account, the same as for a browser that never had one.
+   */
   readToken(): string | null {
-    if (AUTH_DISABLED) {
+    const token = this.readStorage();
+
+    if (token === null || this.isExpired(token)) {
       return null;
     }
 
-    try {
-      return localStorage.getItem(TOKEN_STORAGE_KEY);
-    } catch {
-      return null;
-    }
+    return token;
   }
 
   /** Stores a token and refreshes the decoded claims. */
@@ -58,6 +57,7 @@ export class Session {
   clear(): void {
     try {
       localStorage.removeItem(TOKEN_STORAGE_KEY);
+      sessionStorage.removeItem(TOKEN_STORAGE_KEY);
     } catch {
       // storage is unavailable, nothing to clean up
     }
@@ -76,6 +76,26 @@ export class Session {
     }
 
     return ownerId != null && ownerId === this.userId();
+  }
+
+  /** Reads the raw token, which the login screen may have put in either store. */
+  private readStorage(): string | null {
+    try {
+      return localStorage.getItem(TOKEN_STORAGE_KEY) ?? sessionStorage.getItem(TOKEN_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Whether the token is past its expiry, or carries no expiry to check. */
+  private isExpired(token: string): boolean {
+    const exp = this.decode(token)?.exp;
+
+    if (exp === undefined) {
+      return true;
+    }
+
+    return Date.now() >= exp * 1000;
   }
 
   private decode(token: string | null): TokenClaims | null {

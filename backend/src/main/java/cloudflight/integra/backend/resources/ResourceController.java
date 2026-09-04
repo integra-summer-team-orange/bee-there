@@ -79,7 +79,7 @@ public class ResourceController {
      * @return A {@link ResponseEntity} containing the {@link ResourceDto} with a 200 OK status.
      * @throws EntityNotFoundException if the resource is not found.
      */
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get a resource by ID", description = "Returns a single resource based on its unique ID.")
     @ApiResponses(
             value = {

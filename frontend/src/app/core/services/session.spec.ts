@@ -1,14 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Session } from './session';
+import { Session, TOKEN_STORAGE_KEY } from './session';
+
+/** Seconds since the epoch, offset by the given number of seconds. */
+function epoch(offsetSeconds: number): number {
+  return Math.floor(Date.now() / 1000) + offsetSeconds;
+}
 
 /** Builds a token whose payload carries the given claims. The signature is never checked client-side. */
 function tokenWith(claims: Record<string, unknown>): string {
-  return `header.${btoa(JSON.stringify(claims))}.signature`;
+  return `header.${btoa(JSON.stringify({ exp: epoch(3600), ...claims }))}.signature`;
 }
 
 describe('Session', () => {
   beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
     TestBed.configureTestingModule({});
   });
 
@@ -23,7 +30,7 @@ describe('Session', () => {
   it('lets an anonymous session manage anything while there is no login screen', () => {
     const session = TestBed.inject(Session);
 
-    // RESTORE-AUTH: this expectation flips to false once login lands
+    // RESTORE-AUTH: this expectation flips to false once the development filter is removed
     expect(session.canManage(123)).toBe(true);
   });
 
@@ -70,5 +77,45 @@ describe('Session', () => {
     session.clear();
 
     expect(session.userId()).toBeNull();
+  });
+
+  it('reads a token the login screen left in session storage', () => {
+    const token = tokenWith({ userId: 5, role: 'PARTICIPANT' });
+    sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+
+    const session = TestBed.inject(Session);
+
+    expect(session.readToken()).toBe(token);
+    expect(session.userId()).toBe(5);
+  });
+
+  it('treats an expired token as no token', () => {
+    localStorage.setItem(TOKEN_STORAGE_KEY, tokenWith({ userId: 9, exp: epoch(-60) }));
+
+    const session = TestBed.inject(Session);
+
+    expect(session.readToken()).toBeNull();
+    expect(session.userId()).toBeNull();
+  });
+
+  it('treats a token without an expiry as no token', () => {
+    localStorage.setItem(
+      TOKEN_STORAGE_KEY,
+      `header.${btoa(JSON.stringify({ userId: 9, role: 'ADMIN' }))}.signature`,
+    );
+
+    const session = TestBed.inject(Session);
+
+    expect(session.readToken()).toBeNull();
+  });
+
+  it('clears a token out of both stores', () => {
+    localStorage.setItem(TOKEN_STORAGE_KEY, tokenWith({ userId: 1 }));
+    sessionStorage.setItem(TOKEN_STORAGE_KEY, tokenWith({ userId: 1 }));
+
+    const session = TestBed.inject(Session);
+    session.clear();
+
+    expect(session.readToken()).toBeNull();
   });
 });
