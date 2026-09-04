@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 
 //TODO: delete this when login and register is implemented
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpb25lbDFAZ21haWwuY29tIiwidXNlcklkIjoxLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3ODc5MjQ3MDYsImV4cCI6MTc4ODAxMTEwNn0.hK4Q9_Zg3YnnaPL0x_-PBbq05rTFpm7VqBraDRu5aqU';
+  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJpb25lbDFAZ21haWwuY29tIiwidXNlcklkIjoyLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3ODg0NDU3MDEsImV4cCI6MTc4ODUzMjEwMX0.n131iY0XWsNoAUUTCzz7rDl0Ki9688u-BdRWtjiPyeI';
 
 
   const authReq = req.clone({

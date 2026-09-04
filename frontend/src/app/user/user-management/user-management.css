@@ -1,7 +1,18 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .top-page {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.top-page h1 {
+  margin: 0;
 }
 
 .actions {
@@ -11,14 +22,53 @@
 }
 
 .search-input {
-  border-color: black;
-  border-radius: 16px;
+  width: 250px;
+}
+
+.users-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .users {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  flex: 1;
+}
+
+p-paginator {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .users {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .top-page {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .search-input {
+    flex: 1;
+    width: auto;
+  }
+
+  .users {
+    grid-template-columns: 1fr;
+  }
 }
 
 :host ::ng-deep .add-user-button {
