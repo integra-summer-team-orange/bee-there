@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.user;
 
 import cloudflight.integra.backend.exceptions.ErrorResponse;
+import cloudflight.integra.backend.user.model.InviteUserRequestDto;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.model.UserRequestDto;
 import cloudflight.integra.backend.user.model.UserResponseDto;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +48,7 @@ public class UserController {
      * @param pageSize   the maximum number of items to return per page
      * @return A {@link ResponseEntity} containing the requested page of {@link UserResponseDto} with a 200 OK status.
      */
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Gets a page of users",
             description = "Returns a paginated list of users stored in the system.")
@@ -92,7 +94,7 @@ public class UserController {
                         description = "User not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> getUserById(
             @Parameter(description = "ID of the user to be retrieved", required = true) @PathVariable Long id) {
         User user = userService.getById(id);
@@ -120,7 +122,7 @@ public class UserController {
                         description = "Invalid input data",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid UserRequestDto dto) {
         User user = userService.create(userMapper.fromDto(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
@@ -152,7 +154,7 @@ public class UserController {
                         description = "Invalid input data",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PutMapping("/{id}")
+    @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> updateUser(
             @Parameter(description = "ID of the user to be updated", required = true) @PathVariable Long id,
             @RequestBody @Valid UserRequestDto userRequestDto) {
@@ -180,5 +182,34 @@ public class UserController {
             @Parameter(description = "ID of the user to be deleted", required = true) @PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Invites a new user by generating a random password and creating the user
+     * with the provided information.
+     *
+     * @param userRequestDto the data required to create the invited user
+     * @return a response containing the created user
+     */
+    @Operation(summary = "Invite a user", description = "Creates a new user with a randomly generated password.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "201",
+                        description = "User successfully invited",
+                        content = @Content(schema = @Schema(implementation = UserResponseDto.class))),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid user data",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping(path = "/invite", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserResponseDto> inviteUser(@RequestBody @Valid InviteUserRequestDto userRequestDto) {
+        User user = userService.inviteUser(userMapper.fromDto(userRequestDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
     }
 }

@@ -13,6 +13,20 @@ Authorization: Bearer {{token}}
 GET {{host}}/api/users/123
 Authorization: Bearer {{token}}
 
+
+### invite a user
+
+POST {{host}}/api/users/invite
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "darius",
+  "email": "dariusszocs11@gmail.com",
+  "phone": "0747474747",
+  "role": "PARTICIPANT"
+}
+
 ### Create user
 
 POST {{host}}/api/users
@@ -40,6 +54,7 @@ Content-Type: application/json
   "phone": "0747474747",
   "role": "PARTICIPANT"
 }
+
 
 ### Create user - invalid fields
 
@@ -85,7 +100,7 @@ Content-Type: application/json
 
 ### Delete user
 
-DELETE {{host}}/api/users/1
+DELETE {{host}}/api/users/22
 Authorization: Bearer {{token}}
 
 ### Delete user (failed - 404)

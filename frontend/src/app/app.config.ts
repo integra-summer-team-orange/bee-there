@@ -5,9 +5,14 @@ import { routes } from './app.routes';
 import {providePrimeNG} from 'primeng/config';
 
 import Aura from '@primeuix/themes/aura';
+import {authInterceptor} from './auth/auth.interceptor';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(
+      withInterceptors([authInterceptor]) //TODO:delete this after login, this is only for dev, for adding a token to the request
+    ),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     providePrimeNG({
