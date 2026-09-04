@@ -106,7 +106,7 @@ public class AuthenticationController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = UserResponseDto.class))),
+                                        schema = @Schema(implementation = LoginResponseDto.class))),
                 @ApiResponse(
                         responseCode = "400",
                         description = "Invalid credentials",
