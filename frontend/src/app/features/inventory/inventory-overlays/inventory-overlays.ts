@@ -43,12 +43,12 @@ export class InventoryOverlays {
     this.visibleChange.emit(false);
   }
 
-  // Returns true when availableQuantity exceeds totalQuantity
-  get isQuantityValid(): boolean {
+  // Frontend check for quality
+  get isQuantityInvalid(): boolean {
     if (this.mode === 'delete') return false;
     const total = this.item.totalQuantity ?? 0;
     const available = this.item.availableQuantity ?? 0;
-    return available <= total;
+    return available > total;
   }
 
   onConfirm() {
@@ -57,7 +57,7 @@ export class InventoryOverlays {
         this.delete.emit(this.item.id);
       }
     } else {
-      if (!this.isQuantityValid) {
+      if (this.isQuantityInvalid) {
         return;
       }
       this.confirm.emit(this.item);
