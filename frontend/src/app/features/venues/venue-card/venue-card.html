@@ -1,6 +1,6 @@
-<p-card styleClass="h-full border border-outline-variant shadow-md">
+<p-card styleClass="h-full wrap-anywhere border border-outline-variant shadow-md">
   <ng-template #title>
-    <span class="text-xl font-semibold">{{ venue().name }}</span>
+    <span class="line-clamp-2 text-xl font-semibold">{{ venue().name }}</span>
   </ng-template>
 
   <ng-template #content>
@@ -11,12 +11,12 @@
       </p>
 
       @if (venue().description) {
-        <p class="text-on-surface-variant">{{ venue().description }}</p>
+        <p class="line-clamp-3 text-on-surface-variant">{{ venue().description }}</p>
       }
 
       <p class="flex items-start gap-2 text-on-surface-variant">
-        <i class="pi pi-map-marker mt-0.5" aria-hidden="true"></i>
-        <span>{{ venue().address }}</span>
+        <i class="pi pi-map-marker mt-0.5 shrink-0" aria-hidden="true"></i>
+        <span class="line-clamp-2 min-w-0">{{ venue().address }}</span>
       </p>
     </div>
   </ng-template>
