@@ -27,23 +27,23 @@ import RoleEnum = UserResponseDto.RoleEnum;
 })
 export class UserDialog implements OnChanges {
 
-  visible = input(false);
+  public visible = input(false);
 
-  mode = input<'add' | 'edit' | 'details'>('add');
+  public mode = input<'add' | 'edit' | 'details'>('add');
 
-  user = input<UserResponseDto | null>(null);
+  public user = input<UserResponseDto | null>(null);
 
-  closed = output<void>();
+  protected closed = output<void>();
 
-  saved = output<void>();
+  protected saved = output<void>();
 
-  roles = [
+  protected roles = [
     { label: 'Admin', value: RoleEnum.Admin },
     { label: 'Venue Admin', value: RoleEnum.VenueAdmin },
     { label: 'Participant', value: RoleEnum.Participant }
   ];
 
-  form = new FormGroup({
+  protected form = new FormGroup({
     name: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required]
@@ -65,7 +65,7 @@ export class UserDialog implements OnChanges {
     })
   });
 
-  constructor(
+  public constructor(
     private usersService: UsersService
   ) {}
 
@@ -99,11 +99,11 @@ export class UserDialog implements OnChanges {
     }
   }
 
-  close(): void {
+  protected close(): void {
     this.closed.emit();
   }
 
-  submit(): void {
+  protected submit(): void {
     if (this.mode() === 'details') {
       return;
     }
@@ -123,7 +123,7 @@ export class UserDialog implements OnChanges {
     };
 
     if (this.mode() === 'add') {
-      this.usersService.create1(request).subscribe({
+      this.usersService.inviteUser(request).subscribe({
         next: () => {
           this.saved.emit();
           this.close();
@@ -137,7 +137,7 @@ export class UserDialog implements OnChanges {
     }
 
     if (this.mode() === 'edit' && this.user()) {
-      this.usersService.update1(
+      this.usersService.updateUser(
         this.user()!.id!,
         request
       ).subscribe({

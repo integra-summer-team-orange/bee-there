@@ -9,21 +9,22 @@ import { UserResponseDto } from '../../../api/generated';
   styleUrl: './user-card.css',
 })
 export class UserCard {
-  user = input.required<UserResponseDto>();
 
-  edit = output<UserResponseDto>();
-  details = output<UserResponseDto>();
-  delete = output<UserResponseDto>();
+  public user = input.required<UserResponseDto>();
 
-  onEdit(): void {
+  protected edit = output<UserResponseDto>();
+  protected details = output<UserResponseDto>();
+  protected delete = output<UserResponseDto>();
+
+  protected onEdit(): void {
     this.edit.emit(this.user());
   }
 
-  onDetails(): void {
+  protected onDetails(): void {
     this.details.emit(this.user());
   }
 
-  onDelete(): void {
+  protected onDelete(): void {
     this.delete.emit(this.user());
   }
 }

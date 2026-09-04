@@ -1,36 +1,47 @@
-<div class="top-page">
+<div class="page">
 
-  <h1>User overview</h1>
+  <div class="top-page">
+    <h1>User overview</h1>
 
-  <div class="actions">
+    <div class="actions">
+      <input
+        pInputText
+        class="search-input"
+        placeholder="Search user"
+      />
 
-    <input
-      pInputText
-      class="search-input"
-      placeholder="Search user"
-    />
-
-    <p-button
-      label="Add user"
-      icon="pi pi-plus"
-      class="add-user-button"
-      (onClick)="openAddUser()">
-    </p-button>
-
+      <p-button
+        label="Add user"
+        icon="pi pi-plus"
+        class="add-user-button"
+        (onClick)="openAddUser()">
+      </p-button>
+    </div>
   </div>
 
-</div>
+  <div class="users-section">
+    @if (users$ | async; as page) {
+      <div class="users">
+        @for (user of page.content ?? []; track user.id) {
+          <app-user-card
+            [user]="user"
+            (edit)="openEditUser($event)"
+            (details)="openDetails($event)"
+            (delete)="deleteUser($event)">
+          </app-user-card>
+        }
+      </div>
 
-<div class="users">
-
-  @for (user of users; track user.id) {
-    <app-user-card
-      [user]="user"
-      (edit)="openEditUser($event)"
-      (details)="openDetails($event)"
-      (delete)="deleteUser($event)">
-    </app-user-card>
-  }
+      @if ((page.totalElements ?? 0) > pageSize) {
+        <p-paginator
+          [first]="page.number! * pageSize"
+          [rows]="pageSize"
+          [totalRecords]="page.totalElements!"
+          (onPageChange)="onPageChange($event)"
+        />
+      }
+    }
+  </div>
 
 </div>
 
@@ -42,4 +53,4 @@
   (saved)="onUserSaved()">
 </app-user-dialog>
 
-<p-confirm-dialog></p-confirm-dialog>
+<p-confirm-dialog />

@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
+import { AsyncPipe } from '@angular/common';
 import {
   ErrorResponse,
   UsersService,
-  UserResponseDto
+  UserResponseDto, PageUserResponseDto
 } from '../../../api/generated';
 import { UserCard } from '../user-card/user-card';
 import { UserDialog } from '../user-dialog/user-dialog';
 import { ConfirmationService } from 'primeng/api';
 import {ConfirmDialog} from 'primeng/confirmdialog';
+import {EMPTY, Observable} from 'rxjs';
+import {Paginator, PaginatorState} from 'primeng/paginator';
 
 @Component({
   selector: 'app-user-management',
@@ -18,7 +21,9 @@ import {ConfirmDialog} from 'primeng/confirmdialog';
     InputText,
     UserCard,
     UserDialog,
-    ConfirmDialog
+    ConfirmDialog,
+    AsyncPipe,
+    Paginator
   ],
   providers:[
     ConfirmationService
@@ -28,101 +33,54 @@ import {ConfirmDialog} from 'primeng/confirmdialog';
 })
 export class UserManagement implements OnInit {
 
-  users: UserResponseDto[] = [];
+  protected users$: Observable<PageUserResponseDto> = EMPTY;
 
-  showUserDialog = false;
+  protected showUserDialog = false;
 
-  dialogMode: 'add' | 'edit' | 'details' = 'add';
+  public dialogMode: 'add' | 'edit' | 'details' = 'add';
 
-  selectedUser: UserResponseDto | null = null;
+  public selectedUser: UserResponseDto | null = null;
 
-  pageNumber = 0;
-  pageSize = 9;
+  protected pageNumber = 0;
+  protected pageSize = 9;
 
-  constructor(
+  public constructor(
     private usersService: UsersService,
     private confirmationService:ConfirmationService
   ) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.loadUsers();
   }
 
-  loadUsers(): void {
-   /** this.usersService.getAll1(this.pageNumber, this.pageSize).subscribe({
-      next: (page) => {
-        this.users = page ?? [];
-        console.log(page);
-        console.log(page.length);
-      },
-      error: (error) => {
-        console.error('Failed to load users', error);
-      }
-    });
-     **/
-   this.users = [
-     {
-       id: 1,
-       name: 'Daniel',
-       email: 'daniel@gmail.com',
-       phone: '0747123456',
-       role: UserResponseDto.RoleEnum.Admin,
-       createdAt: '2026-07-21T10:00:00'
-     },
-     {
-       id: 2,
-       name: 'Maria',
-       email: 'maria@gmail.com',
-       phone: '0747123456',
-       role: UserResponseDto.RoleEnum.VenueAdmin,
-       createdAt: '2026-07-22T11:30:00'
-     },
-     {
-       id: 3,
-       name: 'Andrei',
-       email: 'andrei@gmail.com',
-       phone: '0747123456',
-       role: UserResponseDto.RoleEnum.Participant,
-       createdAt: '2026-07-23T09:15:00'
-     },
-     {
-       id: 4,
-       name: 'Ion',
-       email: 'ion@gmail.com',
-       phone: '0747123456',
-       role: UserResponseDto.RoleEnum.Participant,
-       createdAt: '2026-07-24T14:45:00'
-     },
-     {
-       id: 5,
-       name: 'Vasile',
-       email: 'vasile@gmail.com',
-       phone: '0747123456',
-       role: UserResponseDto.RoleEnum.VenueAdmin,
-       createdAt: '2026-07-25T16:20:00'
-     }
-   ];
+  protected loadUsers(): void {
+    this.users$ = this.usersService.getAllUsers(
+      this.pageNumber,
+      this.pageSize
+    )
+
+
   }
 
-  openAddUser(): void {
+  protected openAddUser(): void {
     this.selectedUser = null;
     this.dialogMode = 'add';
     this.showUserDialog = true;
   }
 
-  openEditUser(user: UserResponseDto): void {
+  protected openEditUser(user: UserResponseDto): void {
     this.selectedUser = user;
     this.dialogMode = 'edit';
     this.showUserDialog = true;
   }
 
-  openDetails(user: UserResponseDto): void {
+  protected openDetails(user: UserResponseDto): void {
     this.selectedUser = user;
     this.dialogMode = 'details';
     this.showUserDialog = true;
   }
 
-  deleteUser(user: UserResponseDto): void {
+  protected deleteUser(user: UserResponseDto): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to delete user: ${user.name}?<br>This action cannot be undone.`,
       header: 'Delete User',
@@ -135,11 +93,11 @@ export class UserManagement implements OnInit {
           return;
         }
 
-        this.usersService.delete1(user.id).subscribe({
+        this.usersService.deleteUser(user.id).subscribe({
           next: () => {
             this.loadUsers();
           },
-          error: (error) => {
+          error: (error: ErrorResponse) => {
             console.error('Failed to delete user', error);
           }
         });
@@ -147,12 +105,18 @@ export class UserManagement implements OnInit {
     });
   }
 
-  closeDialog(): void {
+  protected closeDialog(): void {
     this.showUserDialog = false;
     this.selectedUser = null;
   }
 
-  onUserSaved(): void {
+  protected onUserSaved(): void {
+    this.loadUsers();
+  }
+
+  protected onPageChange(event: PaginatorState): void {
+    this.pageNumber = event.page ?? 0;
+    this.pageSize = event.rows ?? 9;
     this.loadUsers();
   }
 }
