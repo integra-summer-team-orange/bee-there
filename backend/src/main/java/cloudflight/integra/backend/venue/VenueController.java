@@ -120,7 +120,7 @@ public class VenueController {
                         description = "Venue not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VenueDto> getVenueById(
             @Parameter(description = "ID of the venue to be retrieved", required = true) @PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id)
