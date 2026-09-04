@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
 
 @theme {
   /* =========================================
@@ -74,4 +75,9 @@
      ========================================= */
   --color-general-highlight: #8069BF;
   --color-text-highlight: #8069BF;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
 }
