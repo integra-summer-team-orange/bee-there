@@ -10,7 +10,7 @@
     ></a>
     <a routerLink="/venues" class="text-lg text-on-surface-variant hover:text-on-surface">Venues</a>
     <span class="text-lg text-outline">/</span>
-    <span class="text-2xl font-bold text-general-highlight">
+    <span class="min-w-0 truncate text-2xl font-bold text-general-highlight">
       {{ mode() === 'create' ? 'New Venue' : venue()?.name }}
     </span>
   </nav>
@@ -37,7 +37,7 @@
           <i class="pi pi-image text-6xl text-outline-variant"></i>
         </div>
 
-        <div class="flex w-full max-w-sm flex-col gap-4">
+        <div class="flex w-full min-w-0 max-w-sm flex-col gap-4">
           <div class="flex items-center gap-3">
             @if (editing()) {
               <input
@@ -48,7 +48,9 @@
                 class="w-full"
               />
             } @else {
-              <h2 class="text-xl font-semibold">{{ venue()?.name }}</h2>
+              <h2 class="line-clamp-2 min-w-0 wrap-anywhere text-xl font-semibold">
+                {{ venue()?.name }}
+              </h2>
 
               @if (manageable()) {
                 <p-button
@@ -79,6 +81,7 @@
               pTextarea
               id="venue-description"
               rows="3"
+              [autoResize]="true"
               formControlName="description"
               placeholder="Add description"
               class="w-full"
@@ -91,14 +94,16 @@
 
           <div class="flex flex-col gap-1">
             <label for="venue-address" class="text-sm text-on-surface-variant" i18n>Address</label>
-            <input
-              pInputText
+            <textarea
+              pTextarea
               id="venue-address"
+              rows="2"
+              [autoResize]="true"
               formControlName="address"
               placeholder="Add address"
-              class="w-full"
+              class="w-full wrap-anywhere"
               [readonly]="!editing()"
-            />
+            ></textarea>
             @if (form.controls.address.touched && form.controls.address.invalid) {
               <small class="text-error" i18n>An address of up to 255 characters is required.</small>
             }
