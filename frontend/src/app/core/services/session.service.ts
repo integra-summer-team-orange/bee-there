@@ -1,27 +1,15 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { LoginRequestDto, LoginResponseDto } from '../../shared/models/auth.model';
-import { UserRequestDto, UserResponseDto } from '../../shared/models/user.model';
+import { Injectable } from '@angular/core';
 
 const TOKEN_KEY = 'auth_token';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
-  private http = inject(HttpClient);
-
-  register(request: UserRequestDto): Observable<UserResponseDto> {
-    return this.http.post<UserResponseDto>('/api/auth/register', request);
-  }
-
-  login(email: string, password: string, rememberMe: boolean): Observable<LoginResponseDto> {
-    const request: LoginRequestDto = { email, password };
-
-    return this.http.post<LoginResponseDto>('/api/auth/login', request).pipe(
-      tap((response) => {
-        this.saveToken(response.token, rememberMe);
-      })
-    );
+export class SessionService {
+  saveToken(token: string, rememberMe: boolean): void {
+    if (rememberMe) {
+      localStorage.setItem(TOKEN_KEY, token);
+    } else {
+      sessionStorage.setItem(TOKEN_KEY, token);
+    }
   }
 
   logout(): void {
@@ -46,14 +34,6 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
-  }
-
-  private saveToken(token: string, rememberMe: boolean): void {
-    if (rememberMe) {
-      localStorage.setItem(TOKEN_KEY, token);
-    } else {
-      sessionStorage.setItem(TOKEN_KEY, token);
-    }
   }
 
   private isExpired(token: string): boolean {

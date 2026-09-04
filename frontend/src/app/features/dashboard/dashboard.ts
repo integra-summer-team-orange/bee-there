@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { AuthService } from '../../core/services/auth.service';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,11 +10,11 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
-  private authService = inject(AuthService);
+  private session = inject(SessionService);
   private router = inject(Router);
 
   logout(): void {
-    this.authService.logout();
+    this.session.logout();
     this.router.navigateByUrl('/');
   }
 }

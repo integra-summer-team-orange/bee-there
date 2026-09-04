@@ -4,7 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthenticationService, LoginRequestDto } from '../../../api/generated';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,8 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './login.css',
 })
 export class Login {
-  private authService = inject(AuthService);
+  private api = inject(AuthenticationService);
+  private session = inject(SessionService);
   private router = inject(Router);
 
   rememberMe = new FormControl(false);
@@ -31,15 +33,24 @@ export class Login {
       return;
     }
 
-    this.authService
-      .login(this.email.value ?? '', this.password.value ?? '', this.rememberMe.value ?? false)
-      .subscribe({
-        next: () => {
-          this.router.navigateByUrl('/dashboard');
-        },
-        error: () => {
+    const request: LoginRequestDto = {
+      email: this.email.value ?? '',
+      password: this.password.value ?? '',
+    };
+
+    this.api.login(request).subscribe({
+      next: (response) => {
+        if (!response.token) {
           this.errorMessage.set('Invalid email or password.');
-        },
-      });
+          return;
+        }
+
+        this.session.saveToken(response.token, this.rememberMe.value ?? false);
+        this.router.navigateByUrl('/dashboard');
+      },
+      error: () => {
+        this.errorMessage.set('Invalid email or password.');
+      },
+    });
   }
 }

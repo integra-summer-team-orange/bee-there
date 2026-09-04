@@ -3,6 +3,8 @@ import { provideRouter } from '@angular/router';
 
 import {provideHttpClient} from '@angular/common/http';
 
+import {provideApi} from '../api/generated';
+
 import { routes } from './app.routes';
 import {providePrimeNG} from 'primeng/config';
 
@@ -14,6 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(),
+    provideApi(''),
     providePrimeNG({
       theme: {
         preset: Aura,

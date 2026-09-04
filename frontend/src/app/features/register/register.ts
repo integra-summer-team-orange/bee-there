@@ -3,8 +3,8 @@ import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, Validat
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthService } from '../../core/services/auth.service';
-import { UserRequestDto } from '../../shared/models/user.model';
+import { AuthenticationService, LoginRequestDto, UserRequestDto, UserResponseDto } from '../../../api/generated';
+import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +13,8 @@ import { UserRequestDto } from '../../shared/models/user.model';
   styleUrl: './register.css',
 })
 export class Register {
-  private authService = inject(AuthService);
+  private api = inject(AuthenticationService);
+  private session = inject(SessionService);
   private router = inject(Router);
 
   name = new FormControl('', Validators.required);
@@ -56,13 +57,25 @@ export class Register {
       email: this.email.value ?? '',
       password: this.password.value ?? '',
       phone: this.phone.value ?? '',
-      role: 'PARTICIPANT',
+      role: UserResponseDto.RoleEnum.Participant,
     };
 
-    this.authService.register(request).subscribe({
+    this.api.register(request).subscribe({
       next: () => {
-        this.authService.login(request.email, request.password, false).subscribe({
-          next: () => {
+        const credentials: LoginRequestDto = {
+          email: request.email,
+          password: this.password.value ?? '',
+        };
+
+        this.api.login(credentials).subscribe({
+          next: (response) => {
+            if (!response.token) {
+              this.errorMessage.set('Account created, but automatic sign-in failed. Please log in.');
+              this.router.navigateByUrl('/login');
+              return;
+            }
+
+            this.session.saveToken(response.token, false);
             this.router.navigateByUrl('/dashboard');
           },
           error: () => {
