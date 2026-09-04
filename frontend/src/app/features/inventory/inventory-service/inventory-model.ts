@@ -1,7 +1,7 @@
-export interface InventoryItem {
+export interface InventoryModel {
   id: string;
-  venue_id: string;
+  venueId: string;
   name: string;
-  total_quantity: number;
-  available_quantity: number;
+  totalQuantity: number;
+  availableQuantity: number;
 }

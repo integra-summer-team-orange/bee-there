@@ -5,7 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { InventoryItem } from '../inventory-service/inventory-model';
+import { InventoryModel } from '../inventory-service/inventory-model';
 
 @Component({
   selector: 'inventory-overlays',
@@ -24,10 +24,10 @@ import { InventoryItem } from '../inventory-service/inventory-model';
 export class InventoryOverlays {
   @Input() visible = false;
   @Input() mode: 'create' | 'edit' | 'delete' = 'create';
-  @Input() item: Partial<InventoryItem> = {};
+  @Input() item: Partial<InventoryModel> = {};
 
   @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() confirm = new EventEmitter<Partial<InventoryItem>>();
+  @Output() confirm = new EventEmitter<Partial<InventoryModel>>();
   @Output() delete = new EventEmitter<string>();
 
   get headerText(): string {
@@ -43,12 +43,23 @@ export class InventoryOverlays {
     this.visibleChange.emit(false);
   }
 
+  // Returns true when availableQuantity exceeds totalQuantity
+  get isQuantityValid(): boolean {
+    if (this.mode === 'delete') return false;
+    const total = this.item.totalQuantity ?? 0;
+    const available = this.item.availableQuantity ?? 0;
+    return available <= total;
+  }
+
   onConfirm() {
     if (this.mode === 'delete') {
       if (this.item.id) {
         this.delete.emit(this.item.id);
       }
     } else {
+      if (!this.isQuantityValid) {
+        return;
+      }
       this.confirm.emit(this.item);
     }
     this.onHide();
