@@ -1,9 +1,9 @@
 <div class="mb-4 p-8 flex items-center justify-center">
   <p-card [style]="{ width: '100%', overflow: 'hidden' }">
-    <ng-template #title> {{ item.name }} </ng-template>
+    <ng-template #title> {{ item.name | slice:0:25 }}{{ item.name.length > 25 ? '...' : '' }} </ng-template>
     <ng-template #content let-value>
-      <span>Available: </span>
-      <span>{{ item.availableQuantity }}/{{ item.totalQuantity }}</span>
+      <span class="font-bold">Available: </span>
+      <span>{{ item.availableQuantity }} of {{ item.totalQuantity }}</span>
     </ng-template>
     <p-progressBar
       [value]="percentage"
