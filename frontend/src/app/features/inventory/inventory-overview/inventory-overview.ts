@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,7 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { InventoryCard } from '../inventory-card/inventory-card';
 import { InventoryOverlays } from '../inventory-overlays/inventory-overlays';
 import { InventoryService } from '../inventory-service/inventory-service';
-import { InventoryModel } from '../inventory-service/inventory-model';
+import { InventoryDto } from '../../../../api/generated';
 
 @Component({
   selector: 'app-inventory-overview',
@@ -35,21 +35,22 @@ import { InventoryModel } from '../inventory-service/inventory-model';
   templateUrl: './inventory-overview.html',
   styleUrl: './inventory-overview.css',
 })
-export class InventoryOverview {
+export class InventoryOverview implements OnInit {
   private inventoryService = inject(InventoryService);
 
   // Master state
   readonly items = this.inventoryService.items;
   readonly searchQuery = signal<string>('');
+  readonly loading = this.inventoryService.loading;
 
   // Pagination state
   first = signal(0);
   rows = signal(6);
 
   // Overlay state
-  overlayVisible = false;
-  overlayMode: 'create' | 'edit' | 'delete' = 'create';
-  selectedItem: Partial<InventoryModel> = {};
+  overlayVisible = signal(false);
+  overlayMode = signal<'create' | 'edit' | 'delete'>('create');
+  selectedItem = signal<Partial<InventoryDto>>({});
 
   // Filtered & Paginated items
   readonly filteredItems = computed(() => {
@@ -65,6 +66,10 @@ export class InventoryOverview {
     return items.slice(actualStart, actualStart + this.rows());
   });
 
+  ngOnInit() {
+    this.inventoryService.loadItems();
+  }
+
   onPageChange(event: PaginatorState) {
     this.first.set(event.first ?? 0);
     this.rows.set(event.rows ?? 6);
@@ -73,36 +78,37 @@ export class InventoryOverview {
   // --- CRUD Operations ---
 
   openCreate() {
-    this.selectedItem = { name: '', totalQuantity: 0, availableQuantity: 0 };
-    this.overlayMode = 'create';
-    this.overlayVisible = true;
+    this.selectedItem.set({ name: '', totalQuantity: 0, availableQuantity: 0 });
+    this.overlayMode.set('create');
+    this.overlayVisible.set(true);
   }
 
-  openEdit(item: InventoryModel) {
-    this.selectedItem = { ...item };
-    this.overlayMode = 'edit';
-    this.overlayVisible = true;
+  openEdit(item: InventoryDto) {
+    this.selectedItem.set({ ...item });
+    this.overlayMode.set('edit');
+    this.overlayVisible.set(true);
   }
 
-  openDelete(id: string) {
+  openDelete(id: number) {
     const item = this.inventoryService.getById(id);
     if (item) {
-      this.selectedItem = { ...item };
-      this.overlayMode = 'delete';
-      this.overlayVisible = true;
+      this.selectedItem.set({ ...item });
+      this.overlayMode.set('delete');
+      this.overlayVisible.set(true);
     }
   }
 
-  handleConfirm(item: Partial<InventoryModel>) {
-    if (this.overlayMode === 'create') {
-      this.inventoryService.addItem(item.name || '', item.totalQuantity || 0, item.availableQuantity || 0);
-    } else if (this.overlayMode === 'edit') {
-      this.inventoryService.updateItem(item as InventoryModel);
+  async handleConfirm(item: Partial<InventoryDto>) {
+    if (this.overlayMode() === 'create') {
+      await this.inventoryService.addItem(item.name || '', item.totalQuantity || 0, item.availableQuantity || 0);
+    } else if (this.overlayMode() === 'edit') {
+      await this.inventoryService.updateItem(item as InventoryDto);
     }
+    this.overlayVisible.set(false);
   }
 
-  // DELETE
-  deleteItem(id: string) {
-    this.inventoryService.deleteItem(id);
+  async deleteItem(id: number) {
+    await this.inventoryService.deleteItem(id);
+    this.overlayVisible.set(false);
   }
 }

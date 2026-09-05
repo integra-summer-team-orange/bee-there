@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InventoryCard } from './inventory-card';
-import { InventoryModel } from '../inventory-service/inventory-model';
 import { By } from '@angular/platform-browser';
+import {InventoryDto} from '../../../../api/generated';
 
 describe('InventoryCard', () => {
   let component: InventoryCard;
   let fixture: ComponentFixture<InventoryCard>;
 
-  const mockItem: InventoryModel = {
-    id: '1',
-    venueId: 'v1',
+  const mockItem: InventoryDto = {
+    id: 1,
+    venueId: 1,
     name: 'Test Item',
     totalQuantity: 100,
     availableQuantity: 50
@@ -50,7 +50,7 @@ describe('InventoryCard', () => {
   });
 
   it('should emit item on edit action', () => {
-    let emittedItem: InventoryModel | null = null;
+    let emittedItem: InventoryDto | null = null;
     component.edit.subscribe((val) => (emittedItem = val));
 
     const editBtn = fixture.debugElement.queryAll(By.css('p-button'))[0];
@@ -60,12 +60,12 @@ describe('InventoryCard', () => {
   });
 
   it('should emit item id on delete action', () => {
-    let deletedId: string | null = null;
+    let deletedId: number | null = null;
     component.delete.subscribe((val) => (deletedId = val));
 
     const deleteBtn = fixture.debugElement.queryAll(By.css('p-button'))[1];
     deleteBtn.triggerEventHandler('onClick', null);
 
-    expect(deletedId).toBe('1');
+    expect(deletedId).toBe(1);
   });
 });
