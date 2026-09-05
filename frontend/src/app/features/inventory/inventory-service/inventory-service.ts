@@ -1,46 +1,88 @@
-import { Injectable, signal } from '@angular/core';
-import { InventoryModel } from './inventory-model';
-
-
-const DUMMY_DATA: InventoryModel[] = [
-  { id: '1', venueId: 'cluj-arena', name: 'Basketballs', totalQuantity: 60, availableQuantity: 20 },
-  { id: '2', venueId: 'cluj-arena', name: 'Tennis Rackets', totalQuantity: 12, availableQuantity: 10 },
-  { id: '3', venueId: 'cluj-arena', name: 'Footballs', totalQuantity: 120, availableQuantity: 0 },
-  { id: '4', venueId: 'cluj-arena', name: 'Badminton Rackets', totalQuantity: 8, availableQuantity: 1 },
-  { id: '5', venueId: 'cluj-arena', name: 'Volleyballs', totalQuantity: 30, availableQuantity: 15 },
-  { id: '6', venueId: 'cluj-arena', name: 'Table Tennis Paddles', totalQuantity: 16, availableQuantity: 14 },
-  { id: '7', venueId: 'cluj-arena', name: 'Yoga Mats', totalQuantity: 25, availableQuantity: 25 },
-];
+import { Injectable, signal, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { InventoryService as InventoryApiService, InventoryDto } from '../../../../api/generated';
+import {MOCK_INVENTORY_ITEMS} from './inventory.mock';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventoryService {
-  private readonly _items = signal<InventoryModel[]>(DUMMY_DATA);
+  private inventoryApi = inject(InventoryApiService);
+
+  // TODO: Integrate a signal passed from the Venue slice
+  protected selectedVenue = 1;
+
+  private readonly _items = signal<InventoryDto[]>([]);
   readonly items = this._items.asReadonly();
 
-  getById(id: string): InventoryModel | undefined {
-    return this._items().find(item => item.id === id);
+  private readonly _loading = signal<boolean>(false);
+  readonly loading = this._loading.asReadonly();
+
+  protected pageNumber = 0;
+  protected pageSize = 10;
+
+  // Loading Items from the backend
+  async loadItems(page = this.pageNumber, size = this.pageSize) {
+    this._loading.set(true);
+    try {
+      const response = await firstValueFrom(this.inventoryApi.getAllInventoryItems(page, size));
+      const items = response.content || [];
+
+      // seed the database should it be empty upon initial load
+      if (items.length === 0 && (response.totalElements === 0 || response.totalElements === undefined)) {
+        await this.seedDatabase();
+        return;
+      }
+
+      this._items.set(items);
+    } finally {
+      this._loading.set(false);
+    }
   }
 
-  addItem(name: string, total: number, available: number) {
-    const newItem: InventoryModel = {
-      id: crypto.randomUUID(),
-      venueId: 'cluj-arena',
+  // function that populates the database with mock items for testing
+  private async seedDatabase() {
+    for (const item of MOCK_INVENTORY_ITEMS) {
+      await firstValueFrom(this.inventoryApi.createInventoryItem(item));
+    }
+    // Reload items from backend now that DB is populated
+    const reloaded = await firstValueFrom(
+      this.inventoryApi.getAllInventoryItems(this.pageNumber, this.pageSize)
+    );
+    this._items.set(reloaded.content || []);
+  }
+
+  async addItem(name: string, total: number, available: number) {
+    const dto: InventoryDto = {
+      venueId: this.selectedVenue,
       name,
       totalQuantity: total,
       availableQuantity: available,
     };
+    const newItem = await firstValueFrom(this.inventoryApi.createInventoryItem(dto));
     this._items.update(list => [newItem, ...list]);
   }
 
-  updateItem(updatedItem: InventoryModel) {
+  async updateItem(updatedItem: InventoryDto) {
+    const dto: InventoryDto = {
+      id: Number(updatedItem.id),
+      venueId: Number(updatedItem.venueId),
+      name: updatedItem.name,
+      totalQuantity: updatedItem.totalQuantity,
+      availableQuantity: updatedItem.availableQuantity
+    }
+    const response = await firstValueFrom(this.inventoryApi.updateInventoryItem(dto.id!, dto));
     this._items.update(list =>
-      list.map(item => (item.id === updatedItem.id ? updatedItem : item))
+      list.map(item => (item.id === updatedItem.id ? response : item))
     );
   }
 
-  deleteItem(id: string) {
+  async deleteItem(id: number) {
+    await firstValueFrom(this.inventoryApi.deleteInventoryItem(id));
     this._items.update(list => list.filter(item => item.id !== id));
+  }
+
+  getById(id: number): InventoryDto | undefined {
+    return this._items().find(item => item.id === id);
   }
 }

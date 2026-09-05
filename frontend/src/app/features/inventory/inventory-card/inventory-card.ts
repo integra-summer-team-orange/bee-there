@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { InventoryModel } from '../inventory-service/inventory-model';
+import { InventoryDto } from '../../../../api/generated';
 
 @Component({
   selector: 'inventory-card',
@@ -13,9 +13,9 @@ import { InventoryModel } from '../inventory-service/inventory-model';
   styleUrl: './inventory-card.css',
 })
 export class InventoryCard {
-  @Input({ required: true }) item!: InventoryModel;
-  @Output() edit = new EventEmitter<InventoryModel>();
-  @Output() delete = new EventEmitter<string>();
+  @Input({ required: true }) item!: InventoryDto;
+  @Output() edit = new EventEmitter<InventoryDto>();
+  @Output() delete = new EventEmitter<number>();
 
   get percentage(): number {
     if (!this.item?.totalQuantity) return 0;
