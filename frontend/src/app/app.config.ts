@@ -4,11 +4,12 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import {providePrimeNG} from 'primeng/config';
 
-import {AuthInterceptor} from './core/interceptors/auth.interceptor';
+import {authInterceptor} from './core/interceptors/auth.interceptor';
 
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
-import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptors} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { BASE_PATH } from '../api/generated';
 
 /**
  * Aura with the violet from the design as the primary colour. Aura ships with emerald, which is why every
@@ -36,12 +37,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
+    { provide: BASE_PATH, useValue: '' },
     providePrimeNG({
       theme: {
         preset: IntegraPreset,

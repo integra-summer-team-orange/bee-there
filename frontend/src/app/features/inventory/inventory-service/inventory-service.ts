@@ -1,7 +1,7 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { InventoryService as InventoryApiService, InventoryDto } from '../../../../api/generated';
-import {MOCK_INVENTORY_ITEMS} from './inventory.mock';
+import { MOCK_INVENTORY_ITEMS } from './inventory.mock';
 
 @Injectable({
   providedIn: 'root'

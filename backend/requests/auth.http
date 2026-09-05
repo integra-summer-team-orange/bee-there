@@ -31,6 +31,11 @@ Content-Type: application/json
   "password": "!IonelCelSmecher123"
 }
 
+> {%
+    // Replace .token with .accessToken or .jwt if your JSON uses a different key name
+    client.global.set("token", response.body.token);
+%}
+
 ### Login
 POST {{host}}/api/auth/login
 Content-Type: application/json
@@ -39,3 +44,7 @@ Content-Type: application/json
   "email": "gigel1@gmail.com",
   "password": "!GigelCelSmecher123"
 }
+
+> {%
+    client.global.set("token", response.body.token);
+%}
