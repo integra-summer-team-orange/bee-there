@@ -120,7 +120,7 @@ public class UserService {
 
         user.setId(id);
         user.setCreatedAt(existing.get().getCreatedAt());
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        user.setPasswordHash(passwordEncoder.encode(existing.get().getPasswordHash()));
 
         return userRepository.save(user);
     }

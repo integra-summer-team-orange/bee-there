@@ -1,8 +1,7 @@
 package cloudflight.integra.backend.user;
 
 import cloudflight.integra.backend.exceptions.ErrorResponse;
-import cloudflight.integra.backend.user.model.PasswordRequestDto;
-import cloudflight.integra.backend.user.model.InviteUserRequestDto;
+import cloudflight.integra.backend.user.model.NoPassUserRequestDto;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.model.UserRequestDto;
 import cloudflight.integra.backend.user.model.UserResponseDto;
@@ -158,7 +157,7 @@ public class UserController {
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseDto> updateUser(
             @Parameter(description = "ID of the user to be updated", required = true) @PathVariable Long id,
-            @RequestBody @Valid UserRequestDto userRequestDto) {
+            @RequestBody @Valid NoPassUserRequestDto userRequestDto) {
         User user = userService.update(id, userMapper.fromDto(userRequestDto));
         return ResponseEntity.ok(userMapper.toDto(user));
     }
@@ -247,7 +246,7 @@ public class UserController {
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping(path = "/invite", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserResponseDto> inviteUser(@RequestBody @Valid InviteUserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> inviteUser(@RequestBody @Valid NoPassUserRequestDto userRequestDto) {
         User user = userService.inviteUser(userMapper.fromDto(userRequestDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
     }

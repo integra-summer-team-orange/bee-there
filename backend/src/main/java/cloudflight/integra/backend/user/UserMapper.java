@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.user;
 
-import cloudflight.integra.backend.user.model.InviteUserRequestDto;
+import cloudflight.integra.backend.user.model.NoPassUserRequestDto;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.model.UserRequestDto;
 import cloudflight.integra.backend.user.model.UserResponseDto;
@@ -35,11 +35,11 @@ public interface UserMapper {
     /**
      * Converts an invitation user request DTO into a user entity.
      *
-     * @param inviteUserRequestDto the request DTO to convert
+     * @param noPassUserRequestDto the request DTO to convert
      * @return the mapped user entity
      */
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    User fromDto(InviteUserRequestDto inviteUserRequestDto);
+    User fromDto(NoPassUserRequestDto noPassUserRequestDto);
 }
