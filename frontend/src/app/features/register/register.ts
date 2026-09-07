@@ -53,10 +53,10 @@ export class Register {
     }
 
     const request: UserRequestDto = {
-      name: this.name.value ?? '',
-      email: this.email.value ?? '',
-      password: this.password.value ?? '',
-      phone: this.phone.value ?? '',
+      name: this.name.value!,
+      email: this.email.value!,
+      password: this.password.value!,
+      phone: this.phone.value!,
       role: UserResponseDto.RoleEnum.Participant,
     };
 
@@ -64,7 +64,7 @@ export class Register {
       next: () => {
         const credentials: LoginRequestDto = {
           email: request.email,
-          password: this.password.value ?? '',
+          password: this.password.value!,
         };
 
         this.api.login(credentials).subscribe({

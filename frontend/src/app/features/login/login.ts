@@ -34,8 +34,8 @@ export class Login {
     }
 
     const request: LoginRequestDto = {
-      email: this.email.value ?? '',
-      password: this.password.value ?? '',
+      email: this.email.value!,
+      password: this.password.value!,
     };
 
     this.api.login(request).subscribe({
