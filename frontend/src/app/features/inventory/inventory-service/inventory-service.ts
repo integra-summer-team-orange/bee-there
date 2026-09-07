@@ -28,13 +28,15 @@ export class InventoryService {
       const response = await firstValueFrom(this.inventoryApi.getAllInventoryItems(page, size));
       const items = response.content || [];
 
+      const filteredItems = items.filter(item => item.venueId === this.selectedVenue);
+
       // seed the database should it be empty upon initial load
-      if (items.length === 0 && (response.totalElements === 0 || response.totalElements === undefined)) {
+      if (filteredItems.length === 0 && (response.totalElements === 0 || response.totalElements === undefined)) {
         await this.seedDatabase();
         return;
       }
 
-      this._items.set(items);
+      this._items.set(filteredItems);
     } finally {
       this._loading.set(false);
     }
