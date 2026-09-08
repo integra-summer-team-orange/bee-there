@@ -69,6 +69,15 @@ Content-Type: application/json
   "role": "PRESIDENT"
 }
 
+### Update user password
+
+PATCH {{host}}/api/users/1/password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "password": "!IonelCelSmecher123"
+}
 ### Update user
 
 PUT {{host}}/api/users/1
