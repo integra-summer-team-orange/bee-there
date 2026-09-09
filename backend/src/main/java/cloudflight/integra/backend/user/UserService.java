@@ -149,4 +149,21 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    /**
+     * Updates the password of the user with the specified ID.
+     *
+     * @param id the ID of the user whose password should be updated
+     * @param password the new password
+     * @throws EntityNotFoundException if no user exists with the specified ID
+     */
+    public void updatePassword(Long id, String password) {
+        checkOwnership(id);
+
+        User existing = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        existing.setPasswordHash(passwordEncoder.encode(password));
+
+        userRepository.save(existing);
+    }
 }

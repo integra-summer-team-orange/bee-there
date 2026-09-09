@@ -1,6 +1,7 @@
 package cloudflight.integra.backend.user;
 
 import cloudflight.integra.backend.exceptions.ErrorResponse;
+import cloudflight.integra.backend.user.model.PasswordRequestDto;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.user.model.UserRequestDto;
 import cloudflight.integra.backend.user.model.UserResponseDto;
@@ -179,6 +180,44 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "ID of the user to be deleted", required = true) @PathVariable Long id) {
         userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Updates the password of the user with the specified ID.
+     *
+     * @param id  the ID of the user whose password should be updated
+     * @param dto the request containing the new password
+     * @return a {@link ResponseEntity} with a 204 No Content status
+     */
+    @PatchMapping("/{id}/password")
+    @Operation(
+            summary = "Updates a user's password",
+            description = "Updates the password of the specified user. The authenticated user must own the account.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(responseCode = "204", description = "Password updated successfully"),
+                @ApiResponse(
+                        responseCode = "400",
+                        description = "Invalid password",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "User not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error occurred",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    public ResponseEntity<Void> updatePassword(
+            @Parameter(description = "ID of the user whose password should be updated", example = "1", required = true)
+                    @PathVariable
+                    Long id,
+            @RequestBody @Valid PasswordRequestDto dto) {
+
+        userService.updatePassword(id, dto.password());
+
         return ResponseEntity.noContent().build();
     }
 }
