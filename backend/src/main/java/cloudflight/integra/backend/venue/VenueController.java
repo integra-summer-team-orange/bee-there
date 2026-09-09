@@ -2,6 +2,9 @@ package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.exceptions.ErrorResponse;
+import cloudflight.integra.backend.resources.ResourceMapper;
+import cloudflight.integra.backend.resources.ResourceService;
+import cloudflight.integra.backend.resources.model.ResourceDto;
 import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,16 +31,23 @@ import org.springframework.web.bind.annotation.*;
 public class VenueController {
     private final VenueService service;
     private final VenueMapper mapper;
+    private final ResourceService resourceService;
+    private final ResourceMapper resourceMapper;
 
     /**
      * Creates a new venue controller.
      *
-     * @param service the venue service
-     * @param mapper the venue mapper
+     * @param service         the venue service
+     * @param mapper          the venue mapper
+     * @param resourceService the resource service
+     * @param resourceMapper  the resource mapper
      */
-    public VenueController(VenueService service, VenueMapper mapper) {
+    public VenueController(
+            VenueService service, VenueMapper mapper, ResourceService resourceService, ResourceMapper resourceMapper) {
         this.service = service;
         this.mapper = mapper;
+        this.resourceService = resourceService;
+        this.resourceMapper = resourceMapper;
     }
 
     /**
@@ -200,5 +210,34 @@ public class VenueController {
             @Parameter(description = "ID of the venue to be deleted", required = true) @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Retrieves a paginated list of resources associated with a specific venue.
+     *
+     * @param id         The unique identifier of the venue.
+     * @param pageNumber The page index for pagination (zero-based, default is 0).
+     * @param pageSize   The number of items per page (default is 10).
+     * @return A {@link ResponseEntity} containing a paginated list of {@link ResourceDto}.
+     */
+    @Operation(
+            summary = "Get resources by venue",
+            description = "Retrieves a paginated list of resources associated with a specific venue.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Resources retrieved successfully",
+                        content =
+                                @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class)))
+            })
+    @GetMapping(value = "/{id}/resources", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<ResourceDto>> getResourcesByVenue(
+            @Parameter(description = "ID of the venue", required = true) @PathVariable("id") Long id,
+            @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+
+        return ResponseEntity.ok(
+                resourceService.getByVenueId(id, pageNumber, pageSize).map(resourceMapper::toDto));
     }
 }
