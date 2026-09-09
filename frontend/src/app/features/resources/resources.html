@@ -53,20 +53,49 @@
 </div>
 
 <!-- ================= PAGINATION ================= -->
-<div class="flex justify-center items-center gap-4 my-12 text-sm font-medium text-on-surface-variant">
-  <button class="hover:text-on-surface transition-colors">&larr; Previous</button>
+@if (totalPages > 1) {
+  <div class="flex justify-center items-center gap-4 my-12 text-sm font-medium text-on-surface-variant">
 
-  <div class="flex gap-2 items-center">
-    <button class="w-8 h-8 bg-on-surface text-surface-container-lowest rounded-md flex items-center justify-center">1</button>
-    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">2</button>
-    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">3</button>
-    <span class="flex items-center justify-center px-1">...</span>
-    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">67</button>
-    <button class="w-8 h-8 hover:bg-surface-container-high rounded-md flex items-center justify-center transition-colors">68</button>
+    <!-- Previous Button -->
+    <button
+      class="transition-colors"
+      [class.opacity-50]="currentPage === 0"
+      [class.cursor-not-allowed]="currentPage === 0"
+      [class.hover:text-on-surface]="currentPage !== 0"
+      (click)="goToPage(currentPage - 1)">
+      &larr; Previous
+    </button>
+
+    <!-- Dynamic page count -->
+    <div class="flex gap-2 items-center">
+      @for(p of visiblePages; track p) {
+        @if (p === '...') {
+          <span class="flex items-center justify-center px-1">...</span>
+        } @else {
+          <button
+            class="w-8 h-8 rounded-md flex items-center justify-center transition-colors"
+            [class.bg-on-surface]="currentPage + 1 === p"
+            [class.text-surface-container-lowest]="currentPage + 1 === p"
+            [class.hover:bg-surface-container-high]="currentPage + 1 !== p"
+            (click)="goToPage($any(p) - 1)">
+            {{p}}
+          </button>
+        }
+      }
+    </div>
+
+    <!-- Next Button -->
+    <button
+      class="transition-colors"
+      [class.opacity-50]="currentPage === totalPages - 1"
+      [class.cursor-not-allowed]="currentPage === totalPages - 1"
+      [class.hover:text-on-surface]="currentPage !== totalPages - 1"
+      (click)="goToPage(currentPage + 1)">
+      Next &rarr;
+    </button>
+
   </div>
-
-  <button class="hover:text-on-surface transition-colors">Next &rarr;</button>
-</div>
+}
 
 <!-- ================= DELETE MODAL ================= -->
 <p-dialog header="Delete Resource" [(visible)]="isDeleteModalVisible" [modal]="true">

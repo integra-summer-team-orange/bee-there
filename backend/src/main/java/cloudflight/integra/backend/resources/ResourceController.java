@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @RestController
 @RequestMapping("/api/resources")
+@CrossOrigin(origins = "http://localhost:4200")
 @Tag(
         name = "Resources",
         description = "API endpoints for managing various types of resources "
