@@ -1,0 +1,99 @@
+<div class="flex flex-col gap-4 ml-135 mr-135">
+  <form [formGroup]="form">
+
+
+    <div class="flex flex-col gap-1">
+      <label for="name" class="font-semibold">Name</label>
+      <input
+        pInputText
+        id="name"
+        formControlName="name"
+        placeholder="Name"
+        class="w-full"
+        [readonly]="!isEditing"
+      >
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="email" class="font-semibold">Email</label>
+      <input
+        pInputText
+        id="email"
+        formControlName="email"
+        placeholder="Email"
+        class="w-full"
+        [readonly]="!isEditing"
+      >
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="phone" class="font-semibold">Phone</label>
+      <input
+        pInputText
+        id="phone"
+        formControlName="phone"
+        placeholder="Phone"
+        class="w-full"
+        [readonly]="!isEditing"
+      >
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="role" class="font-semibold">Role</label>
+      <input
+        pInputText
+        id="role"
+        formControlName="role"
+        class="w-full"
+        readonly
+      >
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="created_at" class="font-semibold">Registration date</label>
+      <input
+        pInputText
+        id="created_at"
+        formControlName="createdAt"
+        class="w-full"
+        readonly
+      >
+    </div>
+
+
+  </form>
+
+  @if (!isEditing) {
+
+    <p-button
+      label="Reset Password"
+      (onClick)="resetPassword()"
+    />
+
+    <p-button
+      label="Edit"
+      (onClick)="isEditing = true"
+    />
+
+    <p-button
+      label="Delete"
+      severity="danger"
+      (onClick)="deleteUser()"
+    />
+  }
+
+  @if (isEditing) {
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="cancelEdit()"
+    />
+
+    <p-button
+      label="Save"
+      (onClick)="submit()"
+    />
+  }
+
+</div>
+
