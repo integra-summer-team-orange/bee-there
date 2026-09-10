@@ -27,11 +27,10 @@ describe('Session', () => {
     expect(session.role()).toBeNull();
   });
 
-  it('lets an anonymous session manage anything while there is no login screen', () => {
+  it('denies an anonymous session from managing anything', () => {
     const session = TestBed.inject(Session);
 
-    // RESTORE-AUTH: this expectation flips to false once the development filter is removed
-    expect(session.canManage(123)).toBe(true);
+    expect(session.canManage(123)).toBe(false);
   });
 
   it('decodes the user id and role out of a stored token', () => {

@@ -2,7 +2,6 @@ package cloudflight.integra.backend.authentication.config;
 
 import cloudflight.integra.backend.authentication.AuthEntryPointJwt;
 import cloudflight.integra.backend.authentication.AuthenticationTokenFilter;
-import java.util.Optional;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,16 +20,10 @@ public class SecurityConfiguration {
     private final AuthenticationTokenFilter authenticationTokenFilter;
     private final AuthEntryPointJwt authEntryPointJwt;
 
-    // RESTORE-AUTH: drop this field and the registration below together with DevelopmentAuthenticationFilter.
-    private final Optional<DevelopmentAuthenticationFilter> developmentAuthenticationFilter;
-
     public SecurityConfiguration(
-            AuthenticationTokenFilter authenticationTokenFilter,
-            AuthEntryPointJwt authEntryPointJwt,
-            Optional<DevelopmentAuthenticationFilter> developmentAuthenticationFilter) {
+            AuthenticationTokenFilter authenticationTokenFilter, AuthEntryPointJwt authEntryPointJwt) {
         this.authenticationTokenFilter = authenticationTokenFilter;
         this.authEntryPointJwt = authEntryPointJwt;
-        this.developmentAuthenticationFilter = developmentAuthenticationFilter;
     }
 
     @Bean
@@ -83,10 +76,6 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .hasRole("ADMIN"))
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // RESTORE-AUTH: registered after the token filter, so a valid token keeps its own authentication.
-        developmentAuthenticationFilter.ifPresent(
-                filter -> http.addFilterAfter(filter, AuthenticationTokenFilter.class));
 
         return http.build();
     }

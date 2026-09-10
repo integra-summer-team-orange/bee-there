@@ -45,8 +45,6 @@ describe('authInterceptor', () => {
   });
 
   it('ignores a token that has expired', () => {
-    // RESTORE-AUTH: a token left over from an earlier session must not outlive its expiry,
-    // otherwise the request is attributed to that user instead of the development account.
     localStorage.setItem(TOKEN_STORAGE_KEY, tokenExpiringIn(-60));
 
     expect(sendThrough().headers.has('Authorization')).toBe(false);

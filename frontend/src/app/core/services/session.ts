@@ -29,9 +29,7 @@ export class Session {
    * Reads the stored token, or null when storage is unavailable, empty, or the token is unusable.
    *
    * A token that has expired — or that carries no expiry at all — counts as absent, so no
-   * Authorization header goes out for it. Until login lands that is what makes a token left over
-   * from an earlier session harmless: the request arrives without a header and the backend
-   * attributes it to the development account, the same as for a browser that never had one.
+   * Authorization header goes out for it.
    */
   readToken(): string | null {
     const token = this.readStorage();
@@ -41,6 +39,17 @@ export class Session {
     }
 
     return token;
+  }
+
+  /**
+   * Re-decodes claims from whatever token is currently in storage, without writing anything.
+   *
+   * `claims` is only set once, at construction, so a token written by another part of the app
+   * after that (e.g. the login screen) leaves `role`/`isAdmin`/`canManage` stale until this is
+   * called. Call it right after a login, register, or logout completes.
+   */
+  refreshClaims(): void {
+    this.claims.set(this.decode(this.readToken()));
   }
 
   /** Stores a token and refreshes the decoded claims. */
@@ -66,9 +75,8 @@ export class Session {
 
   /** True when the given user id is the signed-in user, or when the signed-in user is an admin. */
   canManage(ownerId: number | null | undefined): boolean {
-    // RESTORE-AUTH: the backend attributes tokenless requests to an ADMIN development account.
     if (this.claims() === null) {
-      return true;
+      return false;
     }
 
     if (this.isAdmin()) {
