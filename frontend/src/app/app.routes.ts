@@ -5,6 +5,7 @@ import {Register} from './features/register/register';
 import {Dashboard} from './features/dashboard/dashboard';
 import {redirectIfAuthenticatedGuard} from './core/guards/redirect-if-authenticated.guard';
 import {requireAuthGuard} from './core/guards/require-auth.guard';
+import {UserManagement} from './features/user/user-management/user-management';
 
 export const routes: Routes = [
   {
@@ -26,5 +27,10 @@ export const routes: Routes = [
     path: 'dashboard',
     component: Dashboard,
     canActivate: [requireAuthGuard],
-  }
+  },
+  {
+    path: 'users',
+    component: UserManagement,
+    canActivate: [requireAuthGuard],
+  },
 ];

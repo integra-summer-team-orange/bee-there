@@ -1,0 +1,56 @@
+<div class="flex h-full flex-col">
+
+  <div class="mt-8 mb-8 flex items-center justify-between max-[768px]:flex-col max-[768px]:items-stretch max-[768px]:gap-4">
+    <h1 class="ml-8 text-3xl font-bold">
+      Users overview
+    </h1>
+
+    <div class="flex items-center gap-4 max-[768px]:w-full">
+      <input
+        pInputText
+        class="w-[250px] max-[768px]:w-full max-[768px]:flex-1"
+        placeholder="Search user"
+      />
+
+      <p-button
+        label="Add user"
+        (onClick)="openAddUser()"
+      />
+    </div>
+  </div>
+
+  <div class="flex min-h-0 flex-1 flex-col">
+    @if (users$ | async; as page) {
+      <div class="m-4 grid flex-1 grid-cols-3 gap-4 max-[1200px]:grid-cols-2 max-[768px]:grid-cols-1">
+        @for (user of page.content ?? []; track user.id) {
+          <app-user-card
+            [user]="user"
+            (edit)="openEditUser($event)"
+            (details)="openDetails($event)"
+            (delete)="deleteUser($event)"
+          />
+        }
+      </div>
+
+      @if ((page.totalElements ?? 0) > pageSize) {
+        <p-paginator
+          [first]="page.number! * pageSize"
+          [rows]="pageSize"
+          [totalRecords]="page.totalElements!"
+          (onPageChange)="onPageChange($event)"
+        />
+      }
+    }
+  </div>
+
+</div>
+
+<app-user-dialog
+  [visible]="showUserDialog"
+  [mode]="dialogMode"
+  [user]="selectedUser"
+  (closed)="closeDialog()"
+  (saved)="onUserSaved()"
+/>
+
+<p-confirm-dialog />

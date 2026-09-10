@@ -19,7 +19,7 @@ Content-Type: application/json
   "email": "gigel1@gmail.com",
   "password": "!GigelCelSmecher123",
   "phone": "0746464646",
-  "role": "PARTICIPANT"
+  "role": "ADMIN"
 }
 
 ### Login

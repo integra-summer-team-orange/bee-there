@@ -1,0 +1,105 @@
+<p-dialog
+  [header]="
+    mode() === 'add'
+      ? 'Add user'
+      : mode() === 'edit'
+        ? 'Edit user'
+        : 'User details'
+  "
+  [visible]="visible()"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onHide)="close()">
+
+  <form [formGroup]="form">
+    <div class="flex flex-col gap-4">
+
+      <div class="flex flex-col gap-1">
+        <label for="name" class="font-semibold">Name</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.name }}</span>
+        } @else {
+          <input
+            pInputText
+            id="name"
+            formControlName="name"
+            placeholder="Name"
+            class="w-full"
+          />
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="email" class="font-semibold">Email</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.email }}</span>
+        } @else {
+          <input
+            pInputText
+            id="email"
+            formControlName="email"
+            placeholder="Email"
+            class="w-full"
+          />
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="phone" class="font-semibold">Phone</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.phone }}</span>
+        } @else {
+          <input
+            pInputText
+            id="phone"
+            formControlName="phone"
+            placeholder="Phone"
+            class="w-full"
+          />
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="role" class="font-semibold">Role</label>
+
+        @if (mode() === 'details') {
+          <span>{{ user()?.role }}</span>
+        } @else {
+          <p-select
+            id="role"
+            formControlName="role"
+            [options]="roles"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select role"
+            class="w-full"
+          />
+        }
+      </div>
+
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        (onClick)="close()"
+      />
+
+      @if (mode() !== 'details') {
+        <p-button
+          label="Save"
+          (onClick)="submit()"
+        />
+      }
+
+    </div>
+  </ng-template>
+
+</p-dialog>
