@@ -1,6 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { Button } from 'primeng/button';
-import { UserResponseDto } from '../../../api/generated';
+import { UserResponseDto } from '../../../../api/generated';
 
 @Component({
   selector: 'app-user-card',

@@ -1,10 +1,7 @@
 package cloudflight.integra.backend.user;
 
 import cloudflight.integra.backend.exceptions.ErrorResponse;
-import cloudflight.integra.backend.user.model.NoPassUserRequestDto;
-import cloudflight.integra.backend.user.model.User;
-import cloudflight.integra.backend.user.model.UserRequestDto;
-import cloudflight.integra.backend.user.model.UserResponseDto;
+import cloudflight.integra.backend.user.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

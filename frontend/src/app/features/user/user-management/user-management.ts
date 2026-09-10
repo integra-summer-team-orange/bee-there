@@ -6,7 +6,7 @@ import {
   ErrorResponse,
   UsersService,
   UserResponseDto, PageUserResponseDto
-} from '../../../api/generated';
+} from '../../../../api/generated';
 import { UserCard } from '../user-card/user-card';
 import { UserDialog } from '../user-dialog/user-dialog';
 import { ConfirmationService } from 'primeng/api';

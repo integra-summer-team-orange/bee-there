@@ -8,7 +8,7 @@ import {
   UsersService,
   UserRequestDto,
   UserResponseDto
-} from '../../../api/generated';
+} from '../../../../api/generated';
 
 import RoleEnum = UserResponseDto.RoleEnum;
 

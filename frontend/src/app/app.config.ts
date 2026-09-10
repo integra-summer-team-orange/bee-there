@@ -1,17 +1,16 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
-import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 
 import {provideApi} from '../api/generated';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './auth/auth.interceptor';
 
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
+import {authInterceptor} from './auth/auth.interceptor';
 
 const IntegraPreset = definePreset(Aura, {
   semantic: {
@@ -34,7 +33,7 @@ const IntegraPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
-      withInterceptors([authInterceptor])//TODO:modify this when login and register is implemented
+      withInterceptors([authInterceptor])
     ),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
