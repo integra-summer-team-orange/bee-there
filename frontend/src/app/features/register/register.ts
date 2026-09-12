@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthenticationService, LoginRequestDto, UserRequestDto, UserResponseDto } from '../../../api/generated';
+import { Session } from '../../core/services/session';
 import { SessionService } from '../../core/services/session.service';
 
 @Component({
@@ -14,7 +15,8 @@ import { SessionService } from '../../core/services/session.service';
 })
 export class Register {
   private api = inject(AuthenticationService);
-  private session = inject(SessionService);
+  private sessionService = inject(SessionService);
+  private session = inject(Session);
   private router = inject(Router);
 
   name = new FormControl('', Validators.required);
@@ -75,7 +77,8 @@ export class Register {
               return;
             }
 
-            this.session.saveToken(response.token, false);
+            this.sessionService.saveToken(response.token, false);
+            this.session.refreshClaims();
             this.router.navigateByUrl('/dashboard');
           },
           error: () => {

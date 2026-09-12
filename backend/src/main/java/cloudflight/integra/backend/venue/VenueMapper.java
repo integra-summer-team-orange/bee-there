@@ -13,13 +13,16 @@ public interface VenueMapper {
 
     /**
      * Converts a DTO into a {@link Venue} entity.
-     * The ID and creation timestamp are managed internally by the application and are ignored during this mapping
-     * to prevent client manipulation.
+     * The ID, creation timestamp and managing user are all managed internally by the application and are ignored
+     * during this mapping to prevent client manipulation. The service assigns the managing user from the
+     * authenticated caller.
      *
      * @param venueDto The DTO containing the incoming data for creating or updating a venue.
      * @return The resulting {@link Venue} entity.
      */
-    @Mapping(source = "managedBy", target = "managedBy.id")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "managedBy", ignore = true)
     Venue toEntity(VenueDto venueDto);
 
     /**
@@ -29,5 +32,6 @@ public interface VenueMapper {
      * @return The corresponding {@link VenueDto} containing the formatted data.
      */
     @Mapping(target = "managedBy", source = "managedBy.id")
+    @Mapping(target = "managedByName", source = "managedBy.name")
     VenueDto toDto(Venue venue);
 }
