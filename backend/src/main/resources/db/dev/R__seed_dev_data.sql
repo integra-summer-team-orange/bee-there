@@ -58,3 +58,10 @@ VALUES
     (9, 2, 'Table Tennis Paddles & Balls Set', 10, 7),
     (10, 2, 'Extension Cords & Power Strips', 20, 16)
 ON CONFLICT (id) DO NOTHING;
+
+-- 5. RESET SERIAL SEQUENCES
+-- Ensures subsequent auto-increment values do not clash with hardcoded IDs
+SELECT setval(pg_get_serial_sequence('users', 'id'), COALESCE(MAX(id), 1)) FROM users;
+SELECT setval(pg_get_serial_sequence('venue', 'id'), COALESCE(MAX(id), 1)) FROM venue;
+SELECT setval(pg_get_serial_sequence('resources', 'id'), COALESCE(MAX(id), 1)) FROM resources;
+SELECT setval(pg_get_serial_sequence('inventory', 'id'), COALESCE(MAX(id), 1)) FROM inventory;
