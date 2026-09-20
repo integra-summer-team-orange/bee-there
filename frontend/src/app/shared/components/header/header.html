@@ -21,14 +21,22 @@
   <!-- Right side: User Profile -->
   <div class="flex items-center gap-4">
     <!-- todo: dynamic role -->
-    <span class="font-medium text-on-surface text-lg">Admin</span>
+    @if (session.userId()) {
 
-    <p-avatar
-      label="A"
-      class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
-      size="large"
-      shape="circle">
-    </p-avatar>
+      <a routerLink="/profile" class="cursor-pointer">
+        <span class="font-medium text-on-surface text-lg">
+          {{ userName() }}
+        </span>
+
+
+        <p-avatar
+          [label]="userName().charAt(0).toUpperCase()"
+          class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
+          size="large"
+          shape="circle"
+        />
+      </a>
+    }
   </div>
 
 </header>

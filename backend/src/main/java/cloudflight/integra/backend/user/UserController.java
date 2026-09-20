@@ -247,4 +247,35 @@ public class UserController {
         User user = userService.inviteUser(userMapper.fromDto(userRequestDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
     }
+
+    /**
+     * Retrieves the name of a user by their unique identifier.
+     *
+     * @param id the unique identifier of the user
+     * @return a response containing the user's name
+     */
+    @Operation(summary = "Get user name", description = "Retrieves the name of a user by their unique identifier.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "User name successfully retrieved",
+                        content = @Content(schema = @Schema(implementation = NameResponseDto.class))),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "User not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "500",
+                        description = "Internal server error",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @GetMapping(path = "/{id}/name", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<NameResponseDto> getNameById(
+            @Parameter(description = "ID of the user whose name is to be retrieved", required = true) @PathVariable
+                    Long id) {
+
+        User user = userService.getById(id);
+        return ResponseEntity.ok(new NameResponseDto(user.getName()));
+    }
 }

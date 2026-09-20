@@ -78,6 +78,9 @@ public class UserService {
      * @throws EntityNotFoundException if no user with the specified identifier exists
      */
     public User getById(Long id) {
+
+        checkOwnership(id);
+
         Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {

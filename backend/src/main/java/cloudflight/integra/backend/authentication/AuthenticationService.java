@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.authentication;
 
+import cloudflight.integra.backend.authentication.model.LoginResult;
 import cloudflight.integra.backend.user.UserService;
 import cloudflight.integra.backend.user.exceptions.DuplicateEmailException;
 import cloudflight.integra.backend.user.model.User;
@@ -48,17 +49,19 @@ public class AuthenticationService {
      *
      * @param email the email of the user
      * @param password the password provided by the user
-     * @return a JWT token for the authenticated user
+     * @return a JWT token for the authenticated user and its id
      * @throws IllegalArgumentException if the provided password does not match
      *         the stored password
      */
-    public String login(String email, String password) {
+    public LoginResult login(String email, String password) {
         User user = userService.loadUserByEmail(email);
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        return jwtService.generateToken(user);
+        String token = jwtService.generateToken(user);
+
+        return new LoginResult(user.getId(), token);
     }
 }

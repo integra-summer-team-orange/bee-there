@@ -2,6 +2,7 @@ package cloudflight.integra.backend.authentication;
 
 import cloudflight.integra.backend.authentication.model.LoginRequestDto;
 import cloudflight.integra.backend.authentication.model.LoginResponseDto;
+import cloudflight.integra.backend.authentication.model.LoginResult;
 import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.user.UserMapper;
 import cloudflight.integra.backend.user.model.*;
@@ -26,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Authentication", description = "API endpoints for authentication")
 public class AuthenticationController {
 
-    private AuthenticationService service;
-    private UserMapper mapper;
+    private final AuthenticationService service;
+    private final UserMapper mapper;
 
     /**
      * Constructs an {@code AuthenticationController} with the required services
@@ -123,8 +124,8 @@ public class AuthenticationController {
                                         schema = @Schema(implementation = ErrorResponse.class)))
             })
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-        String token = service.login(dto.email(), dto.password());
+        LoginResult result = service.login(dto.email(), dto.password());
 
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        return ResponseEntity.ok(new LoginResponseDto(result.token(), result.userId()));
     }
 }
