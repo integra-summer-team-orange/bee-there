@@ -182,7 +182,7 @@ public class UserController {
     }
 
     /**
-     * Updates the password of the user with the specified ID.
+     * Updates the word of the user with the specified ID.
      *
      * @param id  the ID of the user whose password should be updated
      * @param dto the request containing the new password

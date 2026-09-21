@@ -146,7 +146,7 @@
 
 <app-user-profile-overlay
   [visible]="showResetPassword"
-  [user]="user!"
+  [user]="userStateService.user()"
   (closed)="closeResetPassword()"
   (saved)="passwordSaved()"
 />

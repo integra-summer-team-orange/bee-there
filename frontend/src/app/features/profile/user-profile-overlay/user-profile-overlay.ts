@@ -93,8 +93,5 @@ export class UserProfileOverlay {
        console.error('Failed to reset password', error);
      }
     });
-
-    this.saved.emit();
-    this.close();
   }
 }

@@ -3,6 +3,7 @@ import { Avatar } from 'primeng/avatar';
 import { RouterLink } from '@angular/router';
 import {SessionService} from '../../../core/services/session.service';
 import {UsersService} from '../../../../api/generated';
+import {UserStateService} from '../../../core/services/userState.service';
 
 @Component({
   selector: 'app-header',
@@ -15,27 +16,26 @@ import {UsersService} from '../../../../api/generated';
 })
 export class Header {
 
-  protected userName = signal('');
-
   constructor(
     protected session: SessionService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    protected userState: UserStateService
   ) {
     effect(() => {
       const userId = this.session.userId();
 
       if (!userId) {
-        this.userName.set('');
+        this.userState.clearUser();
         return;
       }
 
-      this.usersService.getNameById(userId).subscribe({
-        next: (response) => {
-          this.userName.set(String(response.name));
+      this.usersService.getUserById(userId).subscribe({
+        next: (user) => {
+          this.userState.setUser(user);
         },
         error: (error) => {
-          console.error('Failed to load user name', error);
-          this.userName.set('');
+          console.error('Failed to load user', error);
+          this.userState.clearUser();
         }
       });
     });

@@ -25,12 +25,12 @@
 
       <a routerLink="/profile" class="cursor-pointer">
         <span class="font-medium text-on-surface text-lg">
-          {{ userName() }}
+          {{  userState.user()?.name }}
         </span>
 
 
         <p-avatar
-          [label]="userName().charAt(0).toUpperCase()"
+          [label]="userState.user()?.name?.charAt(0)?.toUpperCase()"
           class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
           size="large"
           shape="circle"
