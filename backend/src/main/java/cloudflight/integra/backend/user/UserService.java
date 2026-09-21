@@ -138,7 +138,7 @@ public class UserService {
         checkOwnership(id);
         userRepository
                 .findById(id)
-                .map(user -> {
+                .map(_ -> {
                     userRepository.deleteById(id);
                     return true;
                 })

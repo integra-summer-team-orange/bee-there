@@ -1,4 +1,4 @@
-import {Component, effect, signal} from '@angular/core';
+import {Component, effect} from '@angular/core';
 import { Avatar } from 'primeng/avatar';
 import { RouterLink } from '@angular/router';
 import {SessionService} from '../../../core/services/session.service';
