@@ -1,24 +1,24 @@
 -- All dev users share the following password: Password123!
--- Hash: $2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m
+-- Hash: $2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq
 
 -- 1. USERS
 INSERT INTO users (id, name, email, password_hash, phone, role, created_at)
 VALUES
     -- Admins
-    (1, 'John Admin', 'admin1@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000001', 'ADMIN', CURRENT_TIMESTAMP),
-    (2, 'Jane Admin', 'admin2@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000002', 'ADMIN', CURRENT_TIMESTAMP),
+    (1, 'John Admin', 'admin1@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000001', 'ADMIN', CURRENT_TIMESTAMP),
+    (2, 'Jane Admin', 'admin2@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000002', 'ADMIN', CURRENT_TIMESTAMP),
     -- Venue Admins
-    (3, 'Alpha Venue', 'venueadmin1@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000003', 'VENUE_ADMIN', CURRENT_TIMESTAMP),
-    (4, 'Beta Venue', 'venueadmin2@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000004', 'VENUE_ADMIN', CURRENT_TIMESTAMP),
+    (3, 'Alpha Venue', 'venueadmin1@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000003', 'VENUE_ADMIN', CURRENT_TIMESTAMP),
+    (4, 'Beta Venue', 'venueadmin2@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000004', 'VENUE_ADMIN', CURRENT_TIMESTAMP),
     -- Participants
-    (5, 'Primero Participant', 'participant1@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000005', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (6, 'Secundo Participant', 'participant2@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000006', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (7, 'Tercero Participant', 'participant3@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000007', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (8, 'Cuatro Participant', 'participant4@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000008', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (9, 'Cinco Participant', 'participant5@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000009', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (10, 'Seis Participant', 'participant6@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000010', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (11, 'Siete Participant', 'participant7@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000011', 'PARTICIPANT', CURRENT_TIMESTAMP),
-    (12, 'Ocho Participant', 'participant8@example.com', '$2a$10$wTfkE1r92s70i9uOaYv5ce6Vb0XFepvYgG83v9s72xN/fEmsm9G5m', '+10000000012', 'PARTICIPANT', CURRENT_TIMESTAMP)
+    (5, 'Primero Participant', 'participant1@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000005', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (6, 'Secundo Participant', 'participant2@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000006', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (7, 'Tercero Participant', 'participant3@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000007', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (8, 'Cuatro Participant', 'participant4@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000008', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (9, 'Cinco Participant', 'participant5@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000009', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (10, 'Seis Participant', 'participant6@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000010', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (11, 'Siete Participant', 'participant7@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000011', 'PARTICIPANT', CURRENT_TIMESTAMP),
+    (12, 'Ocho Participant', 'participant8@example.com', '$2a$10$yYE9/.07leixgyy/GkbL5uRrDMqIj8fkc5RdnYYJCGCYmPDUVDyLq', '+10000000012', 'PARTICIPANT', CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. VENUES

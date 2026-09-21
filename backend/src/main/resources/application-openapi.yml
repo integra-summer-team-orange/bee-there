@@ -13,6 +13,8 @@ spring:
   h2:
     console:
       enabled: false
+  flyway:
+    locations: classpath:db/migration
 
 jwt:
   secret: asdqwe123r24g45h1v930idpmlzka03i93j
