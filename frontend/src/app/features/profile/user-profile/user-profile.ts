@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 import { UserProfileOverlay } from '../user-profile-overlay/user-profile-overlay';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { UserStateService } from '../../../core/services/userState.service';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-user-profile',
@@ -28,7 +29,8 @@ import { UserStateService } from '../../../core/services/userState.service';
     InputText,
     Button,
     UserProfileOverlay,
-    ConfirmDialog
+    ConfirmDialog,
+    DatePipe
   ],
   providers: [
     ConfirmationService

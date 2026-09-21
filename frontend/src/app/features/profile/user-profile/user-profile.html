@@ -86,7 +86,7 @@
       <input
         pInputText
         id="created_at"
-        formControlName="createdAt"
+        [value]="userStateService.user()?.createdAt | date:'dd/MM/yyyy'"
         class="w-full"
         readonly
       >
