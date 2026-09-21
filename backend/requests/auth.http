@@ -39,3 +39,12 @@ Content-Type: application/json
   "email": "gigel1@gmail.com",
   "password": "!GigelCelSmecher123"
 }
+
+### Login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin1@example.com",
+  "password": "Password123!"
+}
