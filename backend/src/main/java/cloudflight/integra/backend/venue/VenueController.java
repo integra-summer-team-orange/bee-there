@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,7 +63,7 @@ public class VenueController {
                         description = "Internal server error occurred",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<VenueDto>> getAllVenues(
             @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
             @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
@@ -70,6 +71,31 @@ public class VenueController {
         Page<VenueDto> responsePage = venuePage.map(mapper::toDto);
 
         return ResponseEntity.ok(responsePage);
+    }
+
+    /**
+     * Retrieves a paginated list of the venues managed by the currently authenticated user.
+     *
+     * @param pageNumber The page index to retrieve (zero-based).
+     * @param pageSize The number of venues per page.
+     * @param search Text matched against the venue name and address, or {@code null} for no filtering.
+     * @return A {@link ResponseEntity} containing a {@link Page} of {@link VenueDto} with a 200 OK status.
+     */
+    @Operation(
+            summary = "List the venues managed by the current user",
+            description = "Returns a paginated list of the venues the authenticated caller manages. Callers who"
+                    + " manage no venues receive an empty page rather than an error.")
+    @ApiResponse(responseCode = "200", description = "Managed venues retrieved successfully")
+    @GetMapping(value = "/my", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<VenueDto>> getMine(
+            @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
+            @Parameter(description = "Text matched against the venue name and address")
+                    @RequestParam(required = false, name = "search")
+                    String search) {
+        Page<Venue> venuePage = service.getManagedByCurrentUser(pageNumber, pageSize, search);
+
+        return ResponseEntity.ok(venuePage.map(mapper::toDto));
     }
 
     /**
@@ -94,7 +120,7 @@ public class VenueController {
                         description = "Venue not found",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VenueDto> getVenueById(
             @Parameter(description = "ID of the venue to be retrieved", required = true) @PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id)
@@ -122,6 +148,7 @@ public class VenueController {
                                                 {
                                                     "id": 1,
                                                     "managedBy": 1,
+                                                    "managedByName": "Venue Admin",
                                                     "name": "Cloudflight Arena",
                                                     "description": "Indoor hall with 3 basketball courts",
                                                     "address": "Strada Republicii 42, Cluj-Napoca, Romania",
@@ -159,6 +186,7 @@ public class VenueController {
                                                 {
                                                     "id": 1,
                                                     "managedBy": 1,
+                                                    "managedByName": "Venue Admin",
                                                     "name": "Cloudflight Arena - Renovated Wing",
                                                     "description": "Indoor hall, renovated east wing, 4 courts",
                                                     "address": "Strada Republicii 42, Cluj-Napoca, Romania",
@@ -167,6 +195,10 @@ public class VenueController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "The caller does not manage this venue",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                 @ApiResponse(
                         responseCode = "400",
@@ -193,6 +225,10 @@ public class VenueController {
                 @ApiResponse(
                         responseCode = "404",
                         description = "Venue not found",
+                        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                @ApiResponse(
+                        responseCode = "403",
+                        description = "The caller does not manage this venue",
                         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{id}")

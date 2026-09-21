@@ -1,0 +1,186 @@
+<p-toast />
+
+<section class="mx-auto w-full max-w-6xl px-4 py-2">
+  <!-- p-breadcrumb renders every crumb at the same size, so the trail is built by hand. -->
+  <nav class="mb-8 flex items-center gap-2">
+    <a
+      routerLink="/venues"
+      aria-label="Back to venues"
+      class="pi pi-chevron-left text-sm text-on-surface-variant hover:text-on-surface"
+    ></a>
+    <a routerLink="/venues" class="text-lg text-on-surface-variant hover:text-on-surface">Venues</a>
+    <span class="text-lg text-outline">/</span>
+    <span class="min-w-0 truncate text-2xl font-bold text-general-highlight">
+      {{ mode() === 'create' ? 'New Venue' : venue()?.name }}
+    </span>
+  </nav>
+
+  @if (mode() === 'create') {
+    <h1 class="mb-6 text-3xl font-bold" i18n>Add Venue</h1>
+  }
+
+  @if (editingRefused()) {
+    <p-message severity="warn" text="You can only edit venues you manage." styleClass="mb-6" />
+  }
+
+  @if (loading()) {
+    <div class="flex justify-center py-16">
+      <p-progressSpinner ariaLabel="Loading venue" />
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="flex flex-col gap-10 md:flex-row md:items-start">
+        <div
+          class="flex h-56 w-full shrink-0 items-center justify-center rounded-lg border border-outline-variant bg-surface-container md:w-80"
+          aria-hidden="true"
+        >
+          <i class="pi pi-image text-6xl text-outline-variant"></i>
+        </div>
+
+        <div class="flex w-full min-w-0 max-w-sm flex-col gap-4">
+          <div class="flex items-center gap-3">
+            @if (editing()) {
+              <input
+                pInputText
+                formControlName="name"
+                placeholder="Venue name"
+                aria-label="Venue name"
+                class="w-full"
+              />
+            } @else {
+              <h2 class="line-clamp-2 min-w-0 wrap-anywhere text-xl font-semibold">
+                {{ venue()?.name }}
+              </h2>
+
+              @if (manageable()) {
+                <p-button
+                  icon="pi pi-pencil"
+                  size="small"
+                  [outlined]="true"
+                  ariaLabel="Edit venue"
+                  (onClick)="startEditing()"
+                />
+              }
+            }
+          </div>
+
+          @if (form.controls.name.touched && form.controls.name.invalid) {
+            <small class="text-error" i18n>A name of up to 150 characters is required.</small>
+          }
+
+          @if (venue(); as current) {
+            <div class="-mt-2 text-sm text-on-surface-variant">
+              <p i18n>Added {{ current.createdAt | date: 'd MMM, y' }}</p>
+              <p i18n>Managed by {{ current.managedByName }}</p>
+            </div>
+          }
+
+          <div class="flex flex-col gap-1">
+            <label for="venue-description" class="text-sm text-on-surface-variant" i18n>Description</label>
+            <textarea
+              pTextarea
+              id="venue-description"
+              rows="3"
+              [autoResize]="true"
+              formControlName="description"
+              placeholder="Add description"
+              class="w-full"
+              [readonly]="!editing()"
+            ></textarea>
+            @if (form.controls.description.touched && form.controls.description.invalid) {
+              <small class="text-error" i18n>Keep the description under 255 characters.</small>
+            }
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label for="venue-address" class="text-sm text-on-surface-variant" i18n>Address</label>
+            <textarea
+              pTextarea
+              id="venue-address"
+              rows="2"
+              [autoResize]="true"
+              formControlName="address"
+              placeholder="Add address"
+              class="w-full wrap-anywhere"
+              [readonly]="!editing()"
+            ></textarea>
+            @if (form.controls.address.touched && form.controls.address.invalid) {
+              <small class="text-error" i18n>An address of up to 255 characters is required.</small>
+            }
+          </div>
+
+          @if (editing()) {
+            <div class="flex items-center gap-2">
+              <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="cancel()" />
+              <p-button label="Save" type="submit" [loading]="saving()" />
+            </div>
+          }
+        </div>
+      </div>
+    </form>
+
+    @if (mode() !== 'create') {
+      <div class="mt-12 flex flex-wrap justify-center gap-6">
+        <p-card styleClass="w-64 text-center border border-outline-variant shadow-md">
+          <ng-template #title>
+            <span class="text-lg font-semibold" i18n>Resources</span>
+          </ng-template>
+
+          <ng-template #content>
+            <p class="text-4xl font-bold">{{ venueResources().length }}</p>
+            <p class="text-xs text-on-surface-variant" i18n>registered at this venue</p>
+
+            <ul class="mt-4 flex flex-col gap-1 text-left text-sm text-on-surface-variant">
+              @for (resource of venueResources().slice(0, 3); track resource.id) {
+                <li>&bull; {{ resource.name }} &ndash; {{ resource.capacity }} places</li>
+              } @empty {
+                <li class="text-center text-on-surface-variant" i18n>No resources yet.</li>
+              }
+            </ul>
+          </ng-template>
+
+          <ng-template #footer>
+            <p-button
+              label="View resources"
+              size="small"
+              styleClass="w-full"
+              [disabled]="true"
+              pTooltip="Resource management has its own screen, which is not built yet"
+            />
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="w-64 text-center border border-outline-variant shadow-md">
+          <ng-template #title>
+            <span class="text-lg font-semibold" i18n>Inventory</span>
+          </ng-template>
+
+          <ng-template #content>
+            <p class="text-4xl font-bold" i18n>Booked {{ bookedPercentage() }}%</p>
+            <p class="text-xs text-on-surface-variant" i18n>of the stock at this venue</p>
+
+            <ul class="mt-4 flex flex-col gap-1 text-left text-sm text-on-surface-variant">
+              @for (item of venueInventory().slice(0, 3); track item.id) {
+                <li>
+                  &bull; {{ item.name }} &ndash; {{ item.availableQuantity }}/{{ item.totalQuantity }}
+                </li>
+              } @empty {
+                <li class="text-center text-on-surface-variant" i18n>No inventory yet.</li>
+              }
+            </ul>
+          </ng-template>
+
+          <ng-template #footer>
+            <p-button
+              label="View inventory"
+              size="small"
+              styleClass="w-full"
+              [disabled]="true"
+              pTooltip="Inventory management has its own screen, which is not built yet"
+            />
+          </ng-template>
+        </p-card>
+      </div>
+    }
+  }
+</section>

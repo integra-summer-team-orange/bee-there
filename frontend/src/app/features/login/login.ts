@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthenticationService, LoginRequestDto } from '../../../api/generated';
+import { Session } from '../../core/services/session';
 import { SessionService } from '../../core/services/session.service';
 
 @Component({
@@ -15,7 +16,8 @@ import { SessionService } from '../../core/services/session.service';
 })
 export class Login {
   private api = inject(AuthenticationService);
-  private session = inject(SessionService);
+  private sessionService = inject(SessionService);
+  private session = inject(Session);
   private router = inject(Router);
 
   rememberMe = new FormControl(false);
@@ -45,7 +47,8 @@ export class Login {
           return;
         }
 
-        this.session.saveToken(response.token, this.rememberMe.value ?? false);
+        this.sessionService.saveToken(response.token, this.rememberMe.value ?? false);
+        this.session.refreshClaims();
         this.router.navigateByUrl('/dashboard');
       },
       error: () => {

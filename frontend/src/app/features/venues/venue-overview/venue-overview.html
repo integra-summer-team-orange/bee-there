@@ -1,0 +1,79 @@
+<p-toast />
+
+<section class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-2">
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="text-3xl font-bold" i18n>Venues Overview</h1>
+
+    <div class="flex items-center gap-3">
+      <p-iconfield>
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="search"
+          placeholder="Search venues"
+          aria-label="Search venues"
+          [ngModel]="search()"
+          (ngModelChange)="onSearchChange($event)"
+        />
+      </p-iconfield>
+
+      <p-button label="+ Add venue" routerLink="/venues/new" />
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="flex justify-center py-16">
+      <p-progressSpinner ariaLabel="Loading venues" />
+    </div>
+  } @else if (results().length === 0) {
+    <div
+      class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-outline-variant bg-surface-container-low px-6 py-16 text-center"
+    >
+      <i class="pi pi-map-marker text-4xl text-outline-variant" aria-hidden="true"></i>
+
+      @if (search().trim()) {
+        <p class="font-semibold" i18n>No venue matches "{{ search() }}".</p>
+      } @else {
+        <p class="font-semibold" i18n>You do not manage any venues yet.</p>
+        <p class="text-sm text-on-surface-variant" i18n>Use "Add venue" to create your first one.</p>
+      }
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      @for (venue of results(); track venue.id) {
+        <app-venue-card
+          [venue]="venue"
+          [manageable]="manageable(venue)"
+          (remove)="askToDelete($event)"
+        />
+      }
+    </div>
+
+    @if (totalRecords() > pageSize) {
+      <p-paginator
+        [first]="first()"
+        [rows]="pageSize"
+        [totalRecords]="totalRecords()"
+        (onPageChange)="onPageChange($event)"
+      />
+    }
+  }
+</section>
+
+<p-dialog
+  header="Delete Venue"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '26rem' }"
+  [visible]="venueToDelete() !== null"
+  (visibleChange)="cancelDelete()"
+>
+  <p class="text-sm" i18n>
+    Are you sure you want to delete this venue? This action cannot be undone.
+  </p>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [outlined]="true" (onClick)="cancelDelete()" />
+    <p-button label="Delete" severity="danger" [loading]="deleting()" (onClick)="confirmDelete()" />
+  </ng-template>
+</p-dialog>
