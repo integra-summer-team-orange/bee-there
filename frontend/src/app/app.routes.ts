@@ -12,13 +12,6 @@ import {Resources} from './features/resources/resources';
 export const routes: Routes = [
   {
     path: '',
-    component: Home,
-  },
-  {
-    path: 'inventory',
-    component: InventoryOverview
-  },
-  {
     component: Landing,
     canActivate: [redirectIfAuthenticatedGuard],
   },
@@ -59,6 +52,11 @@ export const routes: Routes = [
     data: { mode: 'edit' },
     loadComponent: () =>
       import('./features/venues/venue-detail/venue-detail').then((m) => m.VenueDetail),
+  },
+  {
+    path: 'venues/:id/inventory',
+    loadComponent: () =>
+      import('./features/inventory/inventory-overview/inventory-overview').then((m) => m.InventoryOverview),
   },
   {
     path: 'venues/:id/resources',
