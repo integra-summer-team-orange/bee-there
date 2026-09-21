@@ -17,7 +17,8 @@ export const routes: Routes = [
   {
     path: 'inventory',
     component: InventoryOverview
-  }
+  },
+  {
     component: Landing,
     canActivate: [redirectIfAuthenticatedGuard],
   },
