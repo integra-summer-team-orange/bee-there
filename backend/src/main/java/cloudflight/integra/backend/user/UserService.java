@@ -78,6 +78,9 @@ public class UserService {
      * @throws EntityNotFoundException if no user with the specified identifier exists
      */
     public User getById(Long id) {
+
+        checkOwnership(id);
+
         Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {
@@ -120,7 +123,7 @@ public class UserService {
 
         user.setId(id);
         user.setCreatedAt(existing.get().getCreatedAt());
-        user.setPasswordHash(passwordEncoder.encode(existing.get().getPasswordHash()));
+        user.setPasswordHash(existing.get().getPasswordHash());
 
         return userRepository.save(user);
     }
@@ -135,7 +138,7 @@ public class UserService {
         checkOwnership(id);
         userRepository
                 .findById(id)
-                .map(user -> {
+                .map(_ -> {
                     userRepository.deleteById(id);
                     return true;
                 })
