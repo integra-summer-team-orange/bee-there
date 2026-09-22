@@ -94,4 +94,9 @@ public class InventoryService {
         }
         repository.deleteById(id);
     }
+
+    public Page<Inventory> getByVenueId(Long venueId, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return repository.findByVenueId(venueId, pageable);
+    }
 }

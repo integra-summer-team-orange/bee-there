@@ -5,6 +5,9 @@ import cloudflight.integra.backend.exceptions.ErrorResponse;
 import cloudflight.integra.backend.resources.ResourceMapper;
 import cloudflight.integra.backend.resources.ResourceService;
 import cloudflight.integra.backend.resources.model.ResourceDto;
+import cloudflight.integra.backend.inventory.InventoryMapper;
+import cloudflight.integra.backend.inventory.InventoryService;
+import cloudflight.integra.backend.inventory.model.InventoryDto;
 import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +38,9 @@ public class VenueController {
     private final ResourceService resourceService;
     private final ResourceMapper resourceMapper;
 
+    private final InventoryService inventoryService;
+    private final InventoryMapper inventoryMapper;
+
     /**
      * Creates a new venue controller.
      *
@@ -42,13 +48,18 @@ public class VenueController {
      * @param mapper          the venue mapper
      * @param resourceService the resource service
      * @param resourceMapper  the resource mapper
+     * @param inventoryService the inventory service
+     * @param inventoryMapper the inventory mapper
      */
     public VenueController(
-            VenueService service, VenueMapper mapper, ResourceService resourceService, ResourceMapper resourceMapper) {
+            VenueService service, VenueMapper mapper, ResourceService resourceService, ResourceMapper resourceMapper, InventoryService inventoryService,
+            InventoryMapper inventoryMapper) {
         this.service = service;
         this.mapper = mapper;
         this.resourceService = resourceService;
         this.resourceMapper = resourceMapper;
+        this.inventoryService = inventoryService;
+        this.inventoryMapper = inventoryMapper;
     }
 
     /**
@@ -275,5 +286,33 @@ public class VenueController {
 
         return ResponseEntity.ok(
                 resourceService.getByVenueId(id, pageNumber, pageSize).map(resourceMapper::toDto));
+    }
+
+    /**
+     * Retrieves a paginated list of inventory items associated with a specific venue.
+     *
+     * @param id         The unique identifier of the venue.
+     * @param pageNumber The page index for pagination (zero-based, default is 0).
+     * @param pageSize   The number of items per page (default is 10).
+     * @return A {@link ResponseEntity} containing a paginated list of {@link InventoryDto}.
+     */
+    @Operation(
+            summary = "Get inventory by venue",
+            description = "Retrieves a paginated list of inventory items associated with a specific venue.")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Inventory retrieved successfully",
+                        content =
+                                @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class)))
+            })
+    @GetMapping(value = "/{id}/inventory", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<InventoryDto>> getInventoryByVenue(
+            @Parameter(description = "ID of the venue", required = true) @PathVariable Long id,
+            @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+        return ResponseEntity.ok(
+                inventoryService.getByVenueId(id, pageNumber, pageSize).map(inventoryMapper::toDto));
     }
 }

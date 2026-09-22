@@ -24,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @RestController
 @RequestMapping("/api/inventory")
+@CrossOrigin(origins = "http://localhost:4200")
 @Tag(name = "Inventory", description = "API endpoints for managing inventory items")
 public class InventoryController {
     private final InventoryService service;
