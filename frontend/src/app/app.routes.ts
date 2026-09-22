@@ -1,6 +1,4 @@
 import {Routes} from '@angular/router';
-import {Home} from './features/home/home';
-import {InventoryOverview} from './features/inventory/inventory-overview/inventory-overview';
 import {Landing} from './features/landing/landing';
 import {Login} from './features/login/login';
 import {Register} from './features/register/register';
@@ -59,6 +57,11 @@ export const routes: Routes = [
     data: { mode: 'edit' },
     loadComponent: () =>
       import('./features/venues/venue-detail/venue-detail').then((m) => m.VenueDetail),
+  },
+  {
+    path: 'reservations',
+    loadChildren: () =>
+      import('./features/reservations/reservation.routes').then((m) => m.RESERVATION_ROUTES),
   },
   {
     path: 'profile',
