@@ -4,6 +4,9 @@ import { DialogModule } from 'primeng/dialog';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+
 import { VenuesService, ResourcesService } from '../../../api/generated';
 import { ResourceDto } from '../../../api/generated';
 
@@ -12,14 +15,17 @@ import { ResourceDto } from '../../../api/generated';
  */
 @Component({
   selector: 'app-resources',
-  imports: [DialogModule, ReactiveFormsModule, TitleCasePipe],
+  imports: [DialogModule, ReactiveFormsModule, TitleCasePipe, ToastModule],
   templateUrl: './resources.html',
   styleUrl: './resources.css',
+  providers: [MessageService]
 })
 export class Resources implements OnInit {
   cdr = inject(ChangeDetectorRef);
   venuesService = inject(VenuesService);
   resourcesService = inject(ResourcesService);
+
+  messageService = inject(MessageService);
 
   formBuilder = inject(FormBuilder);
   route = inject(ActivatedRoute);
@@ -59,7 +65,7 @@ export class Resources implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading venue details:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not load venue details' });
         this.venueName = `Venue #${this.venueId}`;
         this.cdr.detectChanges();
       }
@@ -76,7 +82,9 @@ export class Resources implements OnInit {
         this.generateVisiblePages();
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error loading resources', err)
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not load resources' });
+      }
     });
   }
 
@@ -143,9 +151,12 @@ export class Resources implements OnInit {
         this.resourcesService.createResource(basePayload as ResourceDto).subscribe({
           next: () => {
             this.isFormModalVisible = false;
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource added successfully' });
             this.loadResources(this.currentPage);
           },
-          error: (err) => console.error('Eroare la adaugare:', err)
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add resource' });
+          }
         });
       } else {
         // UPDATE
@@ -157,9 +168,12 @@ export class Resources implements OnInit {
         this.resourcesService.updateResource(this.selectedResource.id!, updatePayload as ResourceDto).subscribe({
           next: () => {
             this.isFormModalVisible = false;
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource updated successfully' });
             this.loadResources(this.currentPage);
           },
-          error: (err) => console.error('Eroare la update:', err)
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update resource' });
+          }
         });
       }
     }
@@ -170,9 +184,12 @@ export class Resources implements OnInit {
       this.resourcesService.deleteResource(this.selectedResource.id).subscribe({
         next: () => {
           this.isDeleteModalVisible = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource deleted successfully' });
           this.loadResources(this.currentPage);
         },
-        error: (err) => console.error('Eroare la stergere:', err)
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete resource' });
+        }
       });
     }
   }
