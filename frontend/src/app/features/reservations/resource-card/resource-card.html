@@ -1,0 +1,35 @@
+<button
+  type="button"
+  class="block h-full w-full text-left"
+  [attr.aria-pressed]="selected()"
+  (click)="choose.emit(resource())"
+>
+  <p-card [styleClass]="cardClass()" [style]="cardStyle()">
+    <ng-template #title>
+      <span class="line-clamp-2 border-b border-outline-variant pb-3 text-xl font-semibold">
+        {{ resource().name }}
+      </span>
+    </ng-template>
+
+    <ng-template #content>
+      <div class="flex flex-col gap-2 text-sm">
+        <p><span class="font-semibold" i18n>Activity Type:</span> {{ resource().activityType }}</p>
+
+        @if (resource().activityDescription; as description) {
+          <p class="line-clamp-3">
+            <span class="font-semibold" i18n>Description:</span> {{ description }}
+          </p>
+        }
+
+        <p><span class="font-semibold" i18n>Type:</span> {{ readableType(resource().type) }}</p>
+
+        <p><span class="font-semibold" i18n>Capacity:</span> {{ resource().capacity }}</p>
+
+        <p>
+          <span class="font-semibold" i18n>Hourly rate:</span>
+          <span i18n>{{ resource().hourlyRate | number: '1.2-2' }}/hr</span>
+        </p>
+      </div>
+    </ng-template>
+  </p-card>
+</button>

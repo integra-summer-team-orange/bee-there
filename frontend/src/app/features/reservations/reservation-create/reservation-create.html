@@ -1,0 +1,370 @@
+<p-toast />
+
+<section class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4">
+  <nav class="flex items-center gap-2">
+    <a
+      routerLink="/reservations"
+      aria-label="Back to my reservations"
+      class="pi pi-chevron-left text-sm text-on-surface-variant hover:text-on-surface"
+    ></a>
+    <a routerLink="/reservations" class="text-lg text-on-surface-variant hover:text-on-surface" i18n>
+      My Reservations
+    </a>
+    <span class="text-lg text-outline">/</span>
+    <span class="min-w-0 truncate text-lg font-bold text-general-highlight">
+      {{ selectedVenue()?.name || 'New Reservation' }}
+    </span>
+  </nav>
+
+  <p-card styleClass="border border-outline-variant shadow-md">
+    <ng-template #title>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-3">
+        @if (created()) {
+          <h1 class="text-2xl font-bold" i18n>Booking confirmed!</h1>
+        } @else {
+          <h1 class="text-2xl font-bold">{{ currentStep().heading }}</h1>
+        }
+
+        <div class="flex min-w-0 flex-1 items-center gap-3">
+          <span class="shrink-0 text-sm font-normal text-on-surface-variant" i18n>
+            Booking progress:
+          </span>
+          <p-progressbar
+            styleClass="min-w-40 flex-1"
+            [value]="progress()"
+            [style]="{ height: '1.25rem' }"
+          />
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #content>
+      @if (created(); as reservation) {
+        <div
+          class="flex flex-col items-center gap-3 rounded-lg border border-outline-variant px-6 py-12 text-center"
+        >
+          <i class="pi pi-check-circle text-4xl text-general-highlight" aria-hidden="true"></i>
+
+          <h2 class="text-2xl font-bold" i18n>Thank you for booking with BeeThere!</h2>
+
+          <p class="text-on-surface-variant" i18n>
+            Your {{ selectedVenue()?.name }} reservation has gone through.
+          </p>
+
+          <p class="text-sm text-on-surface-variant">
+            {{ selectedResource()?.name }} — {{ reservation.start | date: 'd MMM yyyy HH:mm' }} to
+            {{ reservation.end | date: 'd MMM yyyy HH:mm' }}.
+          </p>
+        </div>
+      } @else if (step() === 1) {
+        <div class="flex flex-col gap-4">
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="flex flex-col items-center gap-3">
+              <h2 class="text-xl text-on-surface-variant" i18n>Event Start</h2>
+              <p-datepicker
+                [inline]="true"
+                [showTime]="true"
+                [showButtonBar]="true"
+                [stepMinute]="15"
+                [ngModel]="startAt()"
+                (ngModelChange)="startAt.set($event)"
+              />
+            </div>
+
+            <div class="flex flex-col items-center gap-3">
+              <h2 class="text-xl text-on-surface-variant" i18n>Event End</h2>
+              <p-datepicker
+                [inline]="true"
+                [showTime]="true"
+                [disabled]="true"
+                [ngModel]="endAt()"
+              />
+            </div>
+          </div>
+
+          @if (periodValid()) {
+            <p class="text-sm text-on-surface-variant" i18n>
+              {{ startAt() | date: 'EEEE d MMM, HH:mm' }} to
+              {{ endAt() | date: 'HH:mm' }}. Bookings are one hour, so the end follows the start.
+            </p>
+          } @else {
+            <p-message severity="warn" text="Pick a start date and time." />
+          }
+        </div>
+      } @else if (step() === 2) {
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm text-on-surface-variant" i18n>
+              Pick the venue first, then the resource you want to hold.
+            </p>
+
+            <p-select
+              inputId="reservation-venue"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Venue"
+              styleClass="w-56"
+              [options]="venues()"
+              [loading]="loadingVenues()"
+              [ngModel]="venueId()"
+              (ngModelChange)="onVenueChange($event)"
+            />
+          </div>
+
+          @if (loadingResources()) {
+            <div class="flex justify-center py-10">
+              <p-progressSpinner ariaLabel="Loading resources" />
+            </div>
+          } @else if (venueId() === null) {
+            <p class="text-sm text-on-surface-variant" i18n>
+              Resources appear once a venue is selected.
+            </p>
+          } @else if (resources().length === 0) {
+            <div
+              class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-outline-variant px-6 py-12 text-center"
+            >
+              <i class="pi pi-inbox text-4xl text-outline-variant" aria-hidden="true"></i>
+              <p class="font-semibold" i18n>This venue has no resources to book.</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              @for (resource of resources(); track resource.id) {
+                <app-resource-card
+                  [resource]="resource"
+                  [selected]="resourceId() === resource.id"
+                  (choose)="selectResource($event)"
+                />
+              }
+            </div>
+          }
+
+          @if (selectedResource()) {
+            @if (!slotAvailable()) {
+              <p-message severity="error">
+                <span i18n>This slot is not available. Pick another time or resource.</span>
+              </p-message>
+            }
+
+            @if (bookedSlots().length > 0) {
+              <div class="flex flex-col gap-1">
+                <p class="text-sm font-semibold" i18n>Already booked</p>
+                <ul class="flex flex-col gap-1">
+                  @for (slot of bookedSlots(); track slot.start) {
+                    <li class="text-sm text-on-surface-variant">
+                      {{ slot.start | date: 'EEE d MMM, HH:mm' }} – {{ slot.end | date: 'HH:mm' }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          }
+        </div>
+      } @else if (step() === 3) {
+        <div class="flex flex-col gap-5">
+          <p class="text-sm text-on-surface-variant" i18n>
+            Add anything the venue stocks that you want reserved alongside the resource. Optional.
+          </p>
+
+          @if (loadingInventory()) {
+            <div class="flex justify-center py-10">
+              <p-progressSpinner ariaLabel="Loading items" />
+            </div>
+          } @else if (inventory().length === 0) {
+            <div
+              class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-outline-variant px-6 py-12 text-center"
+            >
+              <i class="pi pi-box text-4xl text-outline-variant" aria-hidden="true"></i>
+              <p class="font-semibold" i18n>This venue has no items to rent.</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              @for (item of inventory(); track item.id) {
+                <app-item-card
+                  [item]="item"
+                  [quantity]="quantityOf(item)"
+                  (quantityChange)="setQuantity(item, $event)"
+                />
+              }
+            </div>
+          }
+        </div>
+      } @else if (step() === 4) {
+        <div class="flex flex-col gap-5">
+          <p class="text-sm text-on-surface-variant" i18n>
+            You are on the reservation as the organiser. Add anyone with an account, or invite
+            somebody by email.
+          </p>
+
+          <app-participant-picker
+            [participants]="participants()"
+            (add)="addParticipant($event)"
+            (remove)="removeParticipant($event)"
+          />
+        </div>
+      } @else {
+        <div class="flex flex-col gap-5">
+          <p class="text-xl font-semibold wrap-anywhere">
+            <span i18n>Venue:</span> {{ selectedVenue()?.name }}
+          </p>
+
+          <dl class="grid grid-cols-1 gap-3 border-b border-outline-variant pb-3 sm:grid-cols-2">
+            <div class="flex gap-2 text-sm">
+              <dt class="font-semibold" i18n>Address:</dt>
+              <dd class="min-w-0 wrap-anywhere">{{ selectedVenue()?.address }}</dd>
+            </div>
+
+            <div class="flex gap-2 text-sm">
+              <dt class="font-semibold" i18n>Organizer:</dt>
+              <dd class="min-w-0 wrap-anywhere">{{ organiserName() }}</dd>
+            </div>
+          </dl>
+
+          <dl class="flex gap-2 border-b border-outline-variant pb-3">
+            <dt class="font-semibold" i18n>Selected resource:</dt>
+            <dd class="min-w-0 wrap-anywhere">{{ selectedResource()?.name }}</dd>
+          </dl>
+
+          <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div class="flex gap-2 text-sm">
+              <dt class="font-semibold" i18n>Event start:</dt>
+              <dd>{{ startAt() | date: 'd MMM yyyy HH:mm' }}</dd>
+            </div>
+
+            <div class="flex gap-2 text-sm">
+              <dt class="font-semibold" i18n>Event end:</dt>
+              <dd>{{ endAt() | date: 'd MMM yyyy HH:mm' }}</dd>
+            </div>
+
+            <div class="flex gap-2 text-sm">
+              <dt class="font-semibold" i18n>Estimated rate:</dt>
+              <dd i18n>
+                {{ estimatedRate() | number: '1.2-2' }} ({{ durationHours() | number: '1.0-2' }} h)
+              </dd>
+            </div>
+          </dl>
+
+          <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="rounded-lg border border-outline-variant">
+              <p class="border-b border-outline-variant px-4 py-3 text-sm font-semibold" i18n>
+                Current participants — {{ participants().length }}
+              </p>
+
+              <ul class="max-h-64 overflow-y-auto">
+                @for (participant of participants(); track participant.email) {
+                  <li
+                    class="flex items-center gap-3 border-b border-outline-variant px-4 py-2 last:border-b-0"
+                  >
+                    <p-avatar
+                      shape="circle"
+                      [icon]="participant.kind === 'user' ? 'pi pi-user' : 'pi pi-envelope'"
+                    />
+
+                    <span class="min-w-0 flex-1 truncate text-sm">{{ labelOf(participant) }}</span>
+
+                    @if (participant.kind === 'user' && participant.organiser) {
+                      <p-tag value="Organiser" severity="secondary" />
+                    } @else {
+                      <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        size="small"
+                        [text]="true"
+                        [ariaLabel]="'Remove ' + labelOf(participant)"
+                        (onClick)="removeParticipant(participant)"
+                      />
+                    }
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div class="rounded-lg border border-outline-variant">
+              <p class="border-b border-outline-variant px-4 py-3 text-sm font-semibold" i18n>
+                Items — {{ rentedTotal() }}
+              </p>
+
+              <ul class="max-h-64 overflow-y-auto">
+                @for (item of rentedItems(); track item.inventoryId) {
+                  <li
+                    class="flex items-center gap-3 border-b border-outline-variant px-4 py-2 last:border-b-0"
+                  >
+                    <span class="min-w-0 flex-1 truncate text-sm">
+                      {{ nameOfItem(item.inventoryId) }}
+                    </span>
+
+                    <p-tag [value]="item.quantity.toString()" severity="warn" />
+
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      size="small"
+                      [text]="true"
+                      [ariaLabel]="'Remove ' + nameOfItem(item.inventoryId)"
+                      (onClick)="removeItem(item.inventoryId)"
+                    />
+                  </li>
+                } @empty {
+                  <li class="px-4 py-6 text-center text-sm text-on-surface-variant" i18n>
+                    No items reserved.
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+
+          @if (!slotAvailable()) {
+            <p-message severity="error" text="This slot is not available." />
+          }
+
+          @if (submitError(); as error) {
+            <p-message severity="error">
+              <span>{{ error }}</span>
+            </p-message>
+          }
+        </div>
+      }
+    </ng-template>
+
+    <ng-template #footer>
+      <div class="flex flex-wrap items-center justify-end gap-3">
+        @if (created()) {
+          <p-button
+            label="Create another"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="createAnother()"
+          />
+          <p-button label="Go Back Home" routerLink="/dashboard" />
+        } @else {
+          <p-button
+            label="Cancel"
+            severity="secondary"
+            [text]="true"
+            routerLink="/dashboard"
+            i18n-label
+          />
+
+          <p-button
+            label="Back"
+            severity="secondary"
+            [outlined]="true"
+            [disabled]="step() === 1"
+            (onClick)="back()"
+          />
+
+          @if (step() < steps.length) {
+            <p-button label="Next" [disabled]="!canAdvance()" (onClick)="next()" />
+          } @else {
+            <p-button
+              label="Finish"
+              severity="success"
+              [disabled]="!canAdvance()"
+              [loading]="submitting()"
+              (onClick)="submit()"
+            />
+          }
+        }
+      </div>
+    </ng-template>
+  </p-card>
+</section>

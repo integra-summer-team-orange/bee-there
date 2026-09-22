@@ -76,6 +76,19 @@
      ========================================= */
   --color-general-highlight: #8069BF;
   --color-text-highlight: #8069BF;
+
+  /* =========================================
+     SELECTION
+     ========================================= */
+  --color-selected-container: #E7F7EC;
+  --color-selected-outline: #63B98C;
+
+  /* =========================================
+     STOCK LEVEL
+     ========================================= */
+  --color-level-low: #4CAF50;
+  --color-level-medium: #E8B71A;
+  --color-level-high: #BA1A1A;
 }
 
 body {
