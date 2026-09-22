@@ -95,6 +95,14 @@ public class InventoryService {
         repository.deleteById(id);
     }
 
+    /**
+     * Retrieves a paginated list of inventory items associated with the specified venue.
+     *
+     * @param venueId The unique identifier of the venue for which to retrieve inventory items.
+     * @param pageNumber The zero-based page index to retrieve.
+     * @param pageSize The maximum number of inventory items to return per page.
+     * @return A {@link Page} containing the inventory items associated with the specified venue.
+     */
     public Page<Inventory> getByVenueId(Long venueId, int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return repository.findByVenueId(venueId, pageable);
