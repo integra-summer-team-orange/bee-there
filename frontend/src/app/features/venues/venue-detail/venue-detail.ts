@@ -26,6 +26,8 @@ import {
 import { Session } from '../../../core/services/session';
 import { describeVenueError } from '../venue-error';
 
+import {InventoryWrapperService} from '../../inventory/inventory-service/inventory-wrapper-service';
+
 /** Which of the three screens from the design this component is currently showing. */
 export type VenueDetailMode = 'view' | 'edit' | 'create';
 
@@ -60,6 +62,7 @@ export class VenueDetail {
   private readonly messages = inject(MessageService);
   private readonly session = inject(Session);
   private readonly formBuilder = inject(FormBuilder);
+  protected readonly inventoryVenueState = inject(InventoryWrapperService);
 
   protected readonly mode = signal<VenueDetailMode>('view');
   protected readonly venue = signal<VenueDto | null>(null);
@@ -181,6 +184,9 @@ export class VenueDetail {
     this.venues.getVenueById(id).subscribe({
       next: (venue) => {
         this.venue.set(venue);
+
+        this.inventoryVenueState.setVenue(venue);
+
         this.form.patchValue({
           name: venue.name ?? '',
           description: venue.description ?? '',

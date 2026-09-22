@@ -1,15 +1,23 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { InventoryService } from './inventory-service';
-import { InventoryService as InventoryApiService, InventoryDto } from '../../../../api/generated';
+import { InventoryWrapperService } from './inventory-wrapper-service';
+import {
+  InventoryService as InventoryApiService,
+  InventoryDto,
+  VenuesService
+} from '../../../../api/generated';
 
-describe('InventoryService', () => {
-  let service: InventoryService;
+describe('InventoryWrapperService', () => {
+  let service: InventoryWrapperService;
   let apiMock: {
     getAllInventoryItems: ReturnType<typeof vi.fn>;
     createInventoryItem: ReturnType<typeof vi.fn>;
     updateInventoryItem: ReturnType<typeof vi.fn>;
     deleteInventoryItem: ReturnType<typeof vi.fn>;
+  };
+  let venuesApiMock: {
+    getInventoryByVenue: ReturnType<typeof vi.fn>;
+    getVenueById: ReturnType<typeof vi.fn>;
   };
 
   const mockItem: InventoryDto = {
@@ -28,14 +36,20 @@ describe('InventoryService', () => {
       deleteInventoryItem: vi.fn(),
     };
 
+    venuesApiMock = {
+      getInventoryByVenue: vi.fn(),
+      getVenueById: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
-        InventoryService,
+        InventoryWrapperService,
         { provide: InventoryApiService, useValue: apiMock },
+        { provide: VenuesService, useValue: venuesApiMock },
       ],
     });
 
-    service = TestBed.inject(InventoryService);
+    service = TestBed.inject(InventoryWrapperService);
   });
 
   it('should be created', () => {
@@ -44,6 +58,7 @@ describe('InventoryService', () => {
   });
 
   it('should add a new item', async () => {
+    service.setVenueId(1);
     apiMock.createInventoryItem.mockReturnValue(of(mockItem));
 
     await service.addItem('New Test Item', 10, 5);
@@ -53,6 +68,7 @@ describe('InventoryService', () => {
   });
 
   it('should update an existing item', async () => {
+    service.setVenueId(1);
     apiMock.createInventoryItem.mockReturnValue(of(mockItem));
     await service.addItem('New Test Item', 10, 5);
 
@@ -66,6 +82,7 @@ describe('InventoryService', () => {
   });
 
   it('should delete an item', async () => {
+    service.setVenueId(1);
     apiMock.createInventoryItem.mockReturnValue(of(mockItem));
     await service.addItem('New Test Item', 10, 5);
 

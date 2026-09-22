@@ -1,7 +1,7 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -12,7 +12,7 @@ import { ToastModule } from 'primeng/toast';
 
 import { InventoryCard } from '../inventory-card/inventory-card';
 import { InventoryOverlays } from '../inventory-overlays/inventory-overlays';
-import { InventoryService } from '../inventory-service/inventory-service';
+import { InventoryWrapperService } from '../inventory-service/inventory-wrapper-service';
 import { InventoryDto } from '../../../../api/generated';
 
 @Component({
@@ -36,12 +36,15 @@ import { InventoryDto } from '../../../../api/generated';
   styleUrl: './inventory-overview.css',
 })
 export class InventoryOverview implements OnInit {
-  private inventoryService = inject(InventoryService);
+  private inventoryService = inject(InventoryWrapperService);
+  private route = inject(ActivatedRoute);
 
   // Master state
   readonly items = this.inventoryService.items;
   readonly searchQuery = signal<string>('');
   readonly loading = this.inventoryService.loading;
+  readonly venueName = this.inventoryService.selectedVenueName;
+  readonly venueId = this.inventoryService.selectedVenueId;
 
   // Pagination state
   first = signal(0);
@@ -67,6 +70,10 @@ export class InventoryOverview implements OnInit {
   });
 
   ngOnInit() {
+    const venueId = Number(this.route.snapshot.paramMap.get('id'));
+    if (venueId) {
+      this.inventoryService.setVenueId(venueId);
+    }
     this.inventoryService.loadItems();
   }
 

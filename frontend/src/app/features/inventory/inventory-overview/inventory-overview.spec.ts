@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { InventoryOverview } from './inventory-overview';
-import { InventoryService } from '../inventory-service/inventory-service';
+import { InventoryWrapperService } from '../inventory-service/inventory-wrapper-service';
 import { InventoryDto } from '../../../../api/generated';
 
 describe('InventoryOverview', () => {
@@ -12,11 +12,14 @@ describe('InventoryOverview', () => {
   let mockInventoryService: {
     items: ReturnType<typeof signal<InventoryDto[]>>;
     loading: ReturnType<typeof signal<boolean>>;
+    selectedVenueName: ReturnType<typeof signal<string>>;
+    selectedVenueId: ReturnType<typeof signal<number | null>>;
     loadItems: () => Promise<void>;
     addItem: (name: string, total: number, available: number) => Promise<void>;
     updateItem: (item: InventoryDto) => Promise<void>;
     deleteItem: (id: number) => Promise<void>;
     getById: (id: number) => InventoryDto | undefined;
+    setVenueId: (id: number | null) => void;
   };
 
   const sampleItems: InventoryDto[] = [
@@ -35,18 +38,31 @@ describe('InventoryOverview', () => {
     mockInventoryService = {
       items: itemsSignal,
       loading: signal<boolean>(false),
+      selectedVenueName: signal<string>('Test Venue'),
+      selectedVenueId: signal<number | null>(1),
       loadItems: async () => {},
       addItem: async () => {},
       updateItem: async () => {},
       deleteItem: async () => {},
       getById: (id: number) => itemsSignal().find((item) => item.id === id),
+      setVenueId: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [InventoryOverview],
       providers: [
         provideRouter([]),
-        { provide: InventoryService, useValue: mockInventoryService },
+        { provide: InventoryWrapperService, useValue: mockInventoryService },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: () => '1',
+              },
+            },
+          },
+        },
       ],
     }).compileComponents();
 
@@ -63,6 +79,7 @@ describe('InventoryOverview', () => {
 
     component.ngOnInit();
     expect(component).toBeTruthy();
+    expect(mockInventoryService.setVenueId).toHaveBeenCalledWith(1);
     expect(loadCalled).toBe(true);
   });
 
