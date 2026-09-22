@@ -47,8 +47,8 @@ export class Login {
           return;
         }
 
-        this.session.saveToken(response.token, this.rememberMe.value ?? false);
-        this.session.saveUserId(response.id,this.rememberMe.value ?? false);
+        this.sessionService.saveToken(response.token, this.rememberMe.value ?? false);
+        this.sessionService.saveUserId(response.id,this.rememberMe.value ?? false);
         this.sessionService.saveToken(response.token, this.rememberMe.value ?? false);
         this.session.refreshClaims();
         this.router.navigateByUrl('/dashboard');
