@@ -144,8 +144,7 @@
               label="View resources"
               size="small"
               styleClass="w-full"
-              [disabled]="true"
-              pTooltip="Resource management has its own screen, which is not built yet"
+              [routerLink]="['/venues', venue()?.id, 'resources']"
             />
           </ng-template>
         </p-card>
