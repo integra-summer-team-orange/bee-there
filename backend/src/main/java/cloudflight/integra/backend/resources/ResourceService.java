@@ -85,4 +85,17 @@ public class ResourceService {
         }
         repository.deleteById(id);
     }
+
+    /**
+     * Retrieves a paginated list of resources belonging to a specific venue.
+     *
+     * @param venueId    The unique identifier of the venue.
+     * @param pageNumber The page index to retrieve (zero-based).
+     * @param pageSize   The number of resources to include on each page.
+     * @return A {@code Page} containing the resources for the specified venue.
+     */
+    public Page<Resource> getByVenueId(Long venueId, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return repository.findByVenueId(venueId, pageable);
+    }
 }

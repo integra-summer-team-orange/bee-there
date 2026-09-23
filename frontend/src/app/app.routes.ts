@@ -5,6 +5,7 @@ import {Register} from './features/register/register';
 import {Dashboard} from './features/dashboard/dashboard';
 import {redirectIfAuthenticatedGuard} from './core/guards/redirect-if-authenticated.guard';
 import {requireAuthGuard} from './core/guards/require-auth.guard';
+import {Resources} from './features/resources/resources';
 
 export const routes: Routes = [
   {
@@ -50,4 +51,8 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/venues/venue-detail/venue-detail').then((m) => m.VenueDetail),
   },
+  {
+    path: 'venues/:id/resources',
+    component: Resources
+  }
 ];
