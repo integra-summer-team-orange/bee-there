@@ -34,7 +34,14 @@
   </div>
 
   <!-- Dynamic Grid Loop -->
-  <section class="cards-grid">
+  <section class="cards-grid relative min-h-[200px]">
+    <p-toast />
+    @if (loading()) {
+      <div class="absolute inset-0 flex justify-center items-center z-10 bg-surface/50">
+        <p-progressSpinner ariaLabel="loading" />
+      </div>
+    }
+
     @for (item of paginatedItems(); track item.id) {
       <inventory-card
         [item]="item"

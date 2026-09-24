@@ -9,6 +9,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { ToastModule } from 'primeng/toast';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 import { InventoryCard } from '../inventory-card/inventory-card';
 import { InventoryOverlays } from '../inventory-overlays/inventory-overlays';
@@ -29,6 +30,7 @@ import { InventoryDto } from '../../../../api/generated';
     InputTextModule,
     PaginatorModule,
     ToastModule,
+    ProgressSpinnerModule,
     InventoryCard,
     InventoryOverlays
   ],
