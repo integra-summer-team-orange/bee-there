@@ -39,7 +39,7 @@
       <div class="flex flex-col gap-2 text-sm mb-6 flex-grow">
         <p><span class="font-bold text-on-surface">Activity Type: </span> <span class="text-on-surface-variant">{{r.activityType | titlecase}}</span></p>
         <p><span class="font-bold text-on-surface">Description: </span> <span class="text-on-surface-variant">{{r.activityDescription}}</span></p>
-        <p><span class="font-bold text-on-surface">Type: </span> <span class="text-on-surface-variant">{{r.type}}</span></p>
+        <p><span class="font-bold text-on-surface">Type: </span> <span class="text-on-surface-variant">{{ formatRaw(r.type) | titlecase }}</span></p>
         <p><span class="font-bold text-on-surface">Capacity: </span> <span class="text-on-surface-variant">{{r.capacity}}</span></p>
         <p><span class="font-bold text-on-surface">Hourly rate: </span> <span class="text-on-surface-variant">${{r.hourlyRate}}/hr</span></p>
       </div>

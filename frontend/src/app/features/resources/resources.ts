@@ -193,4 +193,9 @@ export class Resources implements OnInit {
       });
     }
   }
+
+  // for enum conversion to a more user-readable format
+  formatRaw(type: ResourceDto.TypeEnum | undefined): string {
+    return type ? type.replaceAll('_', ' ').toLowerCase() : '';
+  }
 }
