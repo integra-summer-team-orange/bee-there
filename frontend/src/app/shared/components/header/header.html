@@ -11,7 +11,16 @@
     <!-- todo: dynamic role -->
     <ul class="flex items-center gap-8 font-semibold text-on-surface text-lg">
       <li><a routerLink="/dashboard" class="hover:text-general-highlight transition-colors">Dashboard</a></li>
-      <li><a routerLink="/management" class="text-general-highlight">Management</a></li>
+      <li class="relative">
+        <p-menu #menu [model]="managementItems" [popup]="true" appendTo="body" />
+        <button
+          type="button"
+          (click)="menu.toggle($event)"
+          class="flex items-center gap-1.5 hover:text-general-highlight transition-colors cursor-pointer bg-transparent border-0 p-0 font-semibold text-on-surface text-lg"
+        >
+          <span>Management</span>
+        </button>
+      </li>
       <li><a routerLink="/venues" class="hover:text-general-highlight transition-colors">Venues</a></li>
       <li><a routerLink="/reservations" class="hover:text-general-highlight transition-colors">My Reservations</a></li>
       <li><a routerLink="/contact" class="hover:text-general-highlight transition-colors">Contact</a></li>
