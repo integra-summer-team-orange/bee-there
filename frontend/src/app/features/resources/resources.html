@@ -4,7 +4,21 @@
 <!-- ================= HEADER SECTION ================= -->
 <div class="flex justify-between items-end px-8 py-6">
   <div>
-    <p class="text-outline text-sm">< Venues / {{venueName}} / <span class="text-general-highlight font-bold">Resources</span></p>
+    <!-- p-breadcrumb renders every crumb at the same size, so the trail is built by hand. -->
+    <nav class="mb-8 flex items-center gap-2">
+      <a
+        routerLink="/venues"
+        aria-label="Back to venues"
+        class="pi pi-chevron-left text-sm text-on-surface-variant hover:text-on-surface"
+      ></a>
+      <a routerLink="/venues" class="text-lg text-on-surface-variant hover:text-on-surface">Venues</a>
+      <span class="text-lg text-outline">/</span>
+      <a routerLink="/venues/{{ venueId }}" class="text-lg text-on-surface-variant hover:text-on-surface">{{ venueName }}</a>
+      <span class="text-lg text-outline">/</span>
+      <span class="min-w-0 truncate text-2xl font-bold text-general-highlight">
+      Resources
+    </span>
+    </nav>
     <h1 class="text-4xl font-bold mt-2">{{venueName}} Resources</h1>
   </div>
 
