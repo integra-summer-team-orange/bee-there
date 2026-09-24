@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -87,7 +88,12 @@ export class Register {
           },
         });
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 400 && error.error?.messages?.includes('Email already in use')) {
+          this.email.setErrors({ taken: true });
+          this.email.markAsTouched();
+          return;
+        }
         this.errorMessage.set('Registration failed. Please check your details and try again.');
       },
     });
