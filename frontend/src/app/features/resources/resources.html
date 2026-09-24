@@ -2,9 +2,20 @@
 <p-toast />
 
 <!-- ================= HEADER SECTION ================= -->
-<div class="flex justify-between items-end px-8 py-6">
-  <div>
-    <p class="text-outline text-sm">< Venues / {{venueName}} / <span class="text-general-highlight font-bold">Resources</span></p>
+<div class="flex justify-between items-end gap-4 px-8 py-6">
+  <div class="min-w-0 flex-1 wrap-anywhere">
+    <!-- p-breadcrumb renders every crumb at the same size, so the trail is built by hand. -->
+    <nav class="mb-8 flex items-center gap-2 min-w-0">
+      <a routerLink="/venues" aria-label="Back to venues" class="pi pi-chevron-left text-sm text-on-surface-variant hover:text-on-surface shrink-0"></a>
+      <a routerLink="/venues" class="text-lg text-on-surface-variant hover:text-on-surface shrink-0 whitespace-nowrap">Venues</a>
+      <span class="text-lg text-outline shrink-0">/</span>
+      <!-- Truncated venue name with tooltip -->
+      <a [routerLink]="['/venues', venueId]" [title]="venueName" class="text-lg text-on-surface-variant hover:text-on-surface truncate max-w-[200px] sm:max-w-xs md:max-w-sm inline-block">{{ venueName }}</a>
+      <span class="text-lg text-outline shrink-0">/</span>
+      <span class="text-2xl font-bold text-general-highlight shrink-0 whitespace-nowrap">
+    Resources
+  </span>
+    </nav>
     <h1 class="text-4xl font-bold mt-2">{{venueName}} Resources</h1>
   </div>
 
