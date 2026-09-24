@@ -4,11 +4,12 @@ import { Card } from 'primeng/card';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InventoryDto } from '../../../../api/generated';
+import {Tooltip} from 'primeng/tooltip';
 
 @Component({
   selector: 'inventory-card',
   standalone: true,
-  imports: [CommonModule, Card, Button, ProgressBarModule],
+  imports: [CommonModule, Card, Button, ProgressBarModule, Tooltip],
   templateUrl: './inventory-card.html',
   styleUrl: './inventory-card.css',
 })
@@ -27,4 +28,6 @@ export class InventoryCard {
     if (this.percentage > 20) return 'bg-warning';
     return 'bg-danger';
   }
+
+  protected readonly Tooltip = Tooltip;
 }
