@@ -185,7 +185,8 @@ export class Resources implements OnInit {
         next: () => {
           this.isDeleteModalVisible = false;
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource deleted successfully' });
-          this.loadResources(this.currentPage);
+          const lastOnPage = this.resourceList.length === 1 && this.currentPage > 0;
+          this.loadResources(lastOnPage ? this.currentPage - 1 : this.currentPage);
         },
         error: (err) => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete resource' });
