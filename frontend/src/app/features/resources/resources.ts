@@ -44,18 +44,23 @@ export class Resources implements OnInit {
   selectedResource: ResourceDto | null = null;
 
   resourceForm: FormGroup = this.formBuilder.group({
-    name: new FormControl('', Validators.required),
-    activityType: new FormControl('', Validators.required),
-    activityDescription: new FormControl(''),
-    type: new FormControl('', Validators.required),
-    capacity: new FormControl('', Validators.required),
-    hourlyRate: new FormControl('', Validators.required)
+    name: new FormControl('', [Validators.required]),
+    activityType: new FormControl('', [Validators.required]),
+    activityDescription: new FormControl(''), // Optional: no validators
+    type: new FormControl('', [Validators.required]),
+    capacity: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
+    hourlyRate: new FormControl<number | null>(null, [Validators.required, Validators.min(0)])
   });
 
   ngOnInit() {
     this.venueId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadVenueDetails();
     this.loadResources();
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.resourceForm.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
   loadVenueDetails() {
@@ -136,46 +141,49 @@ export class Resources implements OnInit {
   }
 
   saveResource() {
-    if (this.resourceForm.valid) {
-      const formData = this.resourceForm.value;
+    if (this.resourceForm.invalid) {
+      this.resourceForm.markAllAsTouched();
+      return;
+    }
 
-      const basePayload = {
-        ...formData,
-        venueId: this.venueId,
-        capacity: Number(formData.capacity),
-        hourlyRate: Number(formData.hourlyRate)
+    const formData = this.resourceForm.value;
+
+    const basePayload = {
+      ...formData,
+      venueId: this.venueId,
+      capacity: Number(formData.capacity),
+      hourlyRate: Number(formData.hourlyRate)
+    };
+
+    if (this.selectedResource === null) {
+      // ADD
+      this.resourcesService.createResource(basePayload as ResourceDto).subscribe({
+        next: () => {
+          this.isFormModalVisible = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource added successfully' });
+          this.loadResources(this.currentPage);
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add resource' });
+        }
+      });
+    } else {
+      // UPDATE
+      const updatePayload = {
+        ...basePayload,
+        id: this.selectedResource.id
       };
 
-      if (this.selectedResource === null) {
-        // ADD
-        this.resourcesService.createResource(basePayload as ResourceDto).subscribe({
-          next: () => {
-            this.isFormModalVisible = false;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource added successfully' });
-            this.loadResources(this.currentPage);
-          },
-          error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add resource' });
-          }
-        });
-      } else {
-        // UPDATE
-        const updatePayload = {
-          ...basePayload,
-          id: this.selectedResource.id
-        };
-
-        this.resourcesService.updateResource(this.selectedResource.id!, updatePayload as ResourceDto).subscribe({
-          next: () => {
-            this.isFormModalVisible = false;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource updated successfully' });
-            this.loadResources(this.currentPage);
-          },
-          error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update resource' });
-          }
-        });
-      }
+      this.resourcesService.updateResource(this.selectedResource.id!, updatePayload as ResourceDto).subscribe({
+        next: () => {
+          this.isFormModalVisible = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource updated successfully' });
+          this.loadResources(this.currentPage);
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update resource' });
+        }
+      });
     }
   }
 
