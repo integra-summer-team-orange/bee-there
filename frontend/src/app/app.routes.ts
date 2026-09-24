@@ -29,6 +29,11 @@ export const routes: Routes = [
     canActivate: [requireAuthGuard],
   },
   {
+    path: 'users',
+    loadComponent: () =>
+      import('./features/user/user-management/user-management').then(m => m.UserManagement),
+  },
+  {
     path: 'venues',
     loadComponent: () =>
       import('./features/venues/venue-overview/venue-overview').then((m) => m.VenueOverview),
