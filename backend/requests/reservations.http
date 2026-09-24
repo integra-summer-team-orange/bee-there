@@ -1,0 +1,97 @@
+### Get all reservations
+GET {{host}}/api/reservations
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get all reservations paged
+GET {{host}}/api/reservations?pageNumber=0&pageSize=5
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get all reservations filtered by venue
+GET {{host}}/api/reservations?venueId=1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get reservation by ID (Happy Path)
+GET {{host}}/api/reservations/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get reservation by ID (404 Error Path)
+GET {{host}}/api/reservations/9999
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create a reservation (Happy Path)
+POST {{host}}/api/reservations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "resourceId": 1,
+  "venueId": 1,
+  "startTime": "2026-09-25T12:00:00",
+  "endTime": "2026-09-25T13:00:00",
+  "maxParticipants": 10
+}
+
+### Create a reservation (400 Validation Error Path)
+POST {{host}}/api/reservations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "resourceId": null,
+  "venueId": null,
+  "startTime": null,
+  "endTime": null,
+  "maxParticipants": -5
+}
+
+### Create a reservation with non-existent resource (400/404 Error Path)
+POST {{host}}/api/reservations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "resourceId": 999999,
+  "venueId": 1,
+  "startTime": "2026-09-25T12:00:00",
+  "endTime": "2026-09-25T13:00:00",
+  "maxParticipants": 10
+}
+
+### Create a reservation with non-existent venue (400/404 Error Path)
+POST {{host}}/api/reservations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "resourceId": 1,
+  "venueId": 999999,
+  "startTime": "2026-09-25T14:00:00",
+  "endTime": "2026-09-25T15:00:00",
+  "maxParticipants": 10
+}
+
+### Create an overlapping reservation (400 Error Path)
+POST {{host}}/api/reservations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "resourceId": 1,
+  "venueId": 1,
+  "startTime": "2026-09-25T10:30:00",
+  "endTime": "2026-09-25T11:30:00",
+  "maxParticipants": 10
+}
+
+### Cancel a reservation (Happy Path)
+DELETE {{host}}/api/reservations/1
+Authorization: Bearer {{token}}
+
+### Cancel a reservation (404 Error Path)
+DELETE {{host}}/api/reservations/9999
+Authorization: Bearer {{token}}
