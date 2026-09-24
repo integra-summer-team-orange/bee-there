@@ -174,8 +174,7 @@
               label="View inventory"
               size="small"
               styleClass="w-full"
-              [disabled]="true"
-              pTooltip="Inventory management has its own screen, which is not built yet"
+              [routerLink]="['/venues', venue()?.id, 'inventory']"
             />
           </ng-template>
         </p-card>

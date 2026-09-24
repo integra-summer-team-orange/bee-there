@@ -1,4 +1,6 @@
 import {Routes} from '@angular/router';
+import {Home} from './features/home/home';
+import {InventoryOverview} from './features/inventory/inventory-overview/inventory-overview';
 import {Landing} from './features/landing/landing';
 import {Login} from './features/login/login';
 import {Register} from './features/register/register';
@@ -50,6 +52,11 @@ export const routes: Routes = [
     data: { mode: 'edit' },
     loadComponent: () =>
       import('./features/venues/venue-detail/venue-detail').then((m) => m.VenueDetail),
+  },
+  {
+    path: 'venues/:id/inventory',
+    loadComponent: () =>
+      import('./features/inventory/inventory-overview/inventory-overview').then((m) => m.InventoryOverview),
   },
   {
     path: 'venues/:id/resources',

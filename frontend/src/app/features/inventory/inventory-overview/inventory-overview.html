@@ -1,0 +1,77 @@
+<main>
+  <!--Breadcrumb Bar-->
+  <!-- p-breadcrumb renders every crumb at the same size, so the trail is built by hand. -->
+  <nav class="mb-8 flex items-center gap-2 min-w-0">
+    <a
+      routerLink="/venues"
+      aria-label="Back to venues"
+      class="pi pi-chevron-left text-sm text-on-surface-variant hover:text-on-surface shrink-0"
+    ></a>
+    <a routerLink="/venues" class="text-lg text-on-surface-variant hover:text-on-surface shrink-0 whitespace-nowrap">Venues</a>
+    <span class="text-lg text-outline shrink-0">/</span>
+    <a
+      routerLink="/venues/{{ venueId() }}"
+      [title]="venueName()"
+      class="text-lg text-on-surface-variant hover:text-on-surface truncate max-w-[200px] sm:max-w-xs md:max-w-sm inline-block"
+    >{{ venueName() }}</a>
+    <span class="text-lg text-outline shrink-0">/</span>
+    <span class="text-2xl font-bold text-general-highlight shrink-0 whitespace-nowrap">
+    Inventory
+  </span>
+  </nav>
+
+  <div class="toolbar flex justify-between items-center gap-6 mb-6">
+    <h1 class="text-2xl font-bold flex items-center min-w-0" [title]="venueName() + ' Inventory'">
+      <span class="truncate">{{ venueName() }}</span>
+      <span class="whitespace-pre shrink-0"> Inventory</span>
+    </h1>
+    <div class="actions flex items-center gap-3 shrink-0">
+      <p-iconfield iconPosition="right" class="custom-search">
+        <p-inputicon class="pi pi-search" />
+        <input
+          type="text"
+          pInputText
+          placeholder="Search inventory..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event); first.set(0);" />
+      </p-iconfield>
+
+      <p-button label="+ Add item" class="purple-btn" (onClick)="openCreate()" />
+    </div>
+  </div>
+
+  <!-- Dynamic Grid Loop -->
+  <section class="cards-grid relative min-h-[200px]">
+    <p-toast />
+    @if (loading()) {
+      <div class="absolute inset-0 flex justify-center items-center z-10 bg-surface/50">
+        <p-progressSpinner ariaLabel="loading" />
+      </div>
+    }
+
+    @for (item of paginatedItems(); track item.id) {
+      <inventory-card
+        [item]="item"
+        (delete)="openDelete($event)"
+        (edit)="openEdit($event)" />
+    }
+  </section>
+
+  <inventory-overlays
+    [(visible)]="overlayVisible"
+    [mode]="overlayMode()"
+    [(item)]="selectedItem"
+    (confirm)="handleConfirm($event)"
+    (delete)="deleteItem($event)" />
+
+  <!-- Paginator -->
+  <p-paginator
+    (onPageChange)="onPageChange($event)"
+    [first]="first()"
+    [rows]="rows()"
+    [totalRecords]="filteredItems().length"
+    [showFirstLastIcon]="false"
+    [showPageLinks]="true"
+    [pageLinkSize]="3" />
+
+</main>

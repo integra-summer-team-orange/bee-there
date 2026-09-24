@@ -104,3 +104,7 @@ Authorization: Bearer {{token}}
 ### Delete venue error 404
 DELETE {{host}}/api/venues/9999
 Authorization: Bearer {{token}}
+
+### Get Venue Inventory by Venue Id
+GET {{host}}/api/venues/1/inventory
+Authorization: Bearer {{token}}
