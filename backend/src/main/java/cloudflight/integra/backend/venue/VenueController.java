@@ -2,12 +2,12 @@ package cloudflight.integra.backend.venue;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.exceptions.ErrorResponse;
-import cloudflight.integra.backend.resources.ResourceMapper;
-import cloudflight.integra.backend.resources.ResourceService;
-import cloudflight.integra.backend.resources.model.ResourceDto;
 import cloudflight.integra.backend.inventory.InventoryMapper;
 import cloudflight.integra.backend.inventory.InventoryService;
 import cloudflight.integra.backend.inventory.model.InventoryDto;
+import cloudflight.integra.backend.resources.ResourceMapper;
+import cloudflight.integra.backend.resources.ResourceService;
+import cloudflight.integra.backend.resources.model.ResourceDto;
 import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,7 +52,11 @@ public class VenueController {
      * @param inventoryMapper the inventory mapper
      */
     public VenueController(
-            VenueService service, VenueMapper mapper, ResourceService resourceService, ResourceMapper resourceMapper, InventoryService inventoryService,
+            VenueService service,
+            VenueMapper mapper,
+            ResourceService resourceService,
+            ResourceMapper resourceMapper,
+            InventoryService inventoryService,
             InventoryMapper inventoryMapper) {
         this.service = service;
         this.mapper = mapper;
