@@ -116,53 +116,110 @@
 <p-dialog [header]="selectedResource ? 'Edit resource' : 'Add resource'" [(visible)]="isFormModalVisible" [modal]="true">
   <form [formGroup]="resourceForm" (ngSubmit)="saveResource()" id="resourceForm" class="flex flex-col gap-4 w-96 py-2">
 
+    <!-- Name -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-on-surface">Name</label>
-      <input formControlName="name" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest" placeholder="Resource name">
+      <label class="text-sm font-medium text-on-surface">Name *</label>
+      <input
+        formControlName="name"
+        [class.border-red-500]="isInvalid('name')"
+        class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest"
+        placeholder="Resource name"
+      />
+      <span *ngIf="isInvalid('name')" class="text-xs text-red-500">Name is required.</span>
     </div>
 
+    <!-- Activity Type -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-on-surface">Activity Type</label>
-      <select formControlName="activityType" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest">
-        <option value="" disabled selected>Select activity type</option>
+      <label class="text-sm font-medium text-on-surface">Activity Type *</label>
+      <select
+        formControlName="activityType"
+        [class.border-red-500]="isInvalid('activityType')"
+        class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest"
+      >
+        <option value="" disabled>Select activity type</option>
         <option value="PLAYING">Playing</option>
         <option value="TRAINING">Training</option>
         <option value="MATCH">Match</option>
       </select>
+      <span *ngIf="isInvalid('activityType')" class="text-xs text-red-500">Activity type is required.</span>
     </div>
 
+    <!-- Activity Description (Optional) -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-on-surface">Activity Description</label>
-      <textarea formControlName="activityDescription" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest resize-none h-20" placeholder="Description..."></textarea>
+      <label class="text-sm font-medium text-on-surface">Activity Description (Optional)</label>
+      <textarea
+        formControlName="activityDescription"
+        class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest resize-none h-20"
+        placeholder="Description..."
+      ></textarea>
     </div>
 
+    <!-- Type -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-on-surface">Type</label>
-      <select formControlName="type" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest">
-        <option value="" disabled selected>Select type</option>
+      <label class="text-sm font-medium text-on-surface">Type *</label>
+      <select
+        formControlName="type"
+        [class.border-red-500]="isInvalid('type')"
+        class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest"
+      >
+        <option value="" disabled>Select type</option>
         <option value="INDOOR_SPORT">Indoor Sport</option>
         <option value="OUTDOOR_SPORT">Outdoor Sport</option>
         <option value="BOARDGAME_SOCIAL">Boardgame & Social</option>
       </select>
+      <span *ngIf="isInvalid('type')" class="text-xs text-red-500">Type is required.</span>
     </div>
 
+    <!-- Capacity -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-on-surface">Capacity</label>
-      <input type="number" formControlName="capacity" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest" placeholder="20">
+      <label class="text-sm font-medium text-on-surface">Capacity *</label>
+      <input
+        type="number"
+        min="0"
+        formControlName="capacity"
+        [class.border-red-500]="isInvalid('capacity')"
+        class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest"
+        placeholder="20"
+      />
+      <span *ngIf="isInvalid('capacity')" class="text-xs text-red-500">
+        {{ resourceForm.get('capacity')?.hasError('min') ? 'Capacity cannot be negative.' : 'Capacity is required.' }}
+      </span>
     </div>
 
+    <!-- Hourly Rate -->
     <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-on-surface">Hourly Rate</label>
-      <input type="number" formControlName="hourlyRate" class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest" placeholder="75">
+      <label class="text-sm font-medium text-on-surface">Hourly Rate *</label>
+      <input
+        type="number"
+        min="0"
+        step="0.01"
+        formControlName="hourlyRate"
+        [class.border-red-500]="isInvalid('hourlyRate')"
+        class="border border-outline-variant rounded-lg px-3 py-2 bg-surface-container-lowest"
+        placeholder="75"
+      />
+      <span *ngIf="isInvalid('hourlyRate')" class="text-xs text-red-500">
+        {{ resourceForm.get('hourlyRate')?.hasError('min') ? 'Hourly rate cannot be negative.' : 'Hourly rate is required.' }}
+      </span>
     </div>
 
   </form>
 
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-3 mt-4">
-      <button class="border border-outline-variant px-4 py-2 rounded-lg font-medium text-on-surface hover:bg-surface-container-high transition-colors"
-              (click)="isFormModalVisible = false">Cancel</button>
-      <button type="submit" form="resourceForm" class="bg-general-highlight text-on-primary px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+      <button
+        type="button"
+        class="border border-outline-variant px-4 py-2 rounded-lg font-medium text-on-surface hover:bg-surface-container-high transition-colors"
+        (click)="isFormModalVisible = false"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        form="resourceForm"
+        [disabled]="resourceForm.invalid"
+        class="bg-general-highlight text-on-primary px-4 py-2 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+      >
         Save
       </button>
     </div>
