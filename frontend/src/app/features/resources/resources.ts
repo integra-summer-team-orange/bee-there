@@ -36,6 +36,7 @@ export class Resources implements OnInit {
 
   currentPage = 0;
   totalPages = 0;
+  pageSize = 9;
   visiblePages: (number | string)[] = [];
 
   isDeleteModalVisible = false;
@@ -73,7 +74,7 @@ export class Resources implements OnInit {
   }
 
   loadResources(pageIndex: number = 0) {
-    this.venuesService.getResourcesByVenue(this.venueId, pageIndex, 10).subscribe({
+    this.venuesService.getResourcesByVenue(this.venueId, pageIndex, this.pageSize).subscribe({
       next: (data: any) => {
         this.resourceList = data.content || [];
         this.currentPage = data.number || 0;
