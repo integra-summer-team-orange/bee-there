@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import cloudflight.integra.backend.resources.ResourceService;
-import cloudflight.integra.backend.resources.model.Resource;
 import cloudflight.integra.backend.venue.VenueService;
+import cloudflight.integra.backend.venue.model.Venue;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ReservationService {
-    //TODO::add check if entities exist
     private final ReservationRepository reservationRepository;
     private final VenueService venueService;
     private final ResourceService resourceService;
@@ -67,9 +66,11 @@ public class ReservationService {
      * @throws EntityNotFoundException if no reservation exists with the specified identifier
      */
     public Reservation getById(Long id) {
-        return reservationRepository
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + id + " not found!"));
+
+        return reservationRepository.findById(id).orElseThrow(() ->
+            new EntityNotFoundException(
+                    "Reservation with id: " + id + " not found!"
+            ));
     }
 
     /**
@@ -82,6 +83,10 @@ public class ReservationService {
      */
     public Reservation create(Reservation reservation) {
 
+        //check if the entities linked to reservation exists
+        Venue venue = venueService.getById(reservation.getVenue().getId()).orElseThrow(()->new EntityNotFoundException("Venue not found!"));
+        resourceService.getById(reservation.getResource().getId()).orElseThrow(() -> new EntityNotFoundException("Resource not found!"));
+
         if (reservationRepository.existsOverlappingReservation(
                 reservation.getResource().getId(),
                 Status.CANCELLED,
@@ -89,6 +94,8 @@ public class ReservationService {
                 reservation.getEndTime())) {
             throw new IllegalArgumentException("There is already a reservation for this resource in that time slot");
         }
+
+        reservation.setVenue(venue);
 
         return reservationRepository.save(reservation);
     }

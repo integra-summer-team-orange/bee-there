@@ -31,8 +31,8 @@ Content-Type: application/json
 {
   "resourceId": 1,
   "venueId": 1,
-  "startTime": "2026-09-25T12:00:00",
-  "endTime": "2026-09-25T13:00:00",
+  "startTime": "2026-09-27T14:00:00",
+  "endTime": "2026-09-27T15:00:00",
   "maxParticipants": 10
 }
 
@@ -49,7 +49,7 @@ Content-Type: application/json
   "maxParticipants": -5
 }
 
-### Create a reservation with non-existent resource (400/404 Error Path)
+### Create a reservation with non-existent resource (404 Error Path)
 POST {{host}}/api/reservations
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -62,7 +62,7 @@ Content-Type: application/json
   "maxParticipants": 10
 }
 
-### Create a reservation with non-existent venue (400/404 Error Path)
+### Create a reservation with non-existent venue (404 Error Path)
 POST {{host}}/api/reservations
 Authorization: Bearer {{token}}
 Content-Type: application/json

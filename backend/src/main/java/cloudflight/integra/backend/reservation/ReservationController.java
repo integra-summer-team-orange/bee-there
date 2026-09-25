@@ -109,9 +109,8 @@ public class ReservationController {
             })
     public ResponseEntity<ReservationResponseDto> getReservationById(
             @Parameter(description = "ID of the reservation to be retrieved", required = true) @PathVariable Long id) {
-        Reservation reservation = reservationService.getById(id);
 
-        return ResponseEntity.ok(reservationMapper.toDto(reservation));
+        return ResponseEntity.ok(reservationMapper.toDto(reservationService.getById(id)));
     }
 
     /**

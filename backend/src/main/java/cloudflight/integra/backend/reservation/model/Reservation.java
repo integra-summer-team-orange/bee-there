@@ -21,7 +21,7 @@ public class Reservation {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Resource resource;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "venue_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Venue venue;
@@ -62,27 +62,6 @@ public class Reservation {
         if (this.status == null) {
             this.status = Status.ACTIVE;
         }
-    }
-
-    public Reservation(
-            Resource resource,
-            Venue venue,
-            User organizer,
-            LocalDateTime startTime,
-            LocalDateTime endTime,
-            Status status,
-            Visibility visibility,
-            Integer maxParticipants,
-            LocalDateTime createdAt) {
-        this.resource = resource;
-        this.venue = venue;
-        this.organizer = organizer;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.status = status;
-        this.visibility = visibility;
-        this.maxParticipants = maxParticipants;
-        this.createdAt = createdAt;
     }
 
     public Reservation() {}
