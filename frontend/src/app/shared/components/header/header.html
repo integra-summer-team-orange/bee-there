@@ -6,29 +6,47 @@
     <span class="text-4xl font-bold text-on-tertiary-fixed-variant tracking-wide">BeeThere</span>
   </div>
 
-  <!-- Center: Navigation -->
-  <nav>
-    <!-- todo: dynamic role -->
-    <ul class="flex items-center gap-8 font-semibold text-on-surface text-lg">
-      <li><a routerLink="/dashboard" class="hover:text-general-highlight transition-colors">Dashboard</a></li>
-      <li><a routerLink="/management" class="text-general-highlight">Management</a></li>
-      <li><a routerLink="/venues" class="hover:text-general-highlight transition-colors">Venues</a></li>
-      <li><a routerLink="/reservations" class="hover:text-general-highlight transition-colors">My Reservations</a></li>
-      <li><a routerLink="/contact" class="hover:text-general-highlight transition-colors">Contact</a></li>
-    </ul>
-  </nav>
+  @switch (variant()) {
+    @case ('landing') {
+      <div class="flex items-center gap-4">
+        <p-button label="Log in" routerLink="/login" outlined />
+        <p-button label="Register" routerLink="/register" />
+      </div>
+    }
+    @case ('login') {
+      <div class="flex items-center gap-4">
+        <p-button label="Register" routerLink="/register" />
+      </div>
+    }
+    @case ('register') {
+      <div class="flex items-center gap-4">
+        <p-button label="Log in" routerLink="/login" outlined />
+      </div>
+    }
+    @default {
+      <!-- Center: Navigation -->
+      <nav>
+        <ul class="flex items-center gap-8 font-semibold text-on-surface text-lg">
+          @for (item of navItems(); track item.path) {
+            <li>
+              <span class="text-on-surface">{{ item.label }}</span>
+            </li>
+          }
+        </ul>
+      </nav>
 
-  <!-- Right side: User Profile -->
-  <div class="flex items-center gap-4">
-    <!-- todo: dynamic role -->
-    <span class="font-medium text-on-surface text-lg">Admin</span>
+      <!-- Right side: User Profile -->
+      <div class="flex items-center gap-4">
+        <span class="font-medium text-on-surface text-lg">{{ session.role() }}</span>
 
-    <p-avatar
-      label="A"
-      class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
-      size="large"
-      shape="circle">
-    </p-avatar>
-  </div>
+        <p-avatar
+          [label]="avatarLabel()"
+          class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
+          size="large"
+          shape="circle">
+        </p-avatar>
+      </div>
+    }
+  }
 
 </header>
