@@ -3,12 +3,11 @@ package cloudflight.integra.backend.reservation;
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.reservation.model.Reservation;
 import cloudflight.integra.backend.reservation.model.Status;
-import java.util.Objects;
-import java.util.Optional;
-
 import cloudflight.integra.backend.resources.ResourceService;
 import cloudflight.integra.backend.venue.VenueService;
 import cloudflight.integra.backend.venue.model.Venue;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,8 @@ public class ReservationService {
      * @param venueService the service for venues
      * @param resourceService the service for resources
      */
-    public ReservationService(ReservationRepository reservationRepository, VenueService venueService, ResourceService resourceService) {
+    public ReservationService(
+            ReservationRepository reservationRepository, VenueService venueService, ResourceService resourceService) {
         this.reservationRepository = reservationRepository;
         this.venueService = venueService;
         this.resourceService = resourceService;
@@ -67,10 +67,9 @@ public class ReservationService {
      */
     public Reservation getById(Long id) {
 
-        return reservationRepository.findById(id).orElseThrow(() ->
-            new EntityNotFoundException(
-                    "Reservation with id: " + id + " not found!"
-            ));
+        return reservationRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + id + " not found!"));
     }
 
     /**
@@ -83,9 +82,13 @@ public class ReservationService {
      */
     public Reservation create(Reservation reservation) {
 
-        //check if the entities linked to reservation exists
-        Venue venue = venueService.getById(reservation.getVenue().getId()).orElseThrow(()->new EntityNotFoundException("Venue not found!"));
-        resourceService.getById(reservation.getResource().getId()).orElseThrow(() -> new EntityNotFoundException("Resource not found!"));
+        // check if the entities linked to reservation exists
+        Venue venue = venueService
+                .getById(reservation.getVenue().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Venue not found!"));
+        resourceService
+                .getById(reservation.getResource().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Resource not found!"));
 
         if (reservationRepository.existsOverlappingReservation(
                 reservation.getResource().getId(),
