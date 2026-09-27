@@ -2,6 +2,7 @@ package cloudflight.integra.backend.resources;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
 import cloudflight.integra.backend.resources.model.Resource;
+import cloudflight.integra.backend.resources.model.ResourceType;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -87,15 +88,21 @@ public class ResourceService {
     }
 
     /**
-     * Retrieves a paginated list of resources belonging to a specific venue.
+     * Retrieves a paginated list of a venue's resources, narrowed by search text and resource type.
      *
      * @param venueId    The unique identifier of the venue.
      * @param pageNumber The page index to retrieve (zero-based).
      * @param pageSize   The number of resources to include on each page.
-     * @return A {@code Page} containing the resources for the specified venue.
+     * @param search     Text matched against name and activity type, or {@code null} for no filtering.
+     * @param type       The resource type to keep, or {@code null} for all types.
+     * @return A {@code Page} containing the matching resources for the specified venue.
      */
-    public Page<Resource> getByVenueId(Long venueId, int pageNumber, int pageSize) {
+    public Page<Resource> getByVenueId(Long venueId, int pageNumber, int pageSize, String search, ResourceType type) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return repository.findByVenueId(venueId, pageable);
+        if ((search == null || search.isBlank()) && type == null) {
+            return repository.findByVenueId(venueId, pageable);
+        }
+        String term = search == null ? "" : search.trim();
+        return repository.findByVenueIdMatching(venueId, term, type, pageable);
     }
 }

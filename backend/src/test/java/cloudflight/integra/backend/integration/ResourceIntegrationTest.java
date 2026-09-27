@@ -177,4 +177,43 @@ public class ResourceIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(2))))
                 .andExpect(jsonPath("$.content[*].name", hasItems("Court 1", "Court 2")));
     }
+
+    @Test
+    void shouldFilterVenueResourcesBySearchAndType() throws Exception {
+        ResourceDto court = new ResourceDto(
+                null, validVenueId, "Main Court", "Basketball", null, "INDOOR_SPORT", 10, new BigDecimal("20.00"));
+        ResourceDto field = new ResourceDto(
+                null, validVenueId, "Back Field", "Football", null, "OUTDOOR_SPORT", 22, new BigDecimal("40.00"));
+        ResourceDto table = new ResourceDto(
+                null, validVenueId, "Table 1", "Chess", null, "BOARDGAME_SOCIAL", 2, new BigDecimal("5.00"));
+
+        for (ResourceDto dto : new ResourceDto[] {court, field, table}) {
+            mockMvc.perform(authed(post("/api/resources"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(dto)))
+                    .andExpect(status().isCreated());
+        }
+
+        mockMvc.perform(authed(get("/api/venues/{id}/resources", validVenueId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(3)));
+
+        mockMvc.perform(authed(get("/api/venues/{id}/resources", validVenueId).param("search", "COURT")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[*].name", contains("Main Court")));
+
+        mockMvc.perform(authed(get("/api/venues/{id}/resources", validVenueId).param("search", "chess")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[*].name", contains("Table 1")));
+
+        mockMvc.perform(authed(get("/api/venues/{id}/resources", validVenueId).param("type", "OUTDOOR_SPORT")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[*].name", contains("Back Field")));
+
+        mockMvc.perform(authed(get("/api/venues/{id}/resources", validVenueId)
+                        .param("search", "court")
+                        .param("type", "OUTDOOR_SPORT")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)));
+    }
 }
