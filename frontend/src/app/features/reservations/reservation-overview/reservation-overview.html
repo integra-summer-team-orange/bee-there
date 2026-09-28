@@ -1,0 +1,161 @@
+<p-toast />
+
+<section class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-2">
+  <h1 class="text-3xl font-bold" i18n>My reservations</h1>
+
+  <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+    <p-card styleClass="border border-outline-variant shadow-md">
+      <ng-template #title>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <span class="text-lg font-semibold" i18n>Upcoming Reservations</span>
+
+          <div class="flex items-center gap-2">
+            <p-iconfield>
+              <p-inputicon class="pi pi-search" />
+              <input
+                pInputText
+                type="search"
+                size="small"
+                placeholder="Search"
+                aria-label="Search reservations"
+                class="w-40"
+                [ngModel]="search()"
+                (ngModelChange)="onSearchChange($event)"
+              />
+            </p-iconfield>
+
+            <span pTooltip="New bookings are made through the booking flow, which is not merged yet">
+              <p-button icon="pi pi-plus" size="small" ariaLabel="New reservation" [disabled]="true" />
+            </span>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #content>
+        @if (loading()) {
+          <div class="flex justify-center py-12">
+            <p-progressSpinner ariaLabel="Loading reservations" />
+          </div>
+        } @else if (bookings().length === 0) {
+          <div
+            class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-outline-variant bg-surface-container-low px-6 py-12 text-center"
+          >
+            <i class="pi pi-calendar text-4xl text-outline-variant" aria-hidden="true"></i>
+
+            @if (search().trim()) {
+              <p class="font-semibold wrap-anywhere" i18n>No reservation matches "{{ search() }}".</p>
+            } @else {
+              <p class="font-semibold" i18n>You have no upcoming reservations.</p>
+            }
+          </div>
+        } @else {
+          <div class="flex max-h-[36rem] flex-col gap-3 overflow-y-auto pr-1">
+            @for (group of byVenue(); track group.venue) {
+              <h2 class="mt-2 text-lg font-semibold wrap-anywhere first:mt-0">{{ group.venue }}</h2>
+
+              @for (booking of group.bookings; track booking.id) {
+                <app-reservation-card
+                  [booking]="booking"
+                  [selected]="booking.id === selected()?.id"
+                  (choose)="selectedId.set($event.id)"
+                />
+              }
+            }
+          </div>
+        }
+      </ng-template>
+    </p-card>
+
+    @if (selected(); as booking) {
+      <p-card styleClass="wrap-anywhere overflow-hidden border border-outline-variant shadow-md">
+        <ng-template #header>
+          <div
+            class="flex h-48 items-center justify-center bg-surface-container"
+            aria-hidden="true"
+          >
+            <i class="pi pi-image text-outline-variant" style="font-size: 3.5rem"></i>
+          </div>
+        </ng-template>
+
+        <ng-template #title>
+          <span class="line-clamp-2 text-xl font-semibold">{{ booking.resourceName }}</span>
+        </ng-template>
+
+        <ng-template #content>
+          <div class="flex flex-col gap-2 text-sm">
+            <p class="font-semibold">{{ booking.venueName }}</p>
+            <p class="line-clamp-3 text-on-surface-variant">{{ booking.venueDescription }}</p>
+            <p>
+              <span class="font-semibold" i18n>Address:</span> {{ booking.venueAddress }}
+            </p>
+            <p>
+              <span class="font-semibold" i18n>Schedule:</span>
+              {{ booking.start | date: 'd MMM y, HH:mm' }} &ndash; {{ booking.end | date: 'HH:mm' }}
+            </p>
+            @if (booking.item) {
+              <p>
+                <span class="font-semibold" i18n>Items:</span>
+                {{ booking.item.name }} &times; {{ booking.item.quantity }}
+              </p>
+            }
+            <div class="mt-4 flex items-center gap-3">
+              <span class="font-semibold" i18n>Participants:</span>
+              <app-participant-stack [people]="everyone(booking)" />
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template #footer>
+          <div class="flex flex-wrap items-center gap-3">
+            <p-button
+              label="Venue Details"
+              styleClass="min-w-40"
+              [routerLink]="['/venues', booking.venueId]"
+            />
+            <p-button
+              icon="pi pi-pencil"
+              [outlined]="true"
+              ariaLabel="Manage reservation"
+              [routerLink]="['/reservations', booking.id]"
+            />
+            <p-button
+              label="Cancel Reservation"
+              severity="danger"
+              [outlined]="true"
+              class="ml-auto"
+              (onClick)="toCancel.set(booking)"
+            />
+          </div>
+        </ng-template>
+      </p-card>
+    }
+  </div>
+</section>
+
+<p-dialog
+  header="Cancel Reservation"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '26rem' }"
+  [visible]="toCancel() !== null"
+  (visibleChange)="toCancel.set(null)"
+>
+  <p class="text-sm" i18n>
+    Are you sure you want to cancel your current booking? This action cannot be undone.
+  </p>
+
+  <ng-template #footer>
+    <p-button
+      label="Keep reservation"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="toCancel.set(null)"
+    />
+    <p-button
+      label="Cancel reservation"
+      severity="danger"
+      [loading]="cancelling()"
+      (onClick)="confirmCancel()"
+    />
+  </ng-template>
+</p-dialog>

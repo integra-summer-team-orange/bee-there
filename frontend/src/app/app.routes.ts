@@ -54,5 +54,10 @@ export const routes: Routes = [
   {
     path: 'venues/:id/resources',
     component: Resources
+  },
+  {
+    path: 'reservations',
+    loadChildren: () =>
+      import('./features/reservations/booking.routes').then((m) => m.BOOKING_ROUTES),
   }
 ];

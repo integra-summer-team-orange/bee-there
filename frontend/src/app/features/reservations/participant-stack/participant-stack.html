@@ -1,0 +1,8 @@
+<p-avatargroup role="img" [attr.aria-label]="people().length + ' participants: ' + names()" [title]="names()">
+  @for (person of shown(); track person.userId) {
+    <p-avatar icon="pi pi-user" shape="circle" size="normal" [style]="avatarStyle" />
+  }
+  @if (hidden() > 0) {
+    <p-avatar [label]="'+' + hidden()" shape="circle" size="normal" [style]="avatarStyle" />
+  }
+</p-avatargroup>
