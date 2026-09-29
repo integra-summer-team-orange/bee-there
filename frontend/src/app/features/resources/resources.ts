@@ -36,6 +36,7 @@ export class Resources implements OnInit {
 
   currentPage = 0;
   totalPages = 0;
+  pageSize = 9;
   visiblePages: (number | string)[] = [];
 
   isDeleteModalVisible = false;
@@ -44,18 +45,23 @@ export class Resources implements OnInit {
   selectedResource: ResourceDto | null = null;
 
   resourceForm: FormGroup = this.formBuilder.group({
-    name: new FormControl('', Validators.required),
-    activityType: new FormControl('', Validators.required),
-    activityDescription: new FormControl(''),
-    type: new FormControl('', Validators.required),
-    capacity: new FormControl('', Validators.required),
-    hourlyRate: new FormControl('', Validators.required)
+    name: new FormControl('', [Validators.required]),
+    activityType: new FormControl('', [Validators.required]),
+    activityDescription: new FormControl(''), // Optional: no validators
+    type: new FormControl('', [Validators.required]),
+    capacity: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
+    hourlyRate: new FormControl<number | null>(null, [Validators.required, Validators.min(0)])
   });
 
   ngOnInit() {
     this.venueId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadVenueDetails();
     this.loadResources();
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.resourceForm.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
   loadVenueDetails() {
@@ -73,7 +79,7 @@ export class Resources implements OnInit {
   }
 
   loadResources(pageIndex: number = 0) {
-    this.venuesService.getResourcesByVenue(this.venueId, pageIndex, 10).subscribe({
+    this.venuesService.getResourcesByVenue(this.venueId, pageIndex, this.pageSize).subscribe({
       next: (data: any) => {
         this.resourceList = data.content || [];
         this.currentPage = data.number || 0;
@@ -136,46 +142,49 @@ export class Resources implements OnInit {
   }
 
   saveResource() {
-    if (this.resourceForm.valid) {
-      const formData = this.resourceForm.value;
+    if (this.resourceForm.invalid) {
+      this.resourceForm.markAllAsTouched();
+      return;
+    }
 
-      const basePayload = {
-        ...formData,
-        venueId: this.venueId,
-        capacity: Number(formData.capacity),
-        hourlyRate: Number(formData.hourlyRate)
+    const formData = this.resourceForm.value;
+
+    const basePayload = {
+      ...formData,
+      venueId: this.venueId,
+      capacity: Number(formData.capacity),
+      hourlyRate: Number(formData.hourlyRate)
+    };
+
+    if (this.selectedResource === null) {
+      // ADD
+      this.resourcesService.createResource(basePayload as ResourceDto).subscribe({
+        next: () => {
+          this.isFormModalVisible = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource added successfully' });
+          this.loadResources(this.currentPage);
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add resource' });
+        }
+      });
+    } else {
+      // UPDATE
+      const updatePayload = {
+        ...basePayload,
+        id: this.selectedResource.id
       };
 
-      if (this.selectedResource === null) {
-        // ADD
-        this.resourcesService.createResource(basePayload as ResourceDto).subscribe({
-          next: () => {
-            this.isFormModalVisible = false;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource added successfully' });
-            this.loadResources(this.currentPage);
-          },
-          error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add resource' });
-          }
-        });
-      } else {
-        // UPDATE
-        const updatePayload = {
-          ...basePayload,
-          id: this.selectedResource.id
-        };
-
-        this.resourcesService.updateResource(this.selectedResource.id!, updatePayload as ResourceDto).subscribe({
-          next: () => {
-            this.isFormModalVisible = false;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource updated successfully' });
-            this.loadResources(this.currentPage);
-          },
-          error: (err) => {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update resource' });
-          }
-        });
-      }
+      this.resourcesService.updateResource(this.selectedResource.id!, updatePayload as ResourceDto).subscribe({
+        next: () => {
+          this.isFormModalVisible = false;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource updated successfully' });
+          this.loadResources(this.currentPage);
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update resource' });
+        }
+      });
     }
   }
 
@@ -185,12 +194,18 @@ export class Resources implements OnInit {
         next: () => {
           this.isDeleteModalVisible = false;
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Resource deleted successfully' });
-          this.loadResources(this.currentPage);
+          const lastOnPage = this.resourceList.length === 1 && this.currentPage > 0;
+          this.loadResources(lastOnPage ? this.currentPage - 1 : this.currentPage);
         },
         error: (err) => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete resource' });
         }
       });
     }
+  }
+
+  // for enum conversion to a more user-readable format
+  formatRaw(type: ResourceDto.TypeEnum | undefined): string {
+    return type ? type.replaceAll('_', ' ').toLowerCase() : '';
   }
 }

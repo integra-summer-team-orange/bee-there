@@ -1,0 +1,155 @@
+<div class="bg-white p-8 md:p-12  rounded-[6px] w-full max-w-sm mx-auto flex flex-col gap-8">
+  <form [formGroup]="form" class="flex flex-col gap-6 w-full">
+
+
+    <label>PROFILE PICTURE</label>
+    <div class="flex flex-col gap-1" [class.pointer-events-none]="!isEditing">
+      <label for="name" class="font-semibold">Name</label>
+      <input
+        pInputText
+        id="name"
+        formControlName="name"
+        placeholder="Name"
+        class="w-full"
+        [readonly]="!isEditing"
+      >
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <span class="text-red-600 text-sm">
+          @if (form.controls.name.hasError('required')) {
+            Name is required.
+          } @else if (form.controls.name.hasError('maxlength')) {
+            Name cannot exceed 100 characters.
+          }
+        </span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1" [class.pointer-events-none]="!isEditing">
+      <label for="email" class="font-semibold">Email</label>
+      <input
+        pInputText
+        id="email"
+        formControlName="email"
+        placeholder="Email"
+        class="w-full"
+        [readonly]="!isEditing"
+      >
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <span class="text-red-600 text-sm">
+          @if (form.controls.email.hasError('required')) {
+            Email is required.
+          } @else if (form.controls.email.hasError('email')) {
+            Please enter a valid email address.
+          } @else if (form.controls.email.hasError('maxlength')) {
+            Email cannot exceed 100 characters.
+          }
+        </span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1" [class.pointer-events-none]="!isEditing">
+      <label for="phone" class="font-semibold">Phone</label>
+      <input
+        pInputText
+        id="phone"
+        formControlName="phone"
+        placeholder="Phone"
+        class="w-full"
+        [readonly]="!isEditing"
+      >
+      @if (form.controls.phone.invalid && form.controls.phone.touched) {
+        <span class="text-red-600 text-sm">
+          @if (form.controls.phone.hasError('required')) {
+            Phone is required.
+          } @else if (form.controls.phone.hasError('pattern')) {
+            Phone can contain numbers only.
+          } @else if (form.controls.phone.hasError('maxlength')) {
+            Phone cannot exceed 20 characters.
+          }
+        </span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1" [class.pointer-events-none]="true">
+      <label for="role" class="font-semibold">Role</label>
+      <input
+        pInputText
+        id="role"
+        formControlName="role"
+        class="w-full"
+        readonly
+      >
+    </div>
+
+    <div class="flex flex-col gap-1" [class.pointer-events-none]="true">
+      <label for="created_at" class="font-semibold">Registration date</label>
+      <input
+        pInputText
+        id="created_at"
+        [value]="userStateService.user()?.createdAt | date:'dd/MM/yyyy'"
+        class="w-full"
+        readonly
+      >
+    </div>
+
+
+  </form>
+
+  @if (!isEditing) {
+
+    <p-button
+      label="Reset Password"
+      class="flex-1"
+      styleClass="w-full"
+      (onClick)="resetPassword()"
+    />
+
+    <div class="flex flex-row gap-4 w-full">
+      <p-button
+        label="Edit"
+        severity="secondary"
+        (onClick)="isEditing = true"
+        class="flex-1"
+        styleClass="w-full"
+      />
+
+      <p-button
+        label="Delete"
+        severity="danger"
+        (onClick)="deleteUser()"
+        class="flex-1"
+        styleClass="w-full"
+      />
+    </div>
+  }
+
+  @if (isEditing) {
+    <div class="flex flex-row gap-4 w-full">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        class="flex-1"
+        styleClass="w-full"
+        (onClick)="cancelEdit()"
+      />
+
+      <p-button
+        label="Save"
+        class="flex-1"
+        styleClass="w-full"
+        (onClick)="submit()"
+      />
+    </div>
+  }
+
+</div>
+
+<app-user-profile-overlay
+  [visible]="showResetPassword"
+  [user]="userStateService.user()"
+  (closed)="closeResetPassword()"
+  (saved)="passwordSaved()"
+/>
+
+<p-confirm-dialog/>
+

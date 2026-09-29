@@ -76,6 +76,10 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/resources/**")
                         .hasAnyRole("ADMIN", "VENUE_ADMIN")
 
+                        // users
+                        .requestMatchers("/api/reservations/**")
+                        .hasAnyRole("ADMIN", "VENUE_ADMIN", "PARTICIPANT")
+
                         // everything else
                         .anyRequest()
                         .hasRole("ADMIN"))

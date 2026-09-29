@@ -1,0 +1,89 @@
+<p-dialog
+  header="Change password"
+  [visible]="visible()"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onHide)="close()">
+
+  <form [formGroup]="form">
+    <div class="flex flex-col gap-4">
+
+      <div class="flex flex-col gap-1">
+        <label
+          for="password"
+          class="font-semibold"
+        >
+          New password
+        </label>
+
+        <input
+          pInputText
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="New password"
+          class="w-full"
+        />
+
+        @if (
+          form.controls.password.invalid &&
+          form.controls.password.touched
+          ) {
+          <span class="text-sm text-red-600">
+            Password is required.
+          </span>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label
+          for="confirmPassword"
+          class="font-semibold"
+        >
+          Confirm password
+        </label>
+
+        <input
+          pInputText
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirm password"
+          class="w-full"
+        />
+
+        @if (
+          form.controls.confirmPassword.invalid &&
+          form.controls.confirmPassword.touched
+          ) {
+          <span class="text-sm text-red-600">
+            @if (form.controls.confirmPassword.hasError('required')) {
+              Please confirm your password.
+            } @else if (form.controls.confirmPassword.hasError('mismatch')) {
+              Passwords do not match.
+            }
+          </span>
+        }
+      </div>
+
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        (onClick)="close()"
+      />
+
+      <p-button
+        label="Save"
+        (onClick)="submit()"
+      />
+
+    </div>
+  </ng-template>
+
+</p-dialog>
