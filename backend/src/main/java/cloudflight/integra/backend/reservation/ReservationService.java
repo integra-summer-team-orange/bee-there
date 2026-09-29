@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 /**
  * Service responsible for managing reservations.
@@ -141,6 +142,10 @@ public class ReservationService {
 
         if (!Objects.equals(reservation.get().getOrganizer().getId(), userId)) {
             throw new AccessDeniedException("You are not allowed to manage this reservation");
+        }
+
+        if(reservation.get().getStatus() == Status.CANCELLED){
+            throw new IllegalArgumentException("This reservation is already cancelled!");
         }
 
         reservation.get().setStatus(Status.CANCELLED);
