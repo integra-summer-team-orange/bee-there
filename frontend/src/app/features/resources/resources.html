@@ -2,13 +2,16 @@
 <p-toast />
 
 <!-- ================= HEADER SECTION ================= -->
-<div class="flex justify-between items-end px-8 py-6">
-  <div>
+<div class="flex justify-between items-end gap-4 px-8 py-6">
+  <div class="min-w-0 flex-1 wrap-anywhere">
     <p class="text-outline text-sm">< Venues / {{venueName}} / <span class="text-general-highlight font-bold">Resources</span></p>
-    <h1 class="text-4xl font-bold mt-2">{{venueName}} Resources</h1>
+    <h1 class="flex text-4xl font-bold mt-2">
+      <span class="truncate" [title]="venueName">{{venueName}}</span>
+      <span class="shrink-0">&nbsp;Resources</span>
+    </h1>
   </div>
 
-  <div class="flex gap-4 items-center text-sm">
+  <div class="flex shrink-0 gap-4 items-center text-sm">
     <div class="relative">
       <span class="absolute left-3 top-2.5 text-outline-variant">🔍</span>
       <input class="border border-outline-variant rounded-lg pl-9 pr-3 py-2 bg-surface-container-lowest w-64" placeholder="Search resources...">
@@ -30,7 +33,7 @@
 <!-- ================= CARDS GRID ================= -->
 <div class="grid grid-cols-3 gap-6 mt-6 px-8">
   @for(r of resourceList; track r.id) {
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col min-w-0 wrap-anywhere">
 
       <!-- Card title -->
       <h2 class="text-2xl font-bold text-on-surface mb-4">{{r.name}}</h2>
