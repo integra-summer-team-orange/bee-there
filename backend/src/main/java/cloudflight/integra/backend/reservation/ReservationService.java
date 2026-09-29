@@ -143,7 +143,7 @@ public class ReservationService {
             throw new AccessDeniedException("You are not allowed to manage this reservation");
         }
 
-        if(reservation.get().getStatus() == Status.CANCELLED){
+        if (reservation.get().getStatus() == Status.CANCELLED) {
             throw new IllegalArgumentException("This reservation is already cancelled!");
         }
 
