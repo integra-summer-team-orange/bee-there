@@ -162,7 +162,7 @@
       } @else if (step() === 3) {
         <div class="flex flex-col gap-5">
           <p class="text-sm text-on-surface-variant" i18n>
-            Add anything the venue stocks that you want reserved alongside the resource. Optional.
+            Pick the item you want reserved alongside the resource. One per reservation.
           </p>
 
           @if (loadingInventory()) {
@@ -181,8 +181,8 @@
               @for (item of inventory(); track item.id) {
                 <app-item-card
                   [item]="item"
-                  [quantity]="quantityOf(item)"
-                  (quantityChange)="setQuantity(item, $event)"
+                  [selected]="item.id === inventoryId()"
+                  (choose)="selectItem($event)"
                 />
               }
             </div>
@@ -191,15 +191,13 @@
       } @else if (step() === 4) {
         <div class="flex flex-col gap-5">
           <p class="text-sm text-on-surface-variant" i18n>
-            You are on the reservation as the organiser. Add anyone with an account, or invite
-            somebody by email.
+            For now the reservation is booked for you alone, as the organiser. Inviting other
+            participants comes later.
           </p>
 
-          <app-participant-picker
-            [participants]="participants()"
-            (add)="addParticipant($event)"
-            (remove)="removeParticipant($event)"
-          />
+          <p class="text-sm">
+            <span class="font-semibold" i18n>Organizer:</span> {{ organiserName() }}
+          </p>
         </div>
       } @else {
         <div class="flex flex-col gap-5">
@@ -280,32 +278,28 @@
 
             <div class="rounded-lg border border-outline-variant">
               <p class="border-b border-outline-variant px-4 py-3 text-sm font-semibold" i18n>
-                Items — {{ rentedTotal() }}
+                Item
               </p>
 
-              <ul class="max-h-64 overflow-y-auto">
-                @for (item of rentedItems(); track item.inventoryId) {
-                  <li
-                    class="flex items-center gap-3 border-b border-outline-variant px-4 py-2 last:border-b-0"
-                  >
-                    <span class="min-w-0 flex-1 truncate text-sm">
-                      {{ nameOfItem(item.inventoryId) }}
-                    </span>
+              <ul>
+                @if (selectedItem(); as item) {
+                  <li class="flex items-center gap-3 px-4 py-2">
+                    <span class="min-w-0 flex-1 truncate text-sm">{{ item.name }}</span>
 
-                    <p-tag [value]="item.quantity.toString()" severity="warn" />
+                    <p-tag value="1" severity="warn" />
 
                     <p-button
                       icon="pi pi-trash"
                       severity="danger"
                       size="small"
                       [text]="true"
-                      [ariaLabel]="'Remove ' + nameOfItem(item.inventoryId)"
-                      (onClick)="removeItem(item.inventoryId)"
+                      [ariaLabel]="'Remove ' + item.name"
+                      (onClick)="removeItem()"
                     />
                   </li>
-                } @empty {
+                } @else {
                   <li class="px-4 py-6 text-center text-sm text-on-surface-variant" i18n>
-                    No items reserved.
+                    No item selected. Go back to pick one.
                   </li>
                 }
               </ul>

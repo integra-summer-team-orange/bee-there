@@ -24,54 +24,43 @@ describe('ItemCard', () => {
     await fixture.whenStable();
   });
 
-  it('counts what the venue already has out plus what this reservation takes', async () => {
-    expect(component['alreadyReserved']()).toBe(7);
+  it('counts what the venue already has out plus the one this reservation takes', async () => {
+    expect(component['reserved']()).toBe(7);
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('7/25');
 
-    fixture.componentRef.setInput('quantity', 4);
+    fixture.componentRef.setInput('selected', true);
     await fixture.whenStable();
 
-    expect(component['reserved']()).toBe(11);
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('11/25');
-  });
-
-  it('moves the bar with the quantity', async () => {
-    expect(component['reservedShare']()).toBeCloseTo(7 / 25);
-
-    fixture.componentRef.setInput('quantity', 4);
-    await fixture.whenStable();
-
-    expect(component['reservedShare']()).toBeCloseTo(11 / 25);
+    expect(component['reserved']()).toBe(8);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('8/25');
   });
 
   it('colours the bar green, then amber, then red as the stock fills', async () => {
     expect(component['levelColor']()).toBe('var(--color-level-low)');
 
-    fixture.componentRef.setInput('quantity', 6);
+    fixture.componentRef.setInput('item', { ...BALLS, availableQuantity: 12 });
     await fixture.whenStable();
 
-    expect(component['reservedShare']()).toBeCloseTo(13 / 25);
     expect(component['levelColor']()).toBe('var(--color-level-medium)');
 
-    fixture.componentRef.setInput('quantity', 12);
+    fixture.componentRef.setInput('item', { ...BALLS, availableQuantity: 5 });
     await fixture.whenStable();
 
-    expect(component['reservedShare']()).toBeCloseTo(19 / 25);
     expect(component['levelColor']()).toBe('var(--color-level-high)');
   });
 
   it('never reports more than a full bar', async () => {
-    fixture.componentRef.setInput('item', { ...BALLS, totalQuantity: 10, availableQuantity: 10 });
-    fixture.componentRef.setInput('quantity', 10);
+    fixture.componentRef.setInput('item', { ...BALLS, totalQuantity: 10, availableQuantity: 0 });
+    fixture.componentRef.setInput('selected', true);
     await fixture.whenStable();
 
     expect(component['reservedShare']()).toBe(1);
   });
 
-  it('paints the selected fill only once something is taken', async () => {
+  it('paints the selected fill only when it is the chosen one', async () => {
     expect(component['cardStyle']()).toEqual({});
 
-    fixture.componentRef.setInput('quantity', 1);
+    fixture.componentRef.setInput('selected', true);
     await fixture.whenStable();
 
     expect(component['cardStyle']()).toEqual({
@@ -80,35 +69,21 @@ describe('ItemCard', () => {
     });
   });
 
-  it('clamps a quantity above what is available', () => {
-    const emitted = capture(component);
+  it('asks for itself to be chosen when clicked', () => {
+    const chosen: InventoryOption[] = [];
+    component.choose.subscribe((item) => chosen.push(item));
 
-    component['onQuantityChange'](99);
+    (fixture.nativeElement as HTMLElement).querySelector('button')?.click();
 
-    expect(emitted).toEqual([BALLS.availableQuantity]);
+    expect(chosen).toEqual([BALLS]);
   });
 
-  it('clamps a negative quantity, and treats a cleared box as none', () => {
-    const emitted = capture(component);
+  it('cannot be chosen once none are left', async () => {
+    fixture.componentRef.setInput('item', { ...BALLS, availableQuantity: 0 });
+    await fixture.whenStable();
 
-    component['onQuantityChange'](-3);
-    component['onQuantityChange'](null);
+    const button = (fixture.nativeElement as HTMLElement).querySelector('button');
 
-    expect(emitted).toEqual([0, 0]);
-  });
-
-  it('passes a quantity within range straight through', () => {
-    const emitted = capture(component);
-
-    component['onQuantityChange'](4);
-
-    expect(emitted).toEqual([4]);
+    expect(button?.disabled).toBe(true);
   });
 });
-
-function capture(component: ItemCard): number[] {
-  const emitted: number[] = [];
-  component.quantityChange.subscribe((quantity) => emitted.push(quantity));
-
-  return emitted;
-}

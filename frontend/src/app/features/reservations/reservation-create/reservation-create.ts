@@ -16,7 +16,6 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 
 import { ItemCard } from '../item-card/item-card';
-import { ParticipantPicker } from '../participant-picker/participant-picker';
 import { ResourceCard } from '../resource-card/resource-card';
 import { describeReservationError } from '../reservation-error';
 import {
@@ -24,7 +23,6 @@ import {
   CreatedReservation,
   InventoryOption,
   Participant,
-  RentedItem,
   ReservationApi,
   ResourceOption,
   VenueOption,
@@ -61,7 +59,6 @@ const STEPS = [
     TagModule,
     ToastModule,
     ItemCard,
-    ParticipantPicker,
     ResourceCard,
   ],
   templateUrl: './reservation-create.html',
@@ -93,7 +90,7 @@ export class ReservationCreate {
   protected readonly inventory = signal<InventoryOption[]>([]);
   protected readonly loadingInventory = signal(false);
 
-  protected readonly quantities = signal<Record<number, number>>({});
+  protected readonly inventoryId = signal<number | null>(null);
 
   protected readonly participants = signal<Participant[]>([]);
 
@@ -140,14 +137,8 @@ export class ReservationCreate {
     return organiser?.kind === 'user' ? organiser.name : '';
   });
 
-  protected readonly rentedItems = computed<RentedItem[]>(() =>
-    Object.entries(this.quantities())
-      .filter(([, quantity]) => quantity > 0)
-      .map(([inventoryId, quantity]) => ({ inventoryId: Number(inventoryId), quantity })),
-  );
-
-  protected readonly rentedTotal = computed(() =>
-    this.rentedItems().reduce((total, item) => total + item.quantity, 0),
+  protected readonly selectedItem = computed(
+    () => this.inventory().find((item) => item.id === this.inventoryId()) ?? null,
   );
 
   protected readonly estimatedRate = computed(() => {
@@ -182,8 +173,10 @@ export class ReservationCreate {
         return this.periodValid();
       case 2:
         return this.resourceId() !== null && this.slotAvailable();
+      case 3:
+        return this.inventoryId() !== null;
       case 5:
-        return this.slotAvailable();
+        return this.inventoryId() !== null && this.slotAvailable();
       default:
         return true;
     }
@@ -207,7 +200,7 @@ export class ReservationCreate {
     this.resources.set([]);
     this.bookedSlots.set([]);
     this.inventory.set([]);
-    this.quantities.set({});
+    this.inventoryId.set(null);
 
     if (venueId === null) {
       return;
@@ -249,20 +242,12 @@ export class ReservationCreate {
     });
   }
 
-  protected quantityOf(item: InventoryOption): number {
-    return this.quantities()[item.id] ?? 0;
+  protected selectItem(item: InventoryOption): void {
+    this.inventoryId.set(item.id);
   }
 
-  protected setQuantity(item: InventoryOption, quantity: number): void {
-    this.quantities.update((quantities) => ({ ...quantities, [item.id]: quantity }));
-  }
-
-  protected nameOfItem(inventoryId: number): string {
-    return this.inventory().find((item) => item.id === inventoryId)?.name ?? '';
-  }
-
-  protected removeItem(inventoryId: number): void {
-    this.quantities.update((quantities) => ({ ...quantities, [inventoryId]: 0 }));
+  protected removeItem(): void {
+    this.inventoryId.set(null);
   }
 
   protected addParticipant(participant: Participant): void {
@@ -288,9 +273,19 @@ export class ReservationCreate {
   protected submit(): void {
     const start = this.startAt();
     const end = this.endAt();
-    const resourceId = this.resourceId();
+    const venueId = this.venueId();
+    const resource = this.selectedResource();
+    const inventoryId = this.inventoryId();
 
-    if (this.submitting() || !start || !end || resourceId === null || !this.slotAvailable()) {
+    if (
+      this.submitting() ||
+      !start ||
+      !end ||
+      venueId === null ||
+      !resource ||
+      inventoryId === null ||
+      !this.slotAvailable()
+    ) {
       return;
     }
 
@@ -303,11 +298,13 @@ export class ReservationCreate {
 
     this.api
       .createReservation({
-        resourceId,
+        venueId,
+        resourceId: resource.id,
+        inventoryId,
         start: start.toISOString(),
         end: end.toISOString(),
+        maxParticipants: resource.capacity,
         participants: this.participants(),
-        items: this.rentedItems(),
       })
       .subscribe({
         next: (reservation) => {
@@ -336,7 +333,7 @@ export class ReservationCreate {
     this.submitError.set(null);
     this.resourceId.set(null);
     this.bookedSlots.set([]);
-    this.quantities.set({});
+    this.inventoryId.set(null);
     this.participants.update((participants) =>
       participants.filter((participant) => participant.kind === 'user' && participant.organiser),
     );

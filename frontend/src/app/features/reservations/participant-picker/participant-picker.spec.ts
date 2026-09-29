@@ -72,7 +72,7 @@ class ReservationApiStub extends ReservationApi {
   }
 
   createReservation(): Observable<CreatedReservation> {
-    return of({ id: 1, start: '', end: '', status: 'PENDING' });
+    return of({ id: 1, start: '', end: '', status: 'ACTIVE' });
   }
 }
 

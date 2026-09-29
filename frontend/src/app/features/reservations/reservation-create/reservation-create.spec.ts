@@ -85,7 +85,7 @@ class ReservationApiStub extends ReservationApi {
 
     this.submitted.push(draft);
 
-    return of({ id: 42, start: draft.start, end: draft.end, status: 'PENDING' as const });
+    return of({ id: 42, start: draft.start, end: draft.end, status: 'ACTIVE' as const });
   }
 }
 
@@ -129,6 +129,7 @@ describe('ReservationCreate', () => {
     expect(textOf(fixture)).toContain('Book items');
     expect(textOf(fixture)).toContain('Basketballs');
 
+    component['selectItem'](BALLS);
     component['next']();
     await fixture.whenStable();
 
@@ -155,6 +156,7 @@ describe('ReservationCreate', () => {
 
     expect(component['progress']()).toBe(50);
 
+    component['selectItem'](BALLS);
     component['next']();
 
     expect(component['progress']()).toBe(75);
@@ -260,23 +262,43 @@ describe('ReservationCreate', () => {
     expect(component['clashingSlots']()).toHaveLength(0);
   });
 
-  it('turns item quantities into object rental rows, skipping the untouched ones', async () => {
-    await fillInDraft(component);
-    component['setQuantity'](BALLS, 4);
+  it('refuses to leave the items step until an item is picked', async () => {
+    setPeriod(component, 10);
+    await selectCourt(component);
+    component['step'].set(3);
 
-    component['submit']();
+    component['next']();
 
-    expect(api.submitted[0].items).toEqual([{ inventoryId: BALLS.id, quantity: 4 }]);
+    expect(component['step']()).toBe(3);
+
+    component['selectItem'](BALLS);
+    component['next']();
+
+    expect(component['step']()).toBe(4);
   });
 
-  it('drops an item again when its quantity goes back to zero', async () => {
+  it('submits the venue, the resource, its capacity and the one item the backend expects', async () => {
     await fillInDraft(component);
-    component['setQuantity'](BALLS, 4);
-    component['removeItem'](BALLS.id);
 
     component['submit']();
 
-    expect(api.submitted[0].items).toEqual([]);
+    const draft = api.submitted[0];
+
+    expect(draft.venueId).toBe(VENUE.id);
+    expect(draft.resourceId).toBe(COURT.id);
+    expect(draft.inventoryId).toBe(BALLS.id);
+    expect(draft.maxParticipants).toBe(COURT.capacity);
+  });
+
+  it('does not submit once the item is removed on the review', async () => {
+    await fillInDraft(component);
+    component['removeItem']();
+
+    expect(component['stepComplete'](5)).toBe(false);
+
+    component['submit']();
+
+    expect(api.submitted).toHaveLength(0);
   });
 
   it('submits existing users and email invites in one participant list', async () => {
@@ -362,17 +384,28 @@ describe('ReservationCreate', () => {
     expect(component['submitError']()).toContain('10:00');
   });
 
+  it('reads the overlap 400 from the backend as a taken slot', async () => {
+    api.createError = new HttpErrorResponse({
+      status: 400,
+      error: { messages: ['There is already a reservation for this resource in that time slot'] },
+    });
+    await fillInDraft(component);
+
+    component['submit']();
+
+    expect(component['submitError']()).toContain('already taken');
+  });
+
   it('keeps the organiser when starting another reservation', async () => {
     await fillInDraft(component);
     component['addParticipant']({ kind: 'email', email: 'newcomer@example.com' });
-    component['setQuantity'](BALLS, 2);
     component['submit']();
 
     component['createAnother']();
 
     expect(component['created']()).toBeNull();
     expect(component['step']()).toBe(1);
-    expect(component['rentedItems']()).toEqual([]);
+    expect(component['inventoryId']()).toBeNull();
     expect(component['participants']()).toHaveLength(1);
     expect(component['participants']()[0].email).toBe(ORGANISER.email);
   });
@@ -405,6 +438,7 @@ async function selectCourt(component: ReservationCreate): Promise<void> {
 async function fillInDraft(component: ReservationCreate): Promise<void> {
   setPeriod(component, 10);
   await selectCourt(component);
+  component['selectItem'](BALLS);
   component['step'].set(5);
 }
 

@@ -37,7 +37,7 @@ export interface BookedSlot {
   end: string;
 }
 
-export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+export type ReservationStatus = 'ACTIVE' | 'CANCELLED';
 
 export type Participant =
   | {
@@ -49,17 +49,14 @@ export type Participant =
     }
   | { readonly kind: 'email'; readonly email: string };
 
-export interface RentedItem {
-  inventoryId: number;
-  quantity: number;
-}
-
 export interface ReservationDraft {
+  venueId: number;
   resourceId: number;
+  inventoryId: number;
   start: string;
   end: string;
+  maxParticipants: number;
   participants: readonly Participant[];
-  items: readonly RentedItem[];
 }
 
 export interface CreatedReservation {
