@@ -40,6 +40,8 @@
               Email is required.
             } @else if (email.hasError('email')) {
               Enter a valid email address.
+            } @else if (email.hasError('taken')) {
+              An account with this email already exists.
             }
           </span>
         }
