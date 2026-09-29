@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -15,7 +15,7 @@ import { ResourceDto } from '../../../api/generated';
  */
 @Component({
   selector: 'app-resources',
-  imports: [DialogModule, ReactiveFormsModule, TitleCasePipe, ToastModule],
+  imports: [DialogModule, ReactiveFormsModule, TitleCasePipe, ToastModule, RouterLink],
   templateUrl: './resources.html',
   styleUrl: './resources.css',
   providers: [MessageService]
