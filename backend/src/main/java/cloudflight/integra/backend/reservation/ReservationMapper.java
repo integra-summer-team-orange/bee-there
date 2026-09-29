@@ -26,6 +26,7 @@ public interface ReservationMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(source = "resourceId", target = "resource.id")
     @Mapping(source = "venueId", target = "venue.id")
+    @Mapping(source = "inventoryId", target = "inventory.id")
     Reservation toEntity(ReservationRequestDto dto);
 
     /**
@@ -38,5 +39,6 @@ public interface ReservationMapper {
     @Mapping(source = "venue.id", target = "venueId")
     @Mapping(source = "venue.name", target = "venueName")
     @Mapping(source = "organizer.id", target = "organizerId")
+    @Mapping(source = "inventory.id", target = "inventoryId")
     ReservationResponseDto toDto(Reservation reservation);
 }

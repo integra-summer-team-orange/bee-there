@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record ReservationResponseDto(
         Long id,
+        Long inventoryId,
         Long resourceId,
         Long venueId,
         String venueName,

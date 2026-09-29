@@ -2,6 +2,7 @@ CREATE TABLE reservations (
 
     id BIGSERIAL PRIMARY KEY,
 
+    inventory_id BIGINT NOT NULL,
     resource_id BIGINT NOT NULL,
     venue_id BIGINT NOT NULL,
     organizer_id BIGINT NOT NULL,
@@ -14,6 +15,7 @@ CREATE TABLE reservations (
     max_participants INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL,
 
+    CONSTRAINT fk_reservations_inventory FOREIGN KEY (inventory_id) REFERENCES inventory(id),
     CONSTRAINT fk_reservations_resource FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE ,
     CONSTRAINT fk_reservations_venue FOREIGN KEY (venue_id) REFERENCES venue(id) ON DELETE CASCADE ,
     CONSTRAINT fk_reservations_organizer FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE CASCADE ,

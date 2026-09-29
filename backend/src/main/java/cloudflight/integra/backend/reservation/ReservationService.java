@@ -1,6 +1,8 @@
 package cloudflight.integra.backend.reservation;
 
 import cloudflight.integra.backend.exceptions.EntityNotFoundException;
+import cloudflight.integra.backend.inventory.InventoryService;
+import cloudflight.integra.backend.inventory.model.Inventory;
 import cloudflight.integra.backend.reservation.model.Reservation;
 import cloudflight.integra.backend.reservation.model.Status;
 import cloudflight.integra.backend.resources.ResourceService;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service responsible for managing reservations.
@@ -22,6 +25,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final VenueService venueService;
     private final ResourceService resourceService;
+    private final InventoryService inventoryService;
 
     /**
      * Creates a new reservation service.
@@ -29,12 +33,17 @@ public class ReservationService {
      * @param reservationRepository the repository used to access reservation data
      * @param venueService the service for venues
      * @param resourceService the service for resources
+     * @param inventoryService the service for inventory items
      */
     public ReservationService(
-            ReservationRepository reservationRepository, VenueService venueService, ResourceService resourceService) {
+            ReservationRepository reservationRepository,
+            VenueService venueService,
+            ResourceService resourceService,
+            InventoryService inventoryService) {
         this.reservationRepository = reservationRepository;
         this.venueService = venueService;
         this.resourceService = resourceService;
+        this.inventoryService = inventoryService;
     }
 
     /**
@@ -80,6 +89,7 @@ public class ReservationService {
      * @return the created reservation
      * @throws IllegalArgumentException if an overlapping reservation already exists
      */
+    @Transactional
     public Reservation create(Reservation reservation) {
 
         // check if the entities linked to reservation exists
@@ -89,6 +99,10 @@ public class ReservationService {
         resourceService
                 .getById(reservation.getResource().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Resource not found!"));
+
+        Inventory inventory = inventoryService
+                .getById(reservation.getInventory().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Inventory item not found!"));
 
         if (reservationRepository.existsOverlappingReservation(
                 reservation.getResource().getId(),
@@ -100,7 +114,12 @@ public class ReservationService {
 
         reservation.setVenue(venue);
 
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - 1);
+        inventoryService.update(inventory.getId(), inventory);
+
+        return savedReservation;
     }
 
     /**
@@ -112,6 +131,7 @@ public class ReservationService {
      * @throws EntityNotFoundException if no reservation exists with the specified identifier
      * @throws AccessDeniedException if the specified user is not the organizer of the reservation
      */
+    @Transactional
     public void delete(Long id, Long userId) {
         Optional<Reservation> reservation = reservationRepository.findById(id);
 
@@ -125,5 +145,12 @@ public class ReservationService {
 
         reservation.get().setStatus(Status.CANCELLED);
         reservationRepository.save(reservation.get());
+
+        Inventory inventory = inventoryService
+                .getById(reservation.get().getInventory().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Inventory item not found"));
+
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() + 1);
+        inventoryService.update(inventory.getId(), inventory);
     }
 }

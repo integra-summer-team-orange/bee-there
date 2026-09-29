@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 public record ReservationRequestDto(
+        @NotNull Long inventoryId,
+
         @NotNull Long resourceId,
 
         @NotNull Long venueId,

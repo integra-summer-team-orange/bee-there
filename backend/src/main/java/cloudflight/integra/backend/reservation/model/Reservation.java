@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.reservation.model;
 
+import cloudflight.integra.backend.inventory.model.Inventory;
 import cloudflight.integra.backend.resources.model.Resource;
 import cloudflight.integra.backend.user.model.User;
 import cloudflight.integra.backend.venue.model.Venue;
@@ -15,6 +16,10 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inventory_id")
+    private Inventory inventory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")
@@ -144,5 +149,13 @@ public class Reservation {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 }
