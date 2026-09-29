@@ -130,6 +130,7 @@ public class ReservationService {
      * @param userId the identifier of the user attempting to cancel the reservation
      * @throws EntityNotFoundException if no reservation exists with the specified identifier
      * @throws AccessDeniedException if the specified user is not the organizer of the reservation
+     * @throws IllegalArgumentException if the reservation is already cancelled
      */
     @Transactional
     public void delete(Long id, Long userId) {
