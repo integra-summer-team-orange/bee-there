@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { Session } from '../../core/services/session';
 import { SessionService } from '../../core/services/session.service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ButtonModule],
+  imports: [ButtonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

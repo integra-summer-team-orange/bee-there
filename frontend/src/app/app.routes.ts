@@ -61,6 +61,11 @@ export const routes: Routes = [
       import('./features/venues/venue-detail/venue-detail').then((m) => m.VenueDetail),
   },
   {
+    path: 'reservations',
+    loadChildren: () =>
+      import('./features/reservations/reservation.routes').then((m) => m.RESERVATION_ROUTES),
+  },
+  {
     path: 'profile',
     component: UserProfile,
     canActivate: [requireAuthGuard]
