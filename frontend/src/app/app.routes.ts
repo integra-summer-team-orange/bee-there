@@ -1,5 +1,7 @@
 import {Routes} from '@angular/router';
-import {Landing} from './features/landing/landing';
+import {Home} from './features/home/home';
+import {InventoryOverview} from './features/inventory/inventory-overview/inventory-overview';
+import {LandingPage} from './features/landing-page/landing-page';
 import {Login} from './features/login/login';
 import {Register} from './features/register/register';
 import {Dashboard} from './features/dashboard/dashboard';
@@ -12,7 +14,7 @@ import {Resources} from './features/resources/resources';
 export const routes: Routes = [
   {
     path: '',
-    component: Landing,
+    component: LandingPage,
     canActivate: [redirectIfAuthenticatedGuard],
   },
   {

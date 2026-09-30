@@ -6,6 +6,24 @@
     <span class="text-4xl font-bold text-on-tertiary-fixed-variant tracking-wide">BeeThere</span>
   </div>
 
+  @switch (variant()) {
+  @case ('landing') {
+  <div class="flex items-center gap-4">
+    <p-button label="Log in" routerLink="/login" outlined />
+    <p-button label="Register" routerLink="/register" />
+  </div>
+  }
+  @case ('login') {
+  <div class="flex items-center gap-4">
+    <p-button label="Register" routerLink="/register" />
+  </div>
+  }
+  @case ('register') {
+  <div class="flex items-center gap-4">
+    <p-button label="Log in" routerLink="/login" outlined />
+  </div>
+  }
+  @default {
   <!-- Center: Navigation -->
   <nav>
     <!-- todo: dynamic role -->
@@ -22,21 +40,21 @@
   <div class="flex items-center gap-4">
     <!-- todo: dynamic role -->
     @if (session.userId()) {
+    <a routerLink="/profile" class="cursor-pointer">
+            <span class="font-medium text-on-surface text-lg">
+              {{ userState.user()?.name }}
+            </span>
 
-      <a routerLink="/profile" class="cursor-pointer">
-        <span class="font-medium text-on-surface text-lg">
-          {{  userState.user()?.name }}
-        </span>
-
-
-        <p-avatar
-          [label]="userState.user()?.name?.charAt(0)?.toUpperCase()"
-          class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
-          size="large"
-          shape="circle"
-        />
-      </a>
+      <p-avatar
+        [label]="userState.user()?.name?.charAt(0)?.toUpperCase()"
+        class="bg-surface-container-lowest text-general-highlight border-2 border-general-highlight"
+        size="large"
+        shape="circle"
+      />
+    </a>
     }
   </div>
+  }
+  }
 
 </header>
