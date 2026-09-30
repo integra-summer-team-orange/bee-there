@@ -34,7 +34,8 @@ export const routes: Routes = [
   },
   {
     path: 'users',
-    component: UserManagement,
+    loadComponent: () =>
+      import('./features/user/user-management/user-management').then(m => m.UserManagement),
     canActivate: [requireAuthGuard],
   },
   {

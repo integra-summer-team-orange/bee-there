@@ -42,7 +42,7 @@ export class Login {
 
     this.api.login(request).subscribe({
       next: (response) => {
-        if (!response.token) {
+        if (!response.token || !response.id) {
           this.errorMessage.set('Invalid email or password.');
           return;
         }
