@@ -10,6 +10,8 @@ import { ToastModule } from 'primeng/toast';
 import { VenuesService, ResourcesService } from '../../../api/generated';
 import { ResourceDto } from '../../../api/generated';
 
+type ResourceType = 'INDOOR_SPORT' | 'OUTDOOR_SPORT' | 'BOARDGAME_SOCIAL';
+
 /**
  * Component for displaying and managing resources of a specific venue.
  */
@@ -33,6 +35,10 @@ export class Resources implements OnInit {
   resourceList: ResourceDto[] = [];
   venueName = '...';
   venueId!: number;
+
+  searchTerm = '';
+  selectedType: ResourceType | '' = '';
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
   currentPage = 0;
   totalPages = 0;
@@ -79,7 +85,13 @@ export class Resources implements OnInit {
   }
 
   loadResources(pageIndex: number = 0) {
-    this.venuesService.getResourcesByVenue(this.venueId, pageIndex, this.pageSize).subscribe({
+    this.venuesService.getResourcesByVenue(
+      this.venueId,
+      pageIndex,
+      this.pageSize,
+      this.searchTerm.trim() || undefined,
+      this.selectedType || undefined
+    ).subscribe({
       next: (data: any) => {
         this.resourceList = data.content || [];
         this.currentPage = data.number || 0;
@@ -92,6 +104,17 @@ export class Resources implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Could not load resources' });
       }
     });
+  }
+
+  onSearch(term: string) {
+    this.searchTerm = term;
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.loadResources(0), 300);
+  }
+
+  onTypeChange(type: string) {
+    this.selectedType = type as ResourceType | '';
+    this.loadResources(0);
   }
 
   goToPage(pageIndex: number) {

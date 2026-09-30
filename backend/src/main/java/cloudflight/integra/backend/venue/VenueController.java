@@ -8,6 +8,7 @@ import cloudflight.integra.backend.inventory.model.InventoryDto;
 import cloudflight.integra.backend.resources.ResourceMapper;
 import cloudflight.integra.backend.resources.ResourceService;
 import cloudflight.integra.backend.resources.model.ResourceDto;
+import cloudflight.integra.backend.resources.model.ResourceType;
 import cloudflight.integra.backend.venue.model.Venue;
 import cloudflight.integra.backend.venue.model.VenueDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -269,6 +270,8 @@ public class VenueController {
      * @param id         The unique identifier of the venue.
      * @param pageNumber The page index for pagination (zero-based, default is 0).
      * @param pageSize   The number of items per page (default is 10).
+     * @param search     Text matched against the resource name and activity type, or {@code null} for no filtering.
+     * @param type       The resource type to keep, or {@code null} for all types.
      * @return A {@link ResponseEntity} containing a paginated list of {@link ResourceDto}.
      */
     @Operation(
@@ -286,10 +289,16 @@ public class VenueController {
     public ResponseEntity<Page<ResourceDto>> getResourcesByVenue(
             @Parameter(description = "ID of the venue", required = true) @PathVariable("id") Long id,
             @RequestParam(defaultValue = "0", name = "pageNumber") int pageNumber,
-            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize) {
+            @RequestParam(defaultValue = "10", name = "pageSize") int pageSize,
+            @Parameter(description = "Text matched against the resource name and activity type")
+                    @RequestParam(required = false, name = "search")
+                    String search,
+            @Parameter(description = "Resource type to filter by") @RequestParam(required = false, name = "type")
+                    ResourceType type) {
 
-        return ResponseEntity.ok(
-                resourceService.getByVenueId(id, pageNumber, pageSize).map(resourceMapper::toDto));
+        return ResponseEntity.ok(resourceService
+                .getByVenueId(id, pageNumber, pageSize, search, type)
+                .map(resourceMapper::toDto));
     }
 
     /**
