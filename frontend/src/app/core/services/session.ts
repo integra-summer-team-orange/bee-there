@@ -22,8 +22,16 @@ export class Session {
   /** Role of the signed-in user, or null when there is no usable token. */
   readonly role = computed(() => this.claims()?.role ?? null);
 
-  /** Whether the signed-in user is an administrator, who may manage any venue. */
+  /** Whether the signed-in user is an administrator */
   readonly isAdmin = computed(() => this.role() === 'ADMIN');
+
+  /** Whether the signed-in user is a venue administrator */
+  readonly isVenueAdmin = computed(() => this.role() === 'VENUE_ADMIN');
+
+  /** Whether the user can see management actions (ADMIN or VENUE_ADMIN) */
+  readonly canManagePlatform = computed(() =>
+    this.role() === 'ADMIN' || this.role() === 'VENUE_ADMIN'
+  );
 
   /**
    * Reads the stored token, or null when storage is unavailable, empty, or the token is unusable.
