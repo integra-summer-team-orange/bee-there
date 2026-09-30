@@ -1,0 +1,96 @@
+<p-toast />
+
+<section class="mx-auto w-full max-w-6xl px-4 py-2">
+  <nav class="mb-8 flex items-center gap-2">
+    <a
+      [routerLink]="['/reservations', id]"
+      aria-label="Back to the reservation"
+      class="pi pi-chevron-left text-sm text-on-surface-variant hover:text-on-surface"
+    ></a>
+    <a routerLink="/reservations" class="shrink-0 text-lg text-on-surface-variant hover:text-on-surface" i18n>
+      My Reservations
+    </a>
+    <span class="text-lg text-outline">/</span>
+    <a
+      [routerLink]="['/reservations', id]"
+      class="min-w-0 truncate text-2xl font-bold text-general-highlight"
+    >
+      {{ booking()?.resourceName }}
+    </a>
+  </nav>
+
+  <p-card styleClass="border border-outline-variant shadow-md">
+    <ng-template #title>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-col">
+          <h1 class="text-2xl font-semibold" i18n>Book items</h1>
+          <p class="text-sm font-normal text-on-surface-variant" i18n>
+            A reservation takes one item. Choosing another replaces it.
+          </p>
+        </div>
+
+        <p-iconfield>
+          <p-inputicon class="pi pi-search" />
+          <input
+            pInputText
+            type="search"
+            size="small"
+            placeholder="Search"
+            aria-label="Search items"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+
+    <ng-template #content>
+      @if (loading()) {
+        <div class="flex justify-center py-16">
+          <p-progressSpinner ariaLabel="Loading items" />
+        </div>
+      } @else if (shown().length === 0) {
+        <div
+          class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-outline-variant bg-surface-container-low px-6 py-12 text-center"
+        >
+          <i class="pi pi-box text-4xl text-outline-variant" aria-hidden="true"></i>
+          @if (search().trim()) {
+            <p class="font-semibold wrap-anywhere" i18n>No item matches "{{ search() }}".</p>
+          } @else {
+            <p class="font-semibold" i18n>This venue has no inventory.</p>
+          }
+        </div>
+      } @else {
+        <div class="grid max-h-[34rem] grid-cols-1 gap-4 overflow-y-auto p-1 sm:grid-cols-2 lg:grid-cols-4">
+          @for (item of shown(); track item.id) {
+            <app-stock-card
+              [item]="item"
+              [quantity]="quantityOf(item)"
+              [held]="heldOf(item)"
+              (quantityChange)="setQuantity(item, $event)"
+            />
+          }
+        </div>
+      }
+    </ng-template>
+
+    <ng-template #footer>
+      <div class="flex justify-end gap-3">
+        <p-button
+          label="Cancel"
+          severity="secondary"
+          [outlined]="true"
+          styleClass="min-w-32"
+          [routerLink]="['/reservations', id]"
+        />
+        <p-button
+          label="Save"
+          styleClass="min-w-32"
+          [disabled]="loading() || !changed()"
+          [loading]="saving()"
+          (onClick)="save()"
+        />
+      </div>
+    </ng-template>
+  </p-card>
+</section>

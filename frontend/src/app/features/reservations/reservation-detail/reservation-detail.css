@@ -1,0 +1,15 @@
+.header-yellow {
+  --p-button-warn-background: var(--color-tertiary-fixed);
+  --p-button-warn-hover-background: var(--color-tertiary-fixed-dim);
+  --p-button-warn-active-background: var(--color-tertiary-fixed-dim);
+  --p-button-warn-border-color: var(--color-tertiary-fixed-dim);
+  --p-button-warn-hover-border-color: var(--color-tertiary-container);
+  --p-button-warn-active-border-color: var(--color-tertiary-container);
+  --p-button-warn-color: var(--color-on-tertiary-fixed-variant);
+  --p-button-warn-hover-color: var(--color-on-tertiary-fixed);
+  --p-button-warn-active-color: var(--color-on-tertiary-fixed);
+  --p-button-warn-focus-ring-color: var(--color-tertiary-container);
+  --p-message-warn-background: var(--color-tertiary-fixed);
+  --p-message-warn-border-color: var(--color-tertiary-fixed-dim);
+  --p-message-warn-color: var(--color-on-tertiary-fixed-variant);
+}
