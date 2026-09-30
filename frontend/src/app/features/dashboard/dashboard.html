@@ -1,7 +1,75 @@
-<div class="min-h-screen flex flex-col items-center justify-center gap-6 px-6 py-6">
-  <img src="/logo.png" alt="BeeThere logo" class="h-16 w-16" />
-  <div class="text-[32px] font-bold text-[#765B00]">Welcome to BeeThere</div>
-  <p class="text-[14px] text-[#6A7582]">This is a placeholder home page.</p>
+<div class="min-h-screen flex flex-col items-center justify-center gap-12 px-6 py-6">
+  <div class='flex flex-col items-center justify-center gap-6'>
+  <h1 class="text-4xl mt-2">Upcoming Reservations</h1>
+    <p-card [style]="{ width: '32rem', overflow: 'hidden' }">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-1.5 items-center justify-center px-1 py-1">
+        <div>
+          <h1 class="font-bold">Reservation Name (Resource)</h1>
+          <h2>12/09 <i class="pi pi-calendar"></i></h2>
+        </div>
+
+        <div class="flex ml-auto">
+        <p-button>Details</p-button>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <div class='flex flex-col items-center justify-center gap-6'>
+    <h1 class="text-4xl mt-2">Top Venues</h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <!-- ideally, do one card and replicate it onto others -->
+        <p-card [style]="{ width: '20rem', overflow: 'hidden' }">
+          <ng-template #header>
+            <img alt="Card" class="w-full" src="https://placehold.co/200x150" />
+          </ng-template>
+          <ng-template #title> Tennis Court </ng-template>
+          <p class="text-neutral-400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            quas!
+          </p>
+          <ng-template #footer>
+            <div class="flex gap-4 mt-1">
+              <p-button label="Book now" styleClass="w-full" />
+            </div>
+          </ng-template>
+        </p-card>
+
+        <p-card [style]="{ width: '20rem', overflow: 'hidden' }">
+          <ng-template #header>
+            <img alt="Card" class="w-full" src="https://placehold.co/200x150" />
+          </ng-template>
+          <ng-template #title> Tennis Court </ng-template>
+          <p class="text-neutral-400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            quas!
+          </p>
+          <ng-template #footer>
+            <div class="flex gap-4 mt-1">
+              <p-button label="Book now" styleClass="w-full" />
+            </div>
+          </ng-template>
+        </p-card>
+
+        <p-card [style]="{ width: '20rem', overflow: 'hidden' }">
+          <ng-template #header>
+            <img alt="Card" class="w-full" src="https://placehold.co/200x150" />
+          </ng-template>
+          <ng-template #title> Tennis Court </ng-template>
+          <p class="text-neutral-400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            quas!
+          </p>
+          <ng-template #footer>
+            <div class="flex gap-4 mt-1">
+              <p-button label="Book now" styleClass="w-full" />
+            </div>
+          </ng-template>
+        </p-card>
+      </div>
+  </div>
+
+  <!-- todo: delete this button once we have an user submenu -->
   <button pButton (click)="logout()" class="py-2 px-6 rounded-[6px] flex justify-center items-center gap-2">
     <span pButtonLabel class="text-[16px] font-bold">Log out</span>
   </button>

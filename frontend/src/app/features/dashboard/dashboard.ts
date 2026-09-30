@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { Session } from '../../core/services/session';
 import { SessionService } from '../../core/services/session.service';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [ButtonModule],
+  imports: [ButtonModule, CardModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
