@@ -18,6 +18,7 @@
   <div class='flex flex-col items-center justify-center gap-6'>
     <h1 class="text-4xl mt-2">Top Venues</h1>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <!-- ideally, do one card and replicate it onto others -->
         <p-card [style]="{ width: '20rem', overflow: 'hidden' }">
           <ng-template #header>
             <img alt="Card" class="w-full" src="https://placehold.co/200x150" />
@@ -34,6 +35,37 @@
           </ng-template>
         </p-card>
 
+        <p-card [style]="{ width: '20rem', overflow: 'hidden' }">
+          <ng-template #header>
+            <img alt="Card" class="w-full" src="https://placehold.co/200x150" />
+          </ng-template>
+          <ng-template #title> Tennis Court </ng-template>
+          <p class="text-neutral-400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            quas!
+          </p>
+          <ng-template #footer>
+            <div class="flex gap-4 mt-1">
+              <p-button label="Book now" styleClass="w-full" />
+            </div>
+          </ng-template>
+        </p-card>
+
+        <p-card [style]="{ width: '20rem', overflow: 'hidden' }">
+          <ng-template #header>
+            <img alt="Card" class="w-full" src="https://placehold.co/200x150" />
+          </ng-template>
+          <ng-template #title> Tennis Court </ng-template>
+          <p class="text-neutral-400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            quas!
+          </p>
+          <ng-template #footer>
+            <div class="flex gap-4 mt-1">
+              <p-button label="Book now" styleClass="w-full" />
+            </div>
+          </ng-template>
+        </p-card>
       </div>
   </div>
 
