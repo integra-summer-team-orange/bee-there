@@ -43,6 +43,7 @@ export class Header implements OnInit {
   protected readonly session = inject(Session);
   protected readonly userState = inject(UserStateService);
 
+  managementItems: MenuItem[] | undefined;
   private readonly url = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
